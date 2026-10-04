@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens: warm paper ground, ink type, one ultramarine accent
+   --------------------------------------------------------------- */
+
+@theme {
+  --color-paper: #f5f1e8;
+  --color-paper-2: #ece6d9;
+  --color-card: #fffdf8;
+  --color-ink: #16140f;
+  --color-ink-2: #5c574c;
+  --color-ink-3: #8c8676;
+  --color-line: rgba(22, 20, 15, 0.12);
+  --color-line-2: rgba(22, 20, 15, 0.22);
+  --color-accent: #2438e0;
+  --color-accent-soft: #e2e6ff;
+
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Serif italic accent word used inside headings */
+.accent-word {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--color-accent);
+}
+
+/* Small mono label above sections */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+/* Faint paper grid behind the hero */
+.paper-grid {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 60% 40%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 60% 40%, #000 20%, transparent 75%);
+}
+
+/* Receipt: torn bottom edge */
+.receipt-edge {
+  --tooth: 12px;
+  mask-image:
+    linear-gradient(#000, #000),
+    conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
+  mask-size:
+    100% calc(100% - var(--tooth)),
+    var(--tooth) var(--tooth);
+  mask-position:
+    top,
+    bottom left;
+  mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-image:
+    linear-gradient(#000, #000),
+    conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
+  -webkit-mask-size:
+    100% calc(100% - var(--tooth)),
+    var(--tooth) var(--tooth);
+  -webkit-mask-position:
+    top,
+    bottom left;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+}
+
+.dashed-rule {
+  border-top: 1px dashed var(--color-line-2);
+}
+
+/* Tool strip marquee */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* Floating chips around the receipt */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(calc(var(--r, 0deg) + 1.5deg));
+  }
+}
+.chip-drift {
+  animation: drift var(--d, 7s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-track,
+  .chip-drift {
+    animation: none;
+  }
+}
