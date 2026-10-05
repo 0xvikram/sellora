@@ -1,5 +1,7 @@
 "use client";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";
 
 /**
@@ -21,7 +23,7 @@ export function SmoothScroll() {
         options?: { offset?: number; duration?: number },
       ) => void;
     } | null = null;
-    let frame = 0;
+    let tick: ((time: number) => void) | null = null;
     let cancelled = false;
 
     import("lenis").then(({ default: Lenis }) => {
@@ -34,11 +36,13 @@ export function SmoothScroll() {
         touchMultiplier: 1.6,
       });
       lenis = instance;
-      const raf = (time: number) => {
-        instance.raf(time);
-        frame = requestAnimationFrame(raf);
-      };
-      frame = requestAnimationFrame(raf);
+      // GSAP's ticker drives Lenis so ScrollTrigger and the smoothed scroll
+      // update on the same frame (no jitter on pinned or scrubbed sections).
+      instance.on("scroll", ScrollTrigger.update);
+      tick = (time: number) => instance.raf(time * 1000);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+      ScrollTrigger.refresh();
     }).catch(() => {
       // Chunk never arrived (offline, or the page navigated away mid-fetch).
       // Native scrolling is a perfectly good fallback; don't leave an
@@ -70,7 +74,8 @@ export function SmoothScroll() {
 
     return () => {
       cancelled = true;
-      cancelAnimationFrame(frame);
+      if (tick) gsap.ticker.remove(tick);
+      gsap.ticker.lagSmoothing(500, 33);
       document.removeEventListener("click", onClick);
       lenis?.destroy();
     };
