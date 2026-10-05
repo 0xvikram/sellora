@@ -1,5 +1,9 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import { DEMO_STORE_URL, SERVICES } from "@/lib/site";
 import { Reveal } from "./Reveal";
+import { ContainerScroll } from "./ui/container-scroll-animation";
 
 const TILES = [
   "from-[#f3c98b] to-[#e2643c]",
@@ -11,7 +15,7 @@ const TILES = [
 // A drawn browser window standing in for the demo store.
 function StoreMock() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-paper/15 bg-[#1f1c16] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.8)]">
+    <div className="overflow-hidden rounded-2xl border border-paper/15 bg-[#1f1c16]">
       <div className="flex items-center gap-3 border-b border-paper/10 px-4 py-3">
         <div className="flex gap-1.5" aria-hidden="true">
           <span className="h-2.5 w-2.5 rounded-full bg-paper/20" />
@@ -53,46 +57,57 @@ function StoreMock() {
   );
 }
 
+// Shader backdrop: loaded only in the browser, after the page, so ogl stays
+// out of the first load.
+const Aurora = dynamic(() => import("./ui/Aurora"), { ssr: false });
+
 // Dark band that points at the live demo store. Shows "coming soon"
-// until DEMO_STORE_URL is set in src/lib/site.ts.
+// until DEMO_STORE_URL is set in src/lib/site.ts. The store window tilts
+// up into place as it scrolls in (Aceternity Container Scroll).
 export function DemoStore() {
   const live = DEMO_STORE_URL.length > 0;
   return (
     <section className="relative overflow-hidden bg-ink text-paper">
+      <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden="true">
+        <Aurora colorStops={["#2438e0", "#aab4ff", "#e2643c"]} amplitude={0.9} blend={0.6} speed={0.6} resolution={0.5} />
+      </div>
       <div
-        className="pointer-events-none absolute -right-40 -bottom-40 h-[34rem] w-[34rem] rounded-full bg-accent opacity-40 blur-[130px]"
+        className="pointer-events-none absolute -right-40 -bottom-40 h-[34rem] w-[34rem] rounded-full bg-accent opacity-30 blur-[130px]"
         aria-hidden="true"
       />
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-24 md:px-8 md:py-32 lg:grid-cols-[1fr_1fr] lg:items-center">
-        <Reveal>
-          <p className="eyebrow !text-paper/50">Proof you can click</p>
-          <h2 className="mt-5 text-4xl leading-[1.02] font-medium tracking-[-0.03em] text-balance md:text-7xl">
-            A demo store with every service{" "}
-            <span className="accent-word !text-[#aab4ff]">switched on.</span>
-          </h2>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/70">
-            A sample store running every service live, so you can try the
-            result before you pay. Sample data, not client results.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-5">
-            <a
-              href={live ? DEMO_STORE_URL : "#contact"}
-              className="inline-flex rounded-full bg-paper px-6 py-3.5 text-base font-medium text-ink transition-transform hover:-translate-y-0.5"
-            >
-              {live ? "Open the demo store" : "Ask for a walkthrough"}
-            </a>
-            <span className="flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-paper/60 uppercase">
-              <span
-                className={`h-2 w-2 rounded-full ${live ? "bg-[#7ee0a1]" : "bg-sun"}`}
-                aria-hidden="true"
-              />
-              {live ? "Live" : "Coming soon"}
-            </span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.12} className="lg:rotate-[1.5deg]">
+      <div className="relative mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-32">
+        <ContainerScroll
+          titleComponent={
+            <Reveal>
+              <p className="eyebrow !text-paper/50">Proof you can click</p>
+              <h2 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.02] font-medium tracking-[-0.03em] text-balance md:text-7xl">
+                A demo store with every service{" "}
+                <span className="accent-word !text-[#aab4ff]">switched on.</span>
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-paper/70">
+                A sample store running every service live, so you can try the
+                result before you pay. Sample data, not client results.
+              </p>
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-5">
+                <a
+                  href={live ? DEMO_STORE_URL : "#contact"}
+                  className="inline-flex rounded-full bg-paper px-6 py-3.5 text-base font-medium text-ink transition-transform hover:-translate-y-0.5"
+                >
+                  {live ? "Open the demo store" : "Ask for a walkthrough"}
+                </a>
+                <span className="flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-paper/60 uppercase">
+                  <span
+                    className={`h-2 w-2 rounded-full ${live ? "bg-[#7ee0a1]" : "bg-sun"}`}
+                    aria-hidden="true"
+                  />
+                  {live ? "Live" : "Coming soon"}
+                </span>
+              </div>
+            </Reveal>
+          }
+        >
           <StoreMock />
-        </Reveal>
+        </ContainerScroll>
       </div>
     </section>
   );

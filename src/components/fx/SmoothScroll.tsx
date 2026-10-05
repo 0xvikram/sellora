@@ -20,7 +20,7 @@ export function SmoothScroll() {
       destroy: () => void;
       scrollTo: (
         target: string | number | HTMLElement,
-        options?: { offset?: number; duration?: number },
+        options?: { offset?: number; duration?: number; immediate?: boolean },
       ) => void;
     } | null = null;
     let tick: ((time: number) => void) | null = null;
@@ -43,6 +43,30 @@ export function SmoothScroll() {
       gsap.ticker.add(tick);
       gsap.ticker.lagSmoothing(0);
       ScrollTrigger.refresh();
+
+      // No offset here or on clicks: Lenis already subtracts the html
+      // scroll-padding-top (88px), so we land where a native jump would.
+      // Direct load of /#section: the browser's native jump ran before Lenis
+      // existed (and before fonts and pin spacers settled), so land on the
+      // target once through Lenis after layout is final.
+      const hash = window.location.hash;
+      if (hash.length > 1) {
+        const settle = () => {
+          if (cancelled) return;
+          let el: Element | null = null;
+          try {
+            el = document.querySelector(hash);
+          } catch {
+            return;
+          }
+          if (!el) return;
+          ScrollTrigger.refresh();
+          instance.scrollTo(el as HTMLElement, { immediate: true });
+        };
+        (document.fonts?.ready ?? Promise.resolve()).then(() =>
+          requestAnimationFrame(settle),
+        );
+      }
     }).catch(() => {
       // Chunk never arrived (offline, or the page navigated away mid-fetch).
       // Native scrolling is a perfectly good fallback; don't leave an
@@ -67,7 +91,7 @@ export function SmoothScroll() {
       const target = document.querySelector(hash);
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -72 });
+      lenis.scrollTo(target as HTMLElement);
       history.replaceState(null, "", hash);
     };
     document.addEventListener("click", onClick);

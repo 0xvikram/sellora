@@ -1,4 +1,5 @@
 import { CONTACT_EMAIL, NAV_LINKS, SITE_NAME } from "@/lib/site";
+import { ContactParticles, Wordmark } from "./ContactFx";
 import { Magnetic } from "./fx/Magnetic";
 import { Reveal } from "./Reveal";
 
@@ -10,6 +11,7 @@ export function Contact() {
         className="pointer-events-none absolute -top-40 left-1/2 h-[36rem] w-[60rem] -translate-x-1/2 rounded-full bg-accent opacity-35 blur-[140px]"
         aria-hidden="true"
       />
+      <ContactParticles />
       <div className="relative mx-auto max-w-7xl px-5 pt-24 text-center md:px-8 md:pt-36">
         <Reveal>
           <p className="eyebrow !text-paper/50">Start here</p>
@@ -60,12 +62,7 @@ export function Contact() {
             © {new Date().getFullYear()} {SITE_NAME}
           </p>
         </div>
-        <p
-          className="text-outline-light -mb-[0.2em] text-center text-[15vw] leading-[0.85] font-semibold tracking-[-0.05em] whitespace-nowrap select-none"
-          aria-hidden="true"
-        >
-          {SITE_NAME}
-        </p>
+        <Wordmark text={SITE_NAME} />
       </footer>
     </section>
   );
