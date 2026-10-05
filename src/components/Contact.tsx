@@ -18,8 +18,8 @@ export function Contact() {
             <span className="accent-word !text-[#aab4ff]">price the fix.</span>
           </h2>
           <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-paper/65">
-            A 20-minute call, or a few lines by email. You get a fixed price
-            and a scope in writing before any work starts.
+            A 20-minute call or an email. Fixed price and scope in writing
+            before work starts.
           </p>
           <div className="mt-11 flex flex-wrap items-center justify-center gap-5">
             <Magnetic>

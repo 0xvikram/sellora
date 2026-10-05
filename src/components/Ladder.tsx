@@ -22,7 +22,7 @@ export function Ladder() {
         <SectionHead
           index="02"
           label="How it works"
-          aside="Most brands start with one audit. The next two steps are there if the first one earns it."
+          aside="Start with an audit. Go further only if it earns it."
         >
           Start small. Go further <span className="accent-word">only if it pays.</span>
         </SectionHead>

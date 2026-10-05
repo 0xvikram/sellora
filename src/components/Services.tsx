@@ -22,7 +22,7 @@ export function Services() {
         <SectionHead
           index="01"
           label="Services"
-          aside="Five ways to start. Each is a one-off job with a fixed price."
+          aside="Five one-off jobs, each with a fixed price."
         >
           Pick one job. <span className="accent-word">See the price.</span>
         </SectionHead>

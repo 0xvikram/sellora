@@ -5,7 +5,7 @@ import type { MotionValue } from "framer-motion";
 import { useRef } from "react";
 
 const TEXT =
-  "Two people. No account managers, no hand-offs. You get the audit, the build and the numbers from the people doing the work, at a price you saw before the first call.";
+  "Two people. No account managers. The audit, the build and the numbers, from the people doing the work.";
 
 function Word({
   word,

@@ -228,9 +228,8 @@ export function Hero() {
           </h1>
 
           <motion.p {...rise(0.45)} className="mt-7 max-w-xl text-lg leading-relaxed text-ink-2">
-            A two-person studio for online stores. We make AI ad creative, get
-            your products found in AI search, fix retention and tracking, and
-            connect your tools. Every job has a fixed price, shown on this page.
+            AI creative, AI-search visibility, retention and automation for
+            online stores. Fixed prices, shown here.
           </motion.p>
 
           <motion.div {...rise(0.55)} className="mt-9 flex flex-wrap items-center gap-5">

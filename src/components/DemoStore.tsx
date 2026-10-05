@@ -71,9 +71,8 @@ export function DemoStore() {
             <span className="accent-word !text-[#aab4ff]">switched on.</span>
           </h2>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/70">
-            We are building a sample store that runs each service live, so you
-            can try the result before you pay for it. The data in it is sample
-            data: it shows what we build, not client results.
+            A sample store running every service live, so you can try the
+            result before you pay. Sample data, not client results.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-5">
             <a
