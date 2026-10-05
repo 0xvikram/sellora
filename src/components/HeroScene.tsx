@@ -23,8 +23,6 @@ const PARCEL_DOTS = [
   { x: 304, y: 96, w: 26, h: 26, fill: "var(--color-clay)", r: 14 },
   { x: 334, y: 214, w: 32, h: 22, fill: "var(--color-leaf)", r: -8 },
   { x: 236, y: 300, w: 24, h: 30, fill: "var(--color-sun)", r: 10 },
-  { x: 96, y: 282, w: 20, h: 20, fill: "var(--color-ink)", r: 20 },
-  { x: 168, y: 48, w: 30, h: 22, fill: "var(--color-card)", r: -6 },
 ];
 
 // Static stand-in for the 3D loop: shown while three.js loads, and kept for

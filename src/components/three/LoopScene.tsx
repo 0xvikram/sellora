@@ -32,11 +32,9 @@ type Parcel = {
 
 const PARCELS: Parcel[] = [
   { color: "#2438e0", size: [0.5, 0.36, 0.36], radius: 1.75, speed: 0.22, phase: 0.2, lift: 0.18 },
-  { color: "#e2643c", size: [0.34, 0.34, 0.34], radius: 1.6, speed: 0.27, phase: 1.3, lift: -0.12 },
-  { color: "#2f8f5b", size: [0.42, 0.28, 0.3], radius: 1.65, speed: 0.19, phase: 2.4, lift: 0.08 },
-  { color: "#f0b84a", size: [0.3, 0.3, 0.42], radius: 1.85, speed: 0.25, phase: 3.5, lift: -0.2 },
-  { color: "#16140f", size: [0.26, 0.26, 0.26], radius: 1.8, speed: 0.3, phase: 4.5, lift: 0.14 },
-  { color: PAPER, size: [0.4, 0.3, 0.3], radius: 1.7, speed: 0.21, phase: 5.4, lift: -0.06 },
+  { color: "#e2643c", size: [0.34, 0.34, 0.34], radius: 1.6, speed: 0.27, phase: 1.8, lift: -0.12 },
+  { color: "#2f8f5b", size: [0.42, 0.28, 0.3], radius: 1.65, speed: 0.19, phase: 3.3, lift: 0.08 },
+  { color: "#f0b84a", size: [0.3, 0.3, 0.42], radius: 1.85, speed: 0.25, phase: 4.9, lift: -0.2 },
 ];
 
 function OrbitingParcel({ parcel, index }: { parcel: Parcel; index: number }) {
