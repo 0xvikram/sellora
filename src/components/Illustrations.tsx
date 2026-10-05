@@ -1,7 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { forwardRef, useRef } from "react";
 import type { ReactNode } from "react";
+import { TOOL_LOGOS } from "@/lib/tool-logos";
+import { cn } from "@/lib/utils";
+import { AnimatedBeam } from "./ui/animated-beam";
+import { NumberTicker } from "./ui/number-ticker";
 
 // Code-drawn illustrations, one per service. Every number in them is
 // sample data: they show what the work looks like, not client results.
@@ -193,69 +198,92 @@ export function IllusRetention() {
       <div className="grid grid-cols-2 border-t border-line">
         <div className="border-r border-line px-5 py-3.5">
           <p className="font-mono text-[0.65rem] text-ink-3 uppercase">Second order</p>
-          <p className="mt-1 text-xl font-medium tracking-tight">34%</p>
+          <p className="mt-1 text-xl font-medium tracking-tight">
+            <NumberTicker value={34} />%
+          </p>
         </div>
         <div className="px-5 py-3.5">
           <p className="font-mono text-[0.65rem] text-ink-3 uppercase">Typical reorder gap</p>
-          <p className="mt-1 text-xl font-medium tracking-tight">41 days</p>
+          <p className="mt-1 text-xl font-medium tracking-tight">
+            <NumberTicker value={41} /> days
+          </p>
         </div>
       </div>
     </Panel>
   );
 }
 
-/* 04 — Tool connections: orders travelling from Shopify to other tools */
-const TARGETS = [
-  { label: "CRM", y: 32 },
-  { label: "3PL", y: 100 },
-  { label: "Sheet", y: 168 },
-];
+/* 04 — Tool connections: orders travelling from Shopify through n8n to
+   other tools, drawn with Magic UI Animated Beam */
+const BEAM = {
+  pathColor: "var(--color-ink)",
+  pathOpacity: 0.18,
+  gradientStartColor: "#aab4ff",
+  gradientStopColor: "#2438e0",
+  duration: 3,
+};
+
+const Node = forwardRef<HTMLDivElement, { children: ReactNode; className?: string }>(
+  function Node({ children, className = "" }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "relative z-10 flex items-center justify-center gap-2 rounded-xl border border-line-2 bg-card px-3 py-2.5 font-mono text-[0.72rem] text-ink",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+
+function Logo({ name }: { name: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="currentColor" aria-hidden="true">
+      <path d={TOOL_LOGOS[name]} />
+    </svg>
+  );
+}
 
 export function IllusFlow() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shopifyRef = useRef<HTMLDivElement>(null);
+  const hubRef = useRef<HTMLDivElement>(null);
+  const crmRef = useRef<HTMLDivElement>(null);
+  const tplRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
   return (
     <Panel label="Workflow · sample">
-      <svg viewBox="0 0 420 200" className="w-full px-3 pt-5" role="img" aria-label="An order moving from Shopify through n8n to a CRM, a 3PL and a spreadsheet">
-        <g fill="none" stroke="var(--color-line-2)" strokeWidth="1.5">
-          <path d="M112 100 H176" />
-          {TARGETS.map((target) => (
-            <path
-              key={target.label}
-              d={`M244 100 C 280 100, 280 ${target.y}, 318 ${target.y}`}
-            />
-          ))}
-        </g>
-        <circle r="4" fill="var(--color-accent)">
-          <animateMotion dur="1.6s" repeatCount="indefinite" path="M112 100 H176" />
-        </circle>
-        {TARGETS.map((target, i) => (
-          <circle key={target.label} r="4" fill="var(--color-accent)">
-            <animateMotion
-              dur="1.8s"
-              begin={`${0.5 + i * 0.3}s`}
-              repeatCount="indefinite"
-              path={`M244 100 C 280 100, 280 ${target.y}, 318 ${target.y}`}
-            />
-          </circle>
-        ))}
-        <g fontFamily="var(--font-mono)" fontSize="11">
-          <rect x="14" y="80" width="98" height="40" rx="10" fill="var(--color-paper-2)" stroke="var(--color-line-2)" />
-          <text x="63" y="104" textAnchor="middle" fill="var(--color-ink)">
-            Shopify order
-          </text>
-          <rect x="176" y="78" width="68" height="44" rx="12" fill="var(--color-accent)" />
-          <text x="210" y="104" textAnchor="middle" fill="#fff">
-            n8n
-          </text>
-          {TARGETS.map((target) => (
-            <g key={target.label}>
-              <rect x="318" y={target.y - 18} width="88" height="36" rx="10" fill="var(--color-card)" stroke="var(--color-line-2)" />
-              <text x="362" y={target.y + 4} textAnchor="middle" fill="var(--color-ink)">
-                {target.label}
-              </text>
-            </g>
-          ))}
-        </g>
-      </svg>
+      <div
+        ref={containerRef}
+        role="img"
+        aria-label="An order moving from Shopify through n8n to a CRM, a 3PL and a spreadsheet"
+        className="relative flex items-center justify-between gap-3 px-4 pt-7 pb-6 sm:gap-4 sm:px-7"
+      >
+        <Node ref={shopifyRef} className="bg-paper-2">
+          <Logo name="Shopify" />
+          <span>
+            Shopify
+            <span className="hidden sm:inline"> order</span>
+          </span>
+        </Node>
+        <Node ref={hubRef} className="border-accent bg-accent px-3 py-3.5 text-white sm:px-4">
+          <Logo name="n8n" />
+          n8n
+        </Node>
+        <div className="flex flex-col gap-5">
+          <Node ref={crmRef} className="w-14 px-2 sm:w-20">CRM</Node>
+          <Node ref={tplRef} className="w-14 px-2 sm:w-20">3PL</Node>
+          <Node ref={sheetRef} className="w-14 px-2 sm:w-20">Sheet</Node>
+        </div>
+        <AnimatedBeam containerRef={containerRef} fromRef={shopifyRef} toRef={hubRef} {...BEAM} />
+        <AnimatedBeam containerRef={containerRef} fromRef={hubRef} toRef={crmRef} curvature={30} delay={0.6} {...BEAM} />
+        <AnimatedBeam containerRef={containerRef} fromRef={hubRef} toRef={tplRef} delay={0.85} {...BEAM} />
+        <AnimatedBeam containerRef={containerRef} fromRef={hubRef} toRef={sheetRef} curvature={-30} delay={1.1} {...BEAM} />
+      </div>
       <ul className="space-y-1.5 border-t border-line px-5 py-3.5 font-mono text-[0.7rem] text-ink-2">
         {["#1042 → CRM contact updated", "#1042 → 3PL pick ticket created", "#1042 → row added to sheet"].map(
           (line, i) => (
@@ -291,7 +319,7 @@ function Bar({ label, value, max, tone, delay }: { label: string; value: number;
           transition={{ duration: 1, delay, ease: EASE }}
         />
       </span>
-      <span className="text-right">{value}</span>
+      <NumberTicker value={value} delay={delay} className="text-right" />
     </div>
   );
 }

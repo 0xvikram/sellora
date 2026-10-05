@@ -183,3 +183,47 @@ body {
     animation: none;
   }
 }
+
+/* --- ui components --- */
+/* Magic UI marquee / shine. Keyframes are renamed so they don't replace the
+   `marquee` keyframes the Band above relies on. */
+@theme inline {
+  --animate-marquee: mq-x var(--duration) infinite linear;
+  --animate-marquee-vertical: mq-y var(--duration) linear infinite;
+  --animate-shine: shine var(--duration) infinite linear;
+  @keyframes mq-x {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes mq-y {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-vertical,
+  .animate-shine {
+    animation: none;
+  }
+}
