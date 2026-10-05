@@ -3,7 +3,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { SERVICES } from "@/lib/site";
 import { ILLUSTRATIONS } from "./Illustrations";
 import { SectionHead } from "./SectionHead";
@@ -11,85 +11,94 @@ import { CardBody, CardContainer, CardItem } from "./ui/3d-card";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// Only wide, tall-enough screens with motion allowed get the pinned
-// horizontal scroll; everything else gets the same cards stacked.
-const PIN_QUERY =
-  "(min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)";
+// Stacking deck: every card is `position: sticky`, so the next one slides up
+// over it. Card i sticks at BASE + i * STEP so the edges of the cards beneath
+// stay visible. While a card is being covered it shrinks to COVERED_SCALE and
+// a dark overlay fades up to COVERED_DIM.
+const BASE_TOP_REM = 6.5; // 4rem nav + 2.5rem breathing room
+const STEP_REM = 1.25;
+const COVERED_SCALE = 0.94;
+const COVERED_DIM = 0.35;
+const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-// The `in-[.is-pinned]:` classes apply only while GSAP has the section pinned.
 export function Services() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLOListElement>(null);
-  const barRef = useRef<HTMLSpanElement>(null);
-  const countRef = useRef<HTMLSpanElement>(null);
-  const triggerRef = useRef<ScrollTrigger | null>(null);
+  const listRef = useRef<HTMLOListElement>(null);
+
+  // A card taller than the space below its sticky line would have its bottom
+  // covered before anyone saw it (phones, short windows). For those, stick
+  // lower than the viewport top so the whole card scrolls into view first.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const items = Array.from(list.children) as HTMLElement[];
+    const place = () => {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const vh = window.innerHeight;
+      let changed = false;
+      items.forEach((item, i) => {
+        const wanted = (BASE_TOP_REM + i * STEP_REM) * rem;
+        const fit = vh - item.offsetHeight - rem;
+        const top = `${Math.round(Math.min(wanted, fit))}px`;
+        if (item.style.top !== top) {
+          item.style.top = top;
+          changed = true;
+        }
+      });
+      // The scale/dim tweens end where the next card settles; re-measure them.
+      if (changed) ScrollTrigger.refresh();
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    items.forEach((item) => ro.observe(item));
+    window.addEventListener("resize", place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, []);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      mm.add(PIN_QUERY, () => {
-        const section = sectionRef.current;
-        const track = trackRef.current;
-        if (!section || !track) return;
-        section.classList.add("is-pinned");
-
-        // clientWidth, not innerWidth: the scrollbar would hide the last card's edge.
-        const distance = () =>
-          Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
-        const tween = gsap.to(track, {
-          x: () => -distance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: pinRef.current,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.6,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              if (barRef.current) barRef.current.style.transform = `scaleX(${self.progress})`;
-              if (countRef.current) {
-                countRef.current.textContent = pad(
-                  Math.round(self.progress * (SERVICES.length - 1)) + 1,
-                );
-              }
+      mm.add(MOTION_QUERY, () => {
+        const list = listRef.current;
+        if (!list) return;
+        const items = Array.from(list.children) as HTMLElement[];
+        items.slice(0, -1).forEach((item, i) => {
+          const next = items[i + 1];
+          const card = item.querySelector<HTMLElement>("[data-stack-card]");
+          const shade = item.querySelector<HTMLElement>("[data-stack-shade]");
+          if (!card || !shade) return;
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: next,
+              // From the next card entering the viewport until it has settled.
+              start: "top bottom",
+              end: () => `top ${parseFloat(getComputedStyle(next).top) || 0}px`,
+              scrub: true,
+              invalidateOnRefresh: true,
             },
-          },
+          });
+          tl.fromTo(
+            card,
+            { scale: 1 },
+            { scale: COVERED_SCALE, ease: "none", transformOrigin: "50% 0%" },
+            0,
+          ).fromTo(shade, { opacity: 0 }, { opacity: COVERED_DIM, ease: "none" }, 0);
         });
-        triggerRef.current = tween.scrollTrigger ?? null;
-
-        return () => {
-          triggerRef.current = null;
-          section.classList.remove("is-pinned");
-        };
+        // The old pinned layout added pin spacing; re-measure everything
+        // below (the Ladder beams and reveals) against the new layout.
+        ScrollTrigger.refresh();
       });
     },
     { scope: sectionRef },
   );
 
-  // Keyboard users tabbing through pinned cards: scroll the page to the point
-  // where that card has slid into view (the track moves by transform, so the
-  // browser can't do it for us).
-  const bringIntoView = (index: number) => {
-    const st = triggerRef.current;
-    const track = trackRef.current;
-    const pin = pinRef.current;
-    if (!st || !track || !pin) return;
-    pin.scrollLeft = 0;
-    const cards = track.children;
-    const first = cards[0] as HTMLElement;
-    const card = cards[index] as HTMLElement;
-    const distance = Math.max(1, track.scrollWidth - document.documentElement.clientWidth);
-    const progress = Math.min(1, (card.offsetLeft - first.offsetLeft) / distance);
-    window.scrollTo({ top: st.start + progress * (st.end - st.start), behavior: "instant" });
-  };
-
   return (
-    <section ref={sectionRef} id="services" className="border-t border-line bg-card">
+    <section ref={sectionRef} id="services" className="border-t border-line">
       <div className="mx-auto max-w-7xl px-5 pt-24 md:px-8 md:pt-32">
         <SectionHead
           index="01"
@@ -100,21 +109,19 @@ export function Services() {
         </SectionHead>
       </div>
 
-      <div
-        ref={pinRef}
-        className="pb-24 md:pb-32 in-[.is-pinned]:flex in-[.is-pinned]:h-screen in-[.is-pinned]:flex-col in-[.is-pinned]:justify-center in-[.is-pinned]:overflow-hidden in-[.is-pinned]:pt-16 in-[.is-pinned]:pb-0!"
+      <ol
+        ref={listRef}
+        className="mx-auto mt-14 max-w-7xl space-y-8 px-5 pb-24 md:mt-16 md:px-8 md:pb-40"
       >
-        <ol
-          ref={trackRef}
-          className="relative mx-auto mt-14 max-w-7xl space-y-6 px-5 md:px-8 in-[.is-pinned]:mx-0 in-[.is-pinned]:mt-0 in-[.is-pinned]:flex in-[.is-pinned]:w-max in-[.is-pinned]:max-w-none in-[.is-pinned]:gap-8 in-[.is-pinned]:space-y-0 in-[.is-pinned]:px-[max(2rem,calc((100vw-80rem)/2+2rem))]! in-[.is-pinned]:will-change-transform"
-        >
-          {SERVICES.map((service, i) => {
-            const Illustration = ILLUSTRATIONS[service.id];
-            return (
-              <li
-                key={service.id}
-                className="in-[.is-pinned]:w-[min(66rem,calc(100vw-9rem))] in-[.is-pinned]:shrink-0"
-              >
+        {SERVICES.map((service, i) => {
+          const Illustration = ILLUSTRATIONS[service.id];
+          return (
+            <li
+              key={service.id}
+              className="sticky"
+              style={{ top: `${BASE_TOP_REM + i * STEP_REM}rem` }}
+            >
+              <div data-stack-card className="relative origin-top">
                 <CardContainer
                   tilt={90}
                   containerClassName="block py-0"
@@ -124,11 +131,13 @@ export function Services() {
                     <article
                       tabIndex={0}
                       aria-labelledby={`svc-${service.id}`}
-                      onFocus={() => bringIntoView(i)}
-                      className="grid gap-8 rounded-3xl border border-line-2 bg-paper p-6 transition-colors hover:border-accent focus-visible:border-accent md:p-9 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-12 lg:p-10"
+                      className="grid gap-8 rounded-3xl border border-line-2 bg-card p-6 shadow-[0_1px_2px_rgba(22,20,15,0.06),0_18px_40px_-18px_rgba(22,20,15,0.28)] transition-colors hover:border-accent focus-visible:border-accent md:p-9 lg:min-h-[70vh] lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-12 lg:p-12"
                     >
                       <div>
-                        <CardItem translateZ={20} className="flex w-full items-baseline justify-between gap-6">
+                        <CardItem
+                          translateZ={20}
+                          className="flex w-full items-baseline justify-between gap-6"
+                        >
                           <span className="font-mono text-sm text-accent">
                             {pad(i + 1)} / {pad(SERVICES.length)}
                           </span>
@@ -169,31 +178,16 @@ export function Services() {
                     </article>
                   </CardBody>
                 </CardContainer>
-              </li>
-            );
-          })}
-        </ol>
-
-        <div
-          className="mx-auto mt-8 hidden w-full max-w-7xl items-center gap-5 px-8 font-mono text-xs text-ink-3 in-[.is-pinned]:flex"
-          aria-hidden="true"
-        >
-          <span>
-            <span ref={countRef} className="text-accent">
-              01
-            </span>{" "}
-            / {pad(SERVICES.length)}
-          </span>
-          <span className="h-0.5 flex-1 overflow-hidden rounded-full bg-line">
-            <span
-              ref={barRef}
-              className="block h-full origin-left rounded-full bg-accent"
-              style={{ transform: "scaleX(0)" }}
-            />
-          </span>
-          <span>scroll</span>
-        </div>
-      </div>
+                <span
+                  data-stack-shade
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 rounded-3xl bg-ink opacity-0"
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
