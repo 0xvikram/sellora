@@ -31,11 +31,11 @@ export function Statement() {
   const words = TEXT.split(" ");
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-36">
+    <section className="mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-36">
       <p className="eyebrow">Who you work with</p>
       <p
         ref={ref}
-        className="mt-6 max-w-5xl text-3xl leading-[1.18] font-medium tracking-tight text-balance md:text-5xl md:leading-[1.14]"
+        className="mt-6 max-w-6xl text-3xl leading-[1.16] font-medium tracking-[-0.02em] text-balance md:text-6xl md:leading-[1.1]"
       >
         {reduced
           ? TEXT

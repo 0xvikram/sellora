@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Fraunces, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Cursor } from "@/components/fx/Cursor";
+import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 const hanken = Hanken_Grotesk({
@@ -42,7 +44,12 @@ export default function RootLayout({
       lang="en"
       className={`${hanken.variable} ${fraunces.variable} ${jetbrains.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        <Cursor />
+        {children}
+        <div className="grain pointer-events-none fixed inset-0 z-[90]" aria-hidden="true" />
+      </body>
     </html>
   );
 }

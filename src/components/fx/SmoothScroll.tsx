@@ -1,0 +1,80 @@
+"use client";
+
+import { useEffect } from "react";
+
+/**
+ * Lenis smooth scroll, desktop pointers only. Touch devices keep native
+ * momentum scrolling, and reduced-motion users get nothing at all.
+ */
+export function SmoothScroll() {
+  useEffect(() => {
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+    if (!fine || reduced) return;
+
+    let lenis: {
+      raf: (t: number) => void;
+      destroy: () => void;
+      scrollTo: (
+        target: string | number | HTMLElement,
+        options?: { offset?: number; duration?: number },
+      ) => void;
+    } | null = null;
+    let frame = 0;
+    let cancelled = false;
+
+    import("lenis").then(({ default: Lenis }) => {
+      if (cancelled) return;
+      const instance = new Lenis({
+        duration: 1.05,
+        lerp: 0.1,
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.6,
+      });
+      lenis = instance;
+      const raf = (time: number) => {
+        instance.raf(time);
+        frame = requestAnimationFrame(raf);
+      };
+      frame = requestAnimationFrame(raf);
+    }).catch(() => {
+      // Chunk never arrived (offline, or the page navigated away mid-fetch).
+      // Native scrolling is a perfectly good fallback; don't leave an
+      // unhandled rejection behind.
+    });
+
+    // Lenis owns the scroll position, so native anchor jumps have to be
+    // re-routed through it or in-page links land in the wrong place.
+    const onClick = (e: MouseEvent) => {
+      if (!lenis || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey)
+        return;
+      const anchor = (e.target as HTMLElement | null)?.closest?.("a");
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (!href) return;
+      const hash = href.startsWith("#")
+        ? href
+        : href.startsWith("/#")
+          ? href.slice(1)
+          : null;
+      if (!hash || hash === "#") return;
+      const target = document.querySelector(hash);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target as HTMLElement, { offset: -72 });
+      history.replaceState(null, "", hash);
+    };
+    document.addEventListener("click", onClick);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+      document.removeEventListener("click", onClick);
+      lenis?.destroy();
+    };
+  }, []);
+
+  return null;
+}

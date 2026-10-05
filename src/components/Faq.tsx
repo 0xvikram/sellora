@@ -4,7 +4,7 @@ import { SectionHead } from "./SectionHead";
 export function Faq() {
   return (
     <section id="faq" className="border-t border-line bg-card">
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-24 md:px-8 md:py-32 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 md:px-8 md:py-32 lg:grid-cols-[0.8fr_1.2fr]">
         <SectionHead index="04" label="FAQ">
           Questions, <span className="accent-word">answered.</span>
         </SectionHead>

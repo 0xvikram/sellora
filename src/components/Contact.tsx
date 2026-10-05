@@ -1,59 +1,72 @@
 import { CONTACT_EMAIL, NAV_LINKS, SITE_NAME } from "@/lib/site";
-import { Logo } from "./Nav";
+import { Magnetic } from "./fx/Magnetic";
 import { Reveal } from "./Reveal";
 
+// Dark closing section: the call to action, then a giant wordmark.
 export function Contact() {
   return (
-    <>
-      <section id="contact" className="border-t border-line">
-        <div className="mx-auto max-w-6xl px-5 py-24 text-center md:px-8 md:py-36">
-          <Reveal>
-            <p className="eyebrow">Start here</p>
-            <h2 className="mx-auto mt-5 max-w-4xl text-5xl leading-[1.02] font-medium tracking-tight text-balance md:text-7xl">
-              Tell us what is leaking. We will{" "}
-              <span className="accent-word">price the fix.</span>
-            </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-2">
-              A 20-minute call, or a few lines by email. You get a fixed price
-              and a scope in writing before any work starts.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+    <section id="contact" className="relative overflow-hidden bg-ink text-paper">
+      <div
+        className="pointer-events-none absolute -top-40 left-1/2 h-[36rem] w-[60rem] -translate-x-1/2 rounded-full bg-accent opacity-35 blur-[140px]"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto max-w-7xl px-5 pt-24 text-center md:px-8 md:pt-36">
+        <Reveal>
+          <p className="eyebrow !text-paper/50">Start here</p>
+          <h2 className="mx-auto mt-6 max-w-5xl text-5xl leading-[0.98] font-medium tracking-[-0.03em] text-balance md:text-8xl">
+            Tell us what is leaking. We will{" "}
+            <span className="accent-word !text-[#aab4ff]">price the fix.</span>
+          </h2>
+          <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-paper/65">
+            A 20-minute call, or a few lines by email. You get a fixed price
+            and a scope in writing before any work starts.
+          </p>
+          <div className="mt-11 flex flex-wrap items-center justify-center gap-5">
+            <Magnetic>
               <a
                 href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Call request")}`}
-                className="rounded-full bg-accent px-7 py-4 text-base font-medium text-white transition-transform hover:-translate-y-0.5"
+                className="inline-flex items-center gap-3 rounded-full bg-paper py-2 pr-2 pl-7 text-base font-medium text-ink"
               >
                 Book a 20-minute call
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white">
+                  →
+                </span>
               </a>
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="rounded-full border border-line-2 px-7 py-4 font-mono text-sm transition-colors hover:border-ink"
-              >
-                {CONTACT_EMAIL}
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            </Magnetic>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="rounded-full border border-paper/25 px-7 py-4 font-mono text-sm transition-colors hover:border-paper"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </div>
+        </Reveal>
+      </div>
 
-      <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
-          <Logo />
+      <footer className="relative mt-24 md:mt-32">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 border-t border-paper/15 px-5 py-8 md:flex-row md:items-center md:justify-between md:px-8">
           <nav className="flex flex-wrap gap-x-7 gap-y-2" aria-label="Footer">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-ink-2 transition-colors hover:text-ink"
+                className="text-sm text-paper/60 transition-colors hover:text-paper"
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <p className="font-mono text-xs text-ink-3">
+          <p className="font-mono text-xs text-paper/45">
             © {new Date().getFullYear()} {SITE_NAME}
           </p>
         </div>
+        <p
+          className="text-outline-light -mb-[0.2em] text-center text-[15vw] leading-[0.85] font-semibold tracking-[-0.05em] whitespace-nowrap select-none"
+          aria-hidden="true"
+        >
+          {SITE_NAME}
+        </p>
       </footer>
-    </>
+    </section>
   );
 }

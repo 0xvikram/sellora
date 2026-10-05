@@ -1,3 +1,4 @@
+import { Band } from "@/components/Band";
 import { Contact } from "@/components/Contact";
 import { DemoStore } from "@/components/DemoStore";
 import { Faq } from "@/components/Faq";
@@ -17,6 +18,7 @@ export default function Home() {
         <Hero />
         <ToolStrip />
         <Statement />
+        <Band />
         <Services />
         <Ladder />
         <DemoStore />

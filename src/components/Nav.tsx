@@ -29,7 +29,7 @@ export function Logo() {
 export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
         <Logo />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
           {NAV_LINKS.map((link) => (
