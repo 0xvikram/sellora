@@ -4,13 +4,16 @@ import {
   motion,
   useMotionValue,
   useReducedMotion,
+  useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
 import type { MotionValue } from "framer-motion";
+import { useRef } from "react";
 import type { ReactNode } from "react";
 import { BOOKING_URL, SERVICES } from "@/lib/site";
 import { Magnetic } from "./fx/Magnetic";
+import { HeroScene } from "./HeroScene";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const LINES = ["More orders from", "the customers you"];
@@ -40,93 +43,6 @@ function Receipt() {
       </div>
       <p className="mt-4 text-center text-ink-3">* * * thank you, come again * * *</p>
     </div>
-  );
-}
-
-function MiniCard({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return (
-    <div
-      className={`rounded-xl border border-line bg-card shadow-[0_18px_40px_-22px_rgba(22,20,15,0.45)] ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-function MiniChart() {
-  return (
-    <MiniCard className="w-44 p-3.5">
-      <p className="font-mono text-[0.6rem] tracking-[0.12em] text-ink-3 uppercase">
-        Repeat orders
-      </p>
-      <svg viewBox="0 0 150 60" className="mt-2 w-full" aria-hidden="true">
-        <motion.path
-          d="M2 52 C 22 50, 30 40, 48 38 S 78 30, 92 22 S 126 10, 148 6"
-          fill="none"
-          stroke="var(--color-accent)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.8, delay: 1, ease: "easeInOut" }}
-        />
-        <motion.circle
-          cx="148"
-          cy="6"
-          r="3.5"
-          fill="var(--color-accent)"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 2.7, type: "spring", stiffness: 300 }}
-        />
-      </svg>
-      <p className="mt-1 font-mono text-[0.6rem] text-ink-3">sample data</p>
-    </MiniCard>
-  );
-}
-
-function MiniAnswer() {
-  return (
-    <MiniCard className="w-56 p-3.5">
-      <p className="font-mono text-[0.6rem] tracking-[0.12em] text-ink-3 uppercase">
-        AI assistant
-      </p>
-      <p className="mt-2 text-[0.78rem] leading-snug">
-        “For sensitive skin,{" "}
-        <span className="rounded bg-accent-soft px-1 font-semibold text-accent">Your Brand</span>{" "}
-        is often recommended…”
-      </p>
-    </MiniCard>
-  );
-}
-
-function MiniAd() {
-  return (
-    <div className="relative aspect-[9/16] w-28 overflow-hidden rounded-xl bg-gradient-to-br from-[#f3c98b] to-[#e2643c] shadow-[0_18px_40px_-22px_rgba(22,20,15,0.55)]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.5),transparent_55%)]" />
-      <span className="absolute top-2 left-2 rounded-full bg-white/85 px-2 py-0.5 font-mono text-[0.55rem]">
-        Hook A
-      </span>
-      <span className="absolute top-1/2 left-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90">
-        <span className="ml-0.5 border-y-[5px] border-l-[9px] border-y-transparent border-l-ink" />
-      </span>
-      <div className="absolute inset-x-2 bottom-2 h-0.5 overflow-hidden rounded-full bg-white/35">
-        <div className="illus-progress h-full bg-white" />
-      </div>
-    </div>
-  );
-}
-
-function MiniFlow() {
-  return (
-    <MiniCard className="flex items-center gap-2 px-3.5 py-2.5 font-mono text-[0.68rem]">
-      <span>Shopify</span>
-      <span className="text-accent">→</span>
-      <span className="rounded-md bg-accent px-1.5 py-0.5 text-white">n8n</span>
-      <span className="text-accent">→</span>
-      <span>CRM</span>
-      <span className="ml-1 text-leaf">✓</span>
-    </MiniCard>
   );
 }
 
@@ -167,6 +83,8 @@ function Layer({
 
 export function Hero() {
   const reduced = useReducedMotion();
+  const section = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: section, offset: ["start start", "end start"] });
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const mx = useSpring(px, { stiffness: 60, damping: 18 });
@@ -180,6 +98,7 @@ export function Hero() {
 
   return (
     <section
+      ref={section}
       id="top"
       className="relative overflow-hidden"
       onPointerMove={(e) => {
@@ -257,22 +176,16 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* The scene: a price receipt with small product panels around it */}
-        <div className="relative mx-auto mt-16 h-[34rem] w-full max-w-[26rem] xl:mt-0" aria-hidden="true">
-          <Layer className="top-14 left-1/2 -ml-[9.75rem]" depth={10} rotate={3} delay={0.35} mx={mx} my={my}>
+        {/* The scene: the 3D reorder loop, with the price receipt in front */}
+        <div className="relative mx-auto -mt-8 h-[36rem] w-full max-w-[26rem] sm:h-[40rem] xl:mt-0 xl:h-[36rem]" aria-hidden="true">
+          <HeroScene
+            pointerX={px}
+            pointerY={py}
+            progress={scrollYProgress}
+            className="absolute -inset-x-5 top-0 h-[21rem] sm:-inset-x-24 sm:h-[26rem] xl:-top-8 xl:right-[-9rem] xl:left-[-4rem] xl:h-[30rem]"
+          />
+          <Layer className="top-[11.5rem] left-1/2 -ml-[9.75rem] sm:top-[14rem] xl:top-[12.5rem] xl:-ml-[13rem]" depth={10} rotate={3} delay={0.35} mx={mx} my={my}>
             <Receipt />
-          </Layer>
-          <Layer className="-top-14 -left-2 sm:-left-20" depth={26} rotate={-6} delay={0.6} mx={mx} my={my}>
-            <MiniChart />
-          </Layer>
-          <Layer className="top-6 -right-2 hidden sm:-right-12 sm:block" depth={34} rotate={7} delay={0.7} mx={mx} my={my}>
-            <MiniAd />
-          </Layer>
-          <Layer className="bottom-14 -left-3 sm:-left-16" depth={30} rotate={-4} delay={0.8} mx={mx} my={my}>
-            <MiniAnswer />
-          </Layer>
-          <Layer className="-right-1 bottom-2 sm:-right-8" depth={20} rotate={4} delay={0.9} mx={mx} my={my}>
-            <MiniFlow />
           </Layer>
         </div>
       </div>
