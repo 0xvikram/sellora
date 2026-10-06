@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 // Aceternity ContainerScroll (ui.aceternity.com/registry/container-scroll-animation.json),
 // adapted: the frame sizes to its content instead of fixed 40rem heights,
 // the bezel matches the dark band, the scroll range is measured while the
-// container crosses the viewport, and reduced motion shows it flat.
+// container crosses the viewport, and reduced motion shows it upright with no tilt.
 
 export const ContainerScroll = ({
   titleComponent,
@@ -29,24 +29,23 @@ export const ContainerScroll = ({
     target: containerRef,
     offset: ["start end", "center center"],
   });
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
-
-  const rotate = useTransform(scrollYProgress, [0, 1], [reduced ? 0 : 24, 0]);
+  // Starts tilted back about 20deg and stands up to face the viewer by the
+  // time the container centre reaches the viewport centre, then holds upright.
+  const rotate = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduced ? [0, 0] : [20, 0],
+  );
   const scale = useTransform(
     scrollYProgress,
     [0, 1],
-    reduced ? [1, 1] : isMobile ? [0.92, 1] : [1.05, 1],
+    reduced ? [1, 1] : [0.92, 1],
+  );
+  // Lifts the tilted window slightly so it does not sit low at the start.
+  const cardLift = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduced ? [0, 0] : [-24, 0],
   );
   const translate = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -40]);
 
@@ -55,9 +54,9 @@ export const ContainerScroll = ({
       className={cn("relative flex items-center justify-center", className)}
       ref={containerRef}
     >
-      <div className="relative w-full" style={{ perspective: "1000px" }}>
+      <div className="relative w-full" style={{ perspective: "1200px" }}>
         <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale}>
+        <Card rotate={rotate} translate={cardLift} scale={scale}>
           {children}
         </Card>
       </div>
@@ -87,6 +86,7 @@ export const Header = ({
 export const Card = ({
   rotate,
   scale,
+  translate,
   children,
 }: {
   rotate: MotionValue<number>;
@@ -99,6 +99,7 @@ export const Card = ({
       style={{
         rotateX: rotate,
         scale,
+        translateY: translate,
         boxShadow:
           "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
       }}
