@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 // Aceternity ContainerScroll (ui.aceternity.com/registry/container-scroll-animation.json),
 // adapted: the frame sizes to its content instead of fixed 40rem heights,
 // the bezel matches the dark band, the scroll range is measured while the
-// container crosses the viewport, and reduced motion shows it upright with no tilt.
+// window itself crosses the viewport, and reduced motion shows it upright with no tilt.
 
 export const ContainerScroll = ({
   titleComponent,
@@ -24,13 +24,16 @@ export const ContainerScroll = ({
   className?: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // Progress is measured on the window itself, so the full tilt shows as its
+  // top edge enters the viewport and it is upright once centred.
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: cardRef,
     offset: ["start end", "center center"],
   });
   // Starts tilted back about 20deg and stands up to face the viewer by the
-  // time the container centre reaches the viewport centre, then holds upright.
+  // time the window centre reaches the viewport centre, then holds upright.
   const rotate = useTransform(
     scrollYProgress,
     [0, 1],
@@ -56,7 +59,7 @@ export const ContainerScroll = ({
     >
       <div className="relative w-full" style={{ perspective: "1200px" }}>
         <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={cardLift} scale={scale}>
+        <Card cardRef={cardRef} rotate={rotate} translate={cardLift} scale={scale}>
           {children}
         </Card>
       </div>
@@ -84,11 +87,13 @@ export const Header = ({
 };
 
 export const Card = ({
+  cardRef,
   rotate,
   scale,
   translate,
   children,
 }: {
+  cardRef?: React.Ref<HTMLDivElement>;
   rotate: MotionValue<number>;
   scale: MotionValue<number>;
   translate: MotionValue<number>;
@@ -96,6 +101,7 @@ export const Card = ({
 }) => {
   return (
     <motion.div
+      ref={cardRef}
       style={{
         rotateX: rotate,
         scale,
