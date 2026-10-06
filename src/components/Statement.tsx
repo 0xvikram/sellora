@@ -41,7 +41,7 @@ export function Statement() {
       <p className="eyebrow">Who you work with</p>
       <p
         ref={ref}
-        className="mt-6 max-w-6xl text-3xl leading-[1.16] font-medium tracking-[-0.02em] text-balance md:text-6xl md:leading-[1.1]"
+        className="mt-6 max-w-6xl font-display text-3xl leading-[1.16] font-semibold tracking-[-0.025em] text-balance md:text-6xl md:leading-[1.1]"
       >
         {words.map((word, i) => (
           <Word

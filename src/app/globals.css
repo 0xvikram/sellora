@@ -19,8 +19,8 @@
   --color-leaf: #2f8f5b;
   --color-sun: #f0b84a;
 
-  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
@@ -53,12 +53,22 @@ body {
   border-radius: 4px;
 }
 
-/* Serif italic accent word used inside headings */
+/* Headings use the display face; weight and tracking are set per heading
+   with utilities (semibold, -0.02 to -0.035em). */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+}
+
+/* Accent word inside headings: same display face, accent colour, bolder */
 .accent-word {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   color: var(--color-accent);
 }
 

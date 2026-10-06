@@ -21,7 +21,7 @@ export function Logo() {
           strokeLinejoin="round"
         />
       </svg>
-      <span className="text-[1.05rem] font-semibold tracking-tight">{SITE_NAME}</span>
+      <span className="font-display text-[1.1rem] font-bold tracking-[-0.02em]">{SITE_NAME}</span>
     </a>
   );
 }

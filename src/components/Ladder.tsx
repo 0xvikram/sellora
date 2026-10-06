@@ -13,7 +13,8 @@ import { ShineBorder } from "./ui/shine-border";
 function TickerPrice({ text, delay = 0 }: { text: string; delay?: number }) {
   const parts = text.split(/(\d[\d,]*)/);
   return (
-    <span className="whitespace-nowrap">
+    // Wraps at the space before the unit when a card is narrow (tablet).
+    <span>
       {parts.map((part, i) =>
         /^\d/.test(part) ? (
           <NumberTicker key={i} value={Number(part.replace(/,/g, ""))} delay={delay + i * 0.05} />
@@ -91,14 +92,14 @@ export function Ladder() {
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent font-mono text-xs text-white">
                         {rung.step}
                       </span>
-                      <span className="font-mono text-sm text-ink-2">
+                      <span className="min-w-0 text-right font-mono text-sm text-ink-2">
                         <span className="sr-only">{rung.price}</span>
                         <span aria-hidden="true">
                           <TickerPrice text={rung.price} delay={0.2 + i * 0.15} />
                         </span>
                       </span>
                     </div>
-                    <h3 id={`rung-${rung.step}`} className="mt-10 text-4xl font-medium tracking-tight">
+                    <h3 id={`rung-${rung.step}`} className="mt-10 font-display text-4xl font-semibold tracking-[-0.03em]">
                       {rung.title}
                     </h3>
                     <p className="mt-3 text-base leading-relaxed text-ink-2">{rung.body}</p>

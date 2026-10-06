@@ -41,7 +41,7 @@ export function WhyUs() {
                       className={`relative flex h-full flex-col justify-between overflow-hidden p-7 md:p-9 ${large ? "min-h-[19rem]" : "min-h-[15rem]"}`}
                     >
                       <span
-                        className={`pointer-events-none absolute -right-4 -bottom-10 font-serif leading-none italic opacity-15 select-none ${large ? "text-[15rem]" : "text-[11rem]"}`}
+                        className={`pointer-events-none absolute -right-4 -bottom-10 font-display leading-none font-bold opacity-15 select-none ${large ? "text-[15rem]" : "text-[11rem]"}`}
                         aria-hidden="true"
                       >
                         {look.mark}
@@ -51,7 +51,7 @@ export function WhyUs() {
                       </span>
                       <div className="relative">
                         <h3
-                          className={`font-medium tracking-tight ${large ? "text-3xl md:text-4xl" : "text-2xl"}`}
+                          className={`font-display font-semibold tracking-[-0.025em] ${large ? "text-3xl md:text-4xl" : "text-2xl"}`}
                         >
                           {reason.title}
                         </h3>

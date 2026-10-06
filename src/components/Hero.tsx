@@ -41,7 +41,7 @@ export function Hero() {
             For e-commerce and D2C brands
           </motion.p>
 
-          <h1 className="mt-6 text-[2.9rem] leading-[0.98] font-medium tracking-[-0.035em] sm:text-7xl xl:text-[5.4rem]">
+          <h1 className="mt-6 font-display text-[clamp(2.1rem,10.2vw,2.75rem)] leading-[0.98] font-semibold tracking-[-0.035em] sm:text-7xl xl:text-[5.2rem]">
             {LINES.map((line, i) => (
               <span key={line} className="block overflow-hidden pb-[0.08em]">
                 <motion.span
@@ -56,7 +56,7 @@ export function Hero() {
             ))}
             <span className="block overflow-hidden pb-[0.16em]">
               <motion.span
-                className="accent-word block text-[1.08em]"
+                className="accent-word block"
                 initial={reduced ? false : { y: "110%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.9, delay: 0.3, ease: EASE }}

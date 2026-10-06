@@ -39,14 +39,15 @@ export function ContactParticles() {
 }
 
 // Giant footer wordmark. Without JS, a touch screen or with reduced motion it
-// is the plain outlined text; with a mouse the letters thicken near the cursor.
+// is the plain outlined text; with a mouse the letters thicken near the cursor
+// (Bricolage Grotesque's weight axis, 600 to 800).
 export function Wordmark({ text }: { text: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const on = useFancy(true);
   return (
     <p
       ref={ref}
-      className="text-outline-light -mb-[0.2em] text-center text-[15vw] leading-[0.85] font-semibold tracking-[-0.05em] whitespace-nowrap select-none"
+      className="text-outline-light -mb-[0.2em] text-center font-display text-[15vw] leading-[0.85] font-semibold tracking-[-0.05em] whitespace-nowrap select-none"
       aria-hidden="true"
     >
       {on ? (
@@ -54,7 +55,7 @@ export function Wordmark({ text }: { text: string }) {
           label={text}
           containerRef={ref}
           fromFontVariationSettings="'wght' 600"
-          toFontVariationSettings="'wght' 900"
+          toFontVariationSettings="'wght' 800"
           radius={220}
           falloff="gaussian"
         />

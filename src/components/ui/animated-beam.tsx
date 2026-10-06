@@ -74,22 +74,30 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
   useEffect(() => {
     const updatePath = () => {
       if (containerRef.current && fromRef.current && toRef.current) {
-        const containerRect = containerRef.current.getBoundingClientRect()
+        const container = containerRef.current
+        const containerRect = container.getBoundingClientRect()
         const rectA = fromRef.current.getBoundingClientRect()
         const rectB = toRef.current.getBoundingClientRect()
 
-        const svgWidth = containerRect.width
-        const svgHeight = containerRect.height
+        // Adapted: the beam may sit inside a CSS-scaled box (the laptop
+        // screen). Screen rects are scaled; the SVG draws in the container's
+        // own (unscaled) space, so divide by the scale factor.
+        const k =
+          container.offsetWidth > 0 ? containerRect.width / container.offsetWidth : 1
+        const s = k > 0 ? k : 1
+
+        const svgWidth = container.offsetWidth || containerRect.width
+        const svgHeight = container.offsetHeight || containerRect.height
         setSvgDimensions({ width: svgWidth, height: svgHeight })
 
         const startX =
-          rectA.left - containerRect.left + rectA.width / 2 + startXOffset
+          (rectA.left - containerRect.left + rectA.width / 2) / s + startXOffset
         const startY =
-          rectA.top - containerRect.top + rectA.height / 2 + startYOffset
+          (rectA.top - containerRect.top + rectA.height / 2) / s + startYOffset
         const endX =
-          rectB.left - containerRect.left + rectB.width / 2 + endXOffset
+          (rectB.left - containerRect.left + rectB.width / 2) / s + endXOffset
         const endY =
-          rectB.top - containerRect.top + rectB.height / 2 + endYOffset
+          (rectB.top - containerRect.top + rectB.height / 2) / s + endYOffset
 
         const controlY = startY - curvature
         const d = `M ${startX},${startY} Q ${

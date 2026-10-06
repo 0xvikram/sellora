@@ -80,7 +80,7 @@ export function DemoStore() {
           titleComponent={
             <Reveal>
               <p className="eyebrow !text-paper/50">Proof you can click</p>
-              <h2 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.02] font-medium tracking-[-0.03em] text-balance md:text-7xl">
+              <h2 className="mx-auto mt-5 max-w-4xl font-display text-4xl leading-[1.02] font-semibold tracking-[-0.03em] text-balance md:text-7xl">
                 A demo store with every service{" "}
                 <span className="accent-word !text-[#aab4ff]">switched on.</span>
               </h2>

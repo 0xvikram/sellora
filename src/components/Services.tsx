@@ -4,8 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import type { ReactNode } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { SERVICES } from "@/lib/site";
 import type { Service } from "@/lib/site";
 import { ILLUSTRATIONS } from "./Illustrations";
@@ -14,7 +13,7 @@ import { MacbookScroll } from "./ui/macbook-scroll";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// Desktop: a full-viewport stage pins for SERVICES.length viewport heights of
+// Desktop: a stage pins (its content sits at the top, 2rem under the nav) for SERVICES.length viewport heights of
 // scroll. The pinned progress (0..1) is split into equal slices, one per
 // service; the laptop screen and the caption switch to the slice's service.
 // The lid opens over the first LID_SHARE of the pin.
@@ -60,7 +59,7 @@ function Caption({ service, index, headingId }: { service: Service; index: numbe
       </div>
       <h3
         id={headingId}
-        className="mt-4 text-3xl leading-[1.05] font-medium tracking-tight md:text-4xl"
+        className="mt-4 font-display text-3xl leading-[1.05] font-semibold tracking-[-0.025em] md:text-4xl"
       >
         {service.title}
       </h3>
@@ -87,38 +86,11 @@ function Caption({ service, index, headingId }: { service: Service; index: numbe
   );
 }
 
-// Scales an illustration down (never up) when it is taller than the screen.
-// At scale 1 no transform is set, so beam measurements stay exact.
-function FitToScreen({ children }: { children: ReactNode }) {
-  const boxRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useLayoutEffect(() => {
-    const box = boxRef.current;
-    const inner = innerRef.current;
-    if (!box || !inner) return;
-    const fit = () => {
-      const s = Math.min(1, (box.clientHeight - 24) / Math.max(1, inner.offsetHeight));
-      setScale(Math.round(s * 1000) / 1000);
-    };
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(box);
-    ro.observe(inner);
-    return () => ro.disconnect();
-  }, []);
-
+function Head() {
   return (
-    <div ref={boxRef} className="absolute inset-0 flex items-center justify-center p-3">
-      <div
-        ref={innerRef}
-        className="w-full max-w-[34rem] shrink-0"
-        style={scale < 1 ? { transform: `scale(${scale})` } : undefined}
-      >
-        {children}
-      </div>
-    </div>
+    <SectionHead index="01" label="Services" aside="Five one-off jobs, each with a fixed price.">
+      Pick one job. <span className="accent-word">See the price.</span>
+    </SectionHead>
   );
 }
 
@@ -169,9 +141,12 @@ function PinnedStage() {
   const Illustration = ILLUSTRATIONS[service.id];
 
   return (
-    <div ref={stageRef} className="relative h-screen overflow-hidden">
-      <div className="mx-auto grid h-full max-w-7xl grid-cols-[minmax(0,0.72fr)_minmax(0,1fr)] items-center gap-10 px-8 pt-16 xl:gap-14">
-        <div className="relative min-h-[26rem]" aria-live="polite">
+    <div ref={stageRef} className="relative mx-auto max-w-7xl overflow-hidden px-8 pt-24 pb-8">
+      {/* The heading pins with the stage, 2rem under the 4rem nav. */}
+      <Head />
+      {/* Laptop column ~46-47% of the row; the caption gets the rest. */}
+      <div className="mt-10 grid grid-cols-[minmax(0,1fr)_minmax(0,0.94fr)] items-start gap-12 xl:gap-14">
+        <div className="relative min-h-[26rem] pt-2" aria-live="polite">
           <AnimatePresence mode="wait" initial={false}>
             <motion.article
               key={service.id}
@@ -187,19 +162,17 @@ function PinnedStage() {
         </div>
 
         <div className="flex flex-col items-center">
-          <MacbookScroll progress={lid} screenClassName="aspect-[16/10.4]">
+          <MacbookScroll progress={lid}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={`${service.id}-${scene.count}`}
-                className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,var(--color-card),var(--color-paper-2))]"
+                className="mx-auto max-w-[35rem]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
               >
-                <FitToScreen>
-                  <Illustration />
-                </FitToScreen>
+                <Illustration />
               </motion.div>
             </AnimatePresence>
           </MacbookScroll>
@@ -226,17 +199,17 @@ function PinnedStage() {
 
 function ServiceList() {
   return (
-    <ol className="mx-auto mt-14 max-w-7xl space-y-16 px-5 md:mt-16 md:px-8">
+    <ol className="mx-auto mt-12 max-w-7xl space-y-16 px-5 md:mt-16 md:px-8">
       {SERVICES.map((service, i) => {
         const Illustration = ILLUSTRATIONS[service.id];
         return (
           <li key={service.id}>
             <article
               aria-labelledby={`svc-${service.id}`}
-              className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12"
+              className="grid gap-7 md:gap-9 lg:grid-cols-2 lg:items-center lg:gap-12"
             >
-              <MacbookScroll open className="mx-auto max-w-xl">
-                <div className="p-1.5 sm:p-4">
+              <MacbookScroll open>
+                <div className="mx-auto max-w-[35rem]">
                   <Illustration />
                 </div>
               </MacbookScroll>
@@ -255,18 +228,20 @@ export function Services() {
   const pinned = usePinnedLayout();
 
   return (
-    <section id="services" className="border-t border-line pb-24 md:pb-32">
-      <div className="mx-auto max-w-7xl px-5 pt-24 md:px-8 md:pt-32">
-        <SectionHead
-          index="01"
-          label="Services"
-          aside="Five one-off jobs, each with a fixed price."
-        >
-          Pick one job. <span className="accent-word">See the price.</span>
-        </SectionHead>
-      </div>
-
-      {pinned ? <PinnedStage /> : <ServiceList />}
+    <section
+      id="services"
+      className={`border-t border-line ${pinned ? "pb-10" : "pb-24 md:pb-32"}`}
+    >
+      {pinned ? (
+        <PinnedStage />
+      ) : (
+        <>
+          <div className="mx-auto max-w-7xl px-5 pt-24 md:px-8 md:pt-32">
+            <Head />
+          </div>
+          <ServiceList />
+        </>
+      )}
     </section>
   );
 }

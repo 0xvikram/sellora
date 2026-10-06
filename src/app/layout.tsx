@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
-import { Fraunces, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Cursor } from "@/components/fx/Cursor";
 import { Gsap } from "@/components/fx/Gsap";
 import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
-const hanken = Hanken_Grotesk({
-  variable: "--font-hanken",
+// Body: Instrument Sans (variable, wght 400-700).
+const instrument = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin"],
   display: "swap",
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Headings: Bricolage Grotesque (variable, wght 200-800) with its optical
+// size axis, so large headings get the tighter display cut.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  style: ["italic"],
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -43,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${hanken.variable} ${fraunces.variable} ${jetbrains.variable}`}
+      className={`${instrument.variable} ${bricolage.variable} ${jetbrains.variable}`}
     >
       <body>
         <SmoothScroll />
