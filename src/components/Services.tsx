@@ -59,7 +59,7 @@ function Caption({ service, index, headingId }: { service: Service; index: numbe
       </div>
       <h3
         id={headingId}
-        className="mt-4 font-display text-3xl leading-[1.05] font-semibold tracking-[-0.025em] md:text-4xl"
+        className="mt-4 font-display text-3xl leading-[1.05] font-semibold tracking-[-0.02em] md:text-4xl"
       >
         {service.title}
       </h3>

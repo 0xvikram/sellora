@@ -51,7 +51,7 @@ export function WhyUs() {
                       </span>
                       <div className="relative">
                         <h3
-                          className={`font-display font-semibold tracking-[-0.025em] ${large ? "text-3xl md:text-4xl" : "text-2xl"}`}
+                          className={`font-display font-semibold tracking-[-0.02em] ${large ? "text-3xl md:text-4xl" : "text-2xl"}`}
                         >
                           {reason.title}
                         </h3>

@@ -19,8 +19,8 @@
   --color-leaf: #2f8f5b;
   --color-sun: #f0b84a;
 
-  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
@@ -54,13 +54,12 @@ body {
 }
 
 /* Headings use the display face; weight and tracking are set per heading
-   with utilities (semibold, -0.02 to -0.035em). */
+   with utilities (semibold, -0.02 to -0.03em). */
 @layer base {
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    font-optical-sizing: auto;
   }
 }
 

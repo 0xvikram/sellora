@@ -11,7 +11,7 @@ export function Band() {
             {loop.map((phrase, i) => (
               <span
                 key={`${copy}-${i}`}
-                className="flex items-center font-display text-6xl leading-none font-semibold tracking-[-0.035em] whitespace-nowrap md:text-[7.5rem]"
+                className="flex items-center font-display text-6xl leading-none font-bold tracking-[-0.03em] whitespace-nowrap md:text-[7.5rem]"
               >
                 <span className={i % 2 === 1 ? "text-outline" : ""}>{phrase}</span>
                 <span className="accent-word mx-8 text-[0.7em] md:mx-14">✳</span>

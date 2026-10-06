@@ -99,7 +99,7 @@ export function Ladder() {
                         </span>
                       </span>
                     </div>
-                    <h3 id={`rung-${rung.step}`} className="mt-10 font-display text-4xl font-semibold tracking-[-0.03em]">
+                    <h3 id={`rung-${rung.step}`} className="mt-10 font-display text-4xl font-semibold tracking-[-0.025em]">
                       {rung.title}
                     </h3>
                     <p className="mt-3 text-base leading-relaxed text-ink-2">{rung.body}</p>

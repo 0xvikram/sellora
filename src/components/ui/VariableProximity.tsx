@@ -172,7 +172,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
       onClick={onClick}
       style={{
         display: 'inline',
-        // Adapted: inherit the page font (Hanken Grotesk, variable wght axis).
+        // Adapted: inherit the parent font (Inter Tight, variable wght axis).
         fontFamily: 'inherit',
         ...style
       }}

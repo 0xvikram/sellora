@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Cursor } from "@/components/fx/Cursor";
 import { Gsap } from "@/components/fx/Gsap";
 import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
-// Body: Instrument Sans (variable, wght 400-700).
-const instrument = Instrument_Sans({
-  variable: "--font-instrument",
+// Body: Inter (variable, wght 100-900).
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
 
-// Headings: Bricolage Grotesque (variable, wght 200-800) with its optical
-// size axis, so large headings get the tighter display cut.
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
+// Headings: Inter Tight (variable, wght 100-900). Loaded as the variable font
+// so the footer wordmark can animate its weight axis.
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
   subsets: ["latin"],
-  axes: ["opsz"],
   display: "swap",
 });
 
@@ -46,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrument.variable} ${bricolage.variable} ${jetbrains.variable}`}
+      className={`${inter.variable} ${interTight.variable} ${jetbrains.variable}`}
     >
       <body>
         <SmoothScroll />

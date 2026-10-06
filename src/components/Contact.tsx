@@ -15,7 +15,7 @@ export function Contact() {
       <div className="relative mx-auto max-w-7xl px-5 pt-24 text-center md:px-8 md:pt-36">
         <Reveal>
           <p className="eyebrow !text-paper/50">Start here</p>
-          <h2 className="mx-auto mt-6 max-w-5xl font-display text-5xl leading-[0.98] font-semibold tracking-[-0.035em] text-balance md:text-8xl">
+          <h2 className="mx-auto mt-6 max-w-5xl font-display text-5xl leading-[0.98] font-bold tracking-[-0.03em] text-balance md:text-8xl">
             Tell us what is leaking. We will{" "}
             <span className="accent-word !text-[#aab4ff]">price the fix.</span>
           </h2>
