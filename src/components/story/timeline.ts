@@ -1,8 +1,9 @@
 // The Story section's scrubbed timeline (lg and up, motion allowed).
 //
 // The timeline is 5 units long, one per service, and ScrollTrigger maps
-// the scroll through the 600vh track onto it with scrub 0.6 (no pin, no
-// snap: the stage is CSS position: sticky, so the page scrolls natively).
+// the 3.5 screens of scroll through the 450vh track onto it with scrub 0.6
+// (no pin, no snap: the stage is CSS position: sticky, so the page scrolls
+// natively).
 //
 //   unit i (0..4)   figure i is on stage. Its own drawing animates inside
 //                   [i + 0.12, i + 0.88], so every figure's fills, dashes
@@ -10,6 +11,11 @@
 //   boundary b      figure b-1 leaves (opacity 0, y -24, scale 0.98) over
 //                   [b - 0.2, b]; figure b enters (from opacity 0, y 24,
 //                   scale 0.98) over [b - 0.05, b + 0.15].
+//   big number      a before -> after number ("21% -> 31%") counts its
+//                   after value up from the before value inside
+//                   [i + 0.12 + 0.2 * 0.76, i + 0.12 + 0.8 * 0.76], the
+//                   same window as the figure's own change, with the arrow
+//                   and after value fading up from 30% first.
 //   whole length    the progress rail fills 0 -> 1, linear.
 //
 // All tweens are fromTo with explicit ends, so scrubbing backwards is
@@ -134,6 +140,34 @@ export function buildStory(
   }
   slides.forEach((slide, i) => ANIMS[i]?.(gsap, tl, slide, i + IN, LEN));
 
+  // Each slide's headline number counts as its own window plays.
+  const counters: { el: HTMLElement; to: number }[] = [];
+  slides.forEach((slide, i) => {
+    const el = slide.querySelector<HTMLElement>("[data-num-to]");
+    const after = slide.querySelector("[data-num-after]");
+    if (!el) return;
+    const from = Number(el.dataset.numFrom);
+    const to = Number(el.dataset.numTo);
+    counters.push({ el, to });
+    el.textContent = String(from);
+    const s = i + IN;
+    tl.fromTo(after, { opacity: 0.3 }, { opacity: 1, duration: LEN * 0.2, ease: "power1.out" }, s);
+    const n = { v: from };
+    tl.fromTo(
+      n,
+      { v: from },
+      {
+        v: to,
+        duration: LEN * 0.6,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          el.textContent = String(Math.round(n.v));
+        },
+      },
+      s + LEN * 0.2,
+    );
+  });
+
   // The active service follows the timeline (so it agrees with the stage
   // even while the scrub is catching up).
   let active = -1;
@@ -157,6 +191,10 @@ export function buildStory(
   return () => {
     st.kill();
     tl.kill();
+    // Text set by counters is not an inline style, so restore it by hand.
+    counters.forEach(({ el, to }) => (el.textContent = String(to)));
+    const trackCount = pin.querySelector('[data-count="After"]');
+    if (trackCount) trackCount.textContent = "96";
     items.forEach((item, n) => item.classList.toggle("is-active", n === 0));
     delete pin.dataset.active;
   };
