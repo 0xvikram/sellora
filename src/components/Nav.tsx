@@ -162,7 +162,7 @@ export function Nav() {
                   href={link.href}
                   aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
                   onClick={() => close(false)}
-                  className="block py-3 font-display text-3xl font-normal tracking-[-0.02em] text-ink aria-[current=page]:text-accent aria-[current=page]:italic"
+                  className="block py-3 font-display text-3xl font-normal tracking-[-0.02em] text-ink aria-[current=page]:font-display-italic aria-[current=page]:text-accent aria-[current=page]:italic"
                 >
                   {link.label}
                 </Link>

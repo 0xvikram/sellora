@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Instrument_Sans, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Gsap } from "@/components/fx/Gsap";
 import { JsonLd } from "@/lib/json-ld";
@@ -7,21 +8,34 @@ import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 const TITLE = `${SITE_NAME} — AI and automation for e-commerce brands, at fixed prices`;
 
-// Display: Newsreader (variable wght + optical size, roman and italic).
+// Display: Newsreader roman (variable wght + optical size).
 // font-optical-sizing: auto lets the opsz axis follow the font size.
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  style: ["normal"],
   axes: ["opsz"],
   display: "swap",
 });
 
-// Body: Instrument Sans (variable wght, roman and italic).
+// Accent: Newsreader italic as one static instance (wght 400, opsz pinned at
+// 48, latin subset), self-hosted. The italic is only ever the accent word, so
+// the full variable italic (147 KB) is not worth preloading; this is 25 KB.
+// Source: fonts.googleapis.com css2?family=Newsreader:ital,opsz,wght@1,48,400
+const newsreaderItalic = localFont({
+  src: "./fonts/Newsreader-Italic-400-opsz48.woff2",
+  variable: "--font-newsreader-italic",
+  weight: "400",
+  style: "italic",
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
+});
+
+// Body: Instrument Sans (variable wght, roman only: the site sets no sans italic).
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  style: ["normal"],
   display: "swap",
 });
 
@@ -53,7 +67,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${instrumentSans.variable} ${geistMono.variable}`}
+      className={`${newsreader.variable} ${newsreaderItalic.variable} ${instrumentSans.variable} ${geistMono.variable}`}
     >
       <body>
         <a

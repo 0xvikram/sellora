@@ -62,6 +62,7 @@
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
+  --font-display-italic: var(--font-newsreader-italic), ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
@@ -289,7 +290,7 @@ body::after {
 
 /* Accent word inside headings: Newsreader italic, regular weight, accent. */
 .accent-word {
-  font-family: var(--font-display);
+  font-family: var(--font-display-italic);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
