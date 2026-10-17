@@ -55,7 +55,7 @@ export default function TeardownsPage() {
                   </span>
                   <span
                     aria-hidden="true"
-                    className="hidden font-mono text-accent transition-transform group-hover:translate-x-1 md:block"
+                    className="hidden font-mono text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:block"
                   >
                     →
                   </span>

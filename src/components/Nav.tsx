@@ -21,7 +21,8 @@ export function Nav() {
 
   // Condense the bar after 24px of scroll. One passive listener, at most
   // one read per animation frame. The header keeps a fixed 64px slot in
-  // the flow, so the 64 -> 56 change never moves the page.
+  // the flow, so the 64 -> 56 change never moves the page. Bar heights
+  // include the 1px bottom border, so the bar never overhangs the slot.
   useEffect(() => {
     let frame = 0;
     const update = () => {
@@ -103,7 +104,8 @@ export function Nav() {
         <div
           className={cn(
             "mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 transition-[height] duration-200 ease-out motion-reduce:transition-none md:px-8",
-            condensed ? "h-14" : "h-16",
+            // 63 + 1px border = the 64px slot; 55 + 1 = 56 condensed.
+            condensed ? "h-[55px]" : "h-[63px]",
           )}
         >
           <Link

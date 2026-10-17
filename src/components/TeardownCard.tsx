@@ -42,7 +42,7 @@ export function TeardownCard({
       </p>
       <p className="mt-6 flex items-center justify-between border-t border-line pt-4 font-mono text-xs font-medium tracking-[0.12em] text-ink-2 uppercase">
         Over {teardown.period}
-        <span aria-hidden="true" className="text-accent transition-transform group-hover:translate-x-1">
+        <span aria-hidden="true" className="text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
           →
         </span>
       </p>

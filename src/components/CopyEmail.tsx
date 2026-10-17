@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
  * The email as a large mono mailto link with a Copy button. Copy uses the
  * Clipboard API; where that is missing or refused, it selects the address
  * so the visitor can copy it by hand. The label changes to "Copied" (or
- * "Selected") for two seconds and is announced politely.
+ * "Selected") for two seconds, and a separate status region announces it,
+ * so the button's own name stays stable.
  */
 export function CopyEmail({ email }: { email: string }) {
   const textRef = useRef<HTMLSpanElement>(null);
@@ -50,10 +51,18 @@ export function CopyEmail({ email }: { email: string }) {
       <button
         type="button"
         onClick={copy}
+        aria-label="Copy email address"
         className="inline-flex min-h-11 min-w-[6.5rem] items-center justify-center rounded-[var(--radius-control)] border border-line-control bg-card px-4 font-mono text-sm text-ink transition-colors hover:border-ink"
       >
-        <span aria-live="polite">{state === "copied" ? "Copied" : state === "selected" ? "Selected" : "Copy"}</span>
+        {state === "copied" ? "Copied" : state === "selected" ? "Selected" : "Copy"}
       </button>
+      <span role="status" className="sr-only">
+        {state === "copied"
+          ? "Email address copied"
+          : state === "selected"
+            ? "Email address selected; press Command or Control C to copy"
+            : ""}
+      </span>
     </div>
   );
 }

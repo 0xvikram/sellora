@@ -145,7 +145,7 @@ export default async function TeardownPage({ params }: Props) {
                   <span className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight tracking-[-0.015em]">
                     {next.metric}
                   </span>
-                  <span aria-hidden="true" className="font-mono text-accent transition-transform group-hover:translate-x-1">
+                  <span aria-hidden="true" className="font-mono text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
                     →
                   </span>
                 </Link>
