@@ -148,6 +148,16 @@ export const PROOF: ProofBadge[] = [
   { label: "Teardowns published", value: "3" },
 ];
 
+export type Finding = {
+  title: string;
+  body: string; // two sentences: what we saw, what changed
+  label: string; // what the before/after bars measure
+  before: number;
+  after: number;
+  unit: string; // "%" sits on the number; anything else follows a space
+  max?: number; // bar scale; defaults to 100 for "%", else the larger value
+};
+
 export type Teardown = {
   slug: string;
   store: string;
@@ -156,12 +166,20 @@ export type Teardown = {
   period: string;
   method: string;
   summary: string;
-  findings: [string, string, string];
+  // The first finding carries the headline number (used on the cards).
+  findings: [Finding, Finding, Finding];
+  // "How we found it": the data source, the query and the check.
+  howFound: { source: string; query: string; check: string };
   sample: boolean;
 };
 
+export function formatValue(value: number, unit: string) {
+  return unit === "%" ? `${value}%` : `${value} ${unit}`;
+}
+
 // SAMPLE entries so the pages render. Every one is flagged `sample: true`
-// and shows a visible "Sample" label. Replace with real teardowns.
+// and shows a visible "Sample" label. Every before/after value is a sample
+// value too. Replace with real teardowns.
 export const TEARDOWNS: Teardown[] = [
   {
     slug: "sample-supplements-us",
@@ -173,10 +191,36 @@ export const TEARDOWNS: Teardown[] = [
     summary:
       "A subscription-heavy store whose replenishment emails went out on a fixed 30-day timer, regardless of pack size.",
     findings: [
-      "Replenishment reminders ignored pack size, so 60-day buyers were nudged twice too early.",
-      "No post-purchase flow for one-off buyers, who were 64% of first orders.",
-      "Win-back started at 180 days, long after most lapsed customers had switched.",
+      {
+        title: "Reminders ignored pack size",
+        body: "Replenishment emails went out every 30 days whatever the pack, so 60-day buyers were nudged twice too early. Reminders now follow the pack size bought.",
+        label: "Repeat rate, 90-day cohorts",
+        before: 21,
+        after: 24.8,
+        unit: "%",
+      },
+      {
+        title: "No flow for one-off buyers",
+        body: "One-off buyers were 64% of first orders and got no email after delivery. A three-email post-purchase flow now runs for them.",
+        label: "Second-order rate, one-off buyers",
+        before: 9,
+        after: 13,
+        unit: "%",
+      },
+      {
+        title: "Win-back started too late",
+        body: "Win-back began at 180 days, long after most lapsed customers had switched. It now starts at 75 days from the last order.",
+        label: "Win-back starts after",
+        before: 180,
+        after: 75,
+        unit: "days",
+      },
     ],
+    howFound: {
+      source: "Shopify orders export, 12 months",
+      query: "Cohort by first-order month, repeat within 90 days",
+      check: "Verified against Klaviyo flow sends and the 10% holdout",
+    },
     sample: true,
   },
   {
@@ -190,10 +234,37 @@ export const TEARDOWNS: Teardown[] = [
     summary:
       "A well-reviewed store that never appeared when assistants were asked for recommendations in its category.",
     findings: [
-      "Product schema was missing price and availability on every variant.",
-      "Size and fabric details lived only in images, so assistants could not read them.",
-      "Review content was loaded by script and invisible to crawlers.",
+      {
+        title: "Reviews were invisible to crawlers",
+        body: "Review content loaded by script after the page rendered, so assistants never read it. Reviews now render in the page HTML.",
+        label: "Buyer questions citing the store",
+        before: 0,
+        after: 4,
+        unit: "of 10",
+        max: 10,
+      },
+      {
+        title: "Schema had no price or stock",
+        body: "Product schema was missing price and availability on every variant. Every variant now carries both.",
+        label: "Variants with price and stock in schema",
+        before: 0,
+        after: 100,
+        unit: "%",
+      },
+      {
+        title: "Size and fabric lived in images",
+        body: "Size charts and fabric details were images only, which assistants cannot read. They are now text on every product page.",
+        label: "Product pages with size and fabric as text",
+        before: 6,
+        after: 100,
+        unit: "%",
+      },
     ],
+    howFound: {
+      source: "10 buyer questions, asked weekly in 3 assistants",
+      query: "Answers logged; store citations counted per question",
+      check: "Schema checked with Google's Rich Results Test",
+    },
     sample: true,
   },
   {
@@ -206,10 +277,36 @@ export const TEARDOWNS: Teardown[] = [
     summary:
       "Ad spend decisions were being made on half the real purchases after a checkout change broke the old pixel.",
     findings: [
-      "The purchase event fired from a legacy thank-you page script that no longer ran.",
-      "Conversions API sent events without event IDs, so nothing de-duplicated.",
-      "GA4 counted test orders from the staff account as revenue.",
+      {
+        title: "The purchase event stopped firing",
+        body: "The purchase event came from a legacy thank-you page script that no longer ran after the checkout change. It now fires from a customer events pixel.",
+        label: "Shopify orders reported in Meta",
+        before: 58,
+        after: 94,
+        unit: "%",
+      },
+      {
+        title: "Nothing was de-duplicated",
+        body: "Conversions API sent events without event IDs, so browser and server purchases were counted twice. Both now share one event ID.",
+        label: "Duplicate purchase events",
+        before: 31,
+        after: 2,
+        unit: "%",
+      },
+      {
+        title: "Test orders counted as revenue",
+        body: "GA4 counted orders placed from the staff account as revenue. Staff and test orders are now filtered out.",
+        label: "Test orders in GA4 revenue, per month",
+        before: 14,
+        after: 0,
+        unit: "orders",
+      },
     ],
+    howFound: {
+      source: "Shopify orders and Meta Events Manager, 14 days",
+      query: "Orders matched to purchase events by order ID",
+      check: "Checked order by order against Shopify",
+    },
     sample: true,
   },
 ];
