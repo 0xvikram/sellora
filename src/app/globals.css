@@ -43,6 +43,17 @@
   --color-ground-dark: #1a1c1b;
   --color-accent-on-dark: #7fb8b0;
 
+  /* Type scale. Body copy is 17px/1.55 (18px from lg, below); small and
+     muted copy is 15px. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.55;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.55;
+
   --radius-control: 4px;
   --radius-chip: 2px;
 
@@ -98,38 +109,211 @@ body::after {
   color: var(--color-ground);
 }
 
+@media (min-width: 64rem) {
+  :root {
+    --text-base: 1.125rem;
+    --text-lg: 1.25rem;
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
-/* Headings use the display face; weight and tracking are set per heading
-   with utilities (semibold, -0.02 to -0.03em). */
+.on-dark :focus-visible {
+  outline-color: var(--color-accent-on-dark);
+}
+
+/* ---------------------------------------------------------------
+   Type: Newsreader display (opsz follows size), Instrument Sans body,
+   Geist Mono labels. One italic accent word per headline.
+   --------------------------------------------------------------- */
 @layer base {
+  body {
+    font-size: var(--text-base);
+    line-height: 1.55;
+  }
+
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 450;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 }
 
-/* Accent word inside headings: same display face, accent colour, bolder */
+@layer components {
+  .type-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+    line-height: 1.02;
+    font-weight: 450;
+    letter-spacing: -0.02em;
+  }
+
+  .type-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    line-height: 1.08;
+    font-weight: 450;
+    letter-spacing: -0.02em;
+  }
+
+  .type-h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  /* Lead paragraph under a heading, and the 65ch cap for body copy. */
+  .lead {
+    font-size: var(--text-lg);
+    line-height: 1.55;
+    color: var(--color-ink-2);
+    max-width: 65ch;
+  }
+
+  .measure {
+    max-width: 65ch;
+  }
+
+  /* Buttons: pill, 44px tall, Instrument Sans 500. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding-inline: 1.375rem;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  /* Ink fill with ground text (14.90:1); hover goes to the accent with
+     white text (7.58:1). */
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-ground);
+  }
+  .btn-primary:hover {
+    background: var(--color-accent-ink);
+    color: #fff;
+  }
+
+  .btn-secondary {
+    border-color: var(--color-line-2);
+    color: var(--color-ink);
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-ink);
+  }
+
+  .on-dark .btn-primary {
+    background: var(--color-ground);
+    color: var(--color-ink);
+  }
+  .on-dark .btn-primary:hover {
+    background: var(--color-accent-on-dark);
+    color: var(--color-ink);
+  }
+  .on-dark .btn-secondary {
+    border-color: rgb(242 237 228 / 0.3);
+    color: var(--color-ground);
+  }
+  .on-dark .btn-secondary:hover {
+    border-color: var(--color-ground);
+  }
+
+  /* Inputs: card fill, a 3:1 control border (ink at 50%), accent ring. */
+  .field {
+    min-height: 2.75rem;
+    width: 100%;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line-control);
+    border-radius: var(--radius-control);
+    background: var(--color-card);
+    color: var(--color-ink);
+    font-size: 1rem;
+  }
+  .field::placeholder {
+    color: var(--color-ink-3);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: var(--color-accent);
+  }
+
+  /* Underlined text link. */
+  .text-link {
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.125rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    transition: color 160ms ease;
+  }
+  .text-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* Small mono chip (Sample, placeholder). */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line-2);
+    border-radius: var(--radius-chip);
+    padding: 0.125rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+}
+
+/* Accent word inside headings: Newsreader italic, regular weight, accent. */
 .accent-word {
   font-family: var(--font-display);
-  font-style: normal;
-  font-weight: 700;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--color-accent);
 }
 
-/* Small mono label above sections */
+.on-dark .accent-word {
+  color: var(--color-accent-on-dark);
+}
+
+/* Small mono label above sections: 12px uppercase, ink-2 (9.82:1 on
+   ground, 8.73:1 on ground-2, 10.71:1 on card). */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  /* ink-2 is 9.82:1 on ground, 8.73:1 on ground-2, 10.71:1 on card. */
   color: var(--color-ink-2);
+}
+
+.on-dark .eyebrow {
+  color: var(--color-accent-on-dark);
 }
 
 /* Receipt: torn bottom edge */
