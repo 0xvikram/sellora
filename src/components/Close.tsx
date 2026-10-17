@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BOOKING_URL, CONTACT_EMAIL, NAV_LINKS, REPLY_PROMISE, SITE_NAME } from "@/lib/site";
+import { BOOKING_URL, CONTACT_EMAIL, NAV_LINKS, REPLY_PROMISE, SITE_NAME, STUDIO } from "@/lib/site";
 import { Container } from "./Container";
 import { Reveal } from "./Reveal";
 
@@ -28,6 +28,7 @@ export function Close() {
           </a>
         </div>
         <p className="mt-5 text-base text-ground/75">{REPLY_PROMISE}</p>
+        <p className="mt-1 text-base text-ground/75">{STUDIO.hours}.</p>
 
         <div className="mt-16 flex flex-col gap-5 border-t border-ground/20 pt-8 md:mt-20 md:flex-row md:items-center md:justify-between">
           <nav aria-label="Footer">

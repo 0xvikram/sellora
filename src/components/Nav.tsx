@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { NAV_LINKS, SITE_NAME } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 function isCurrent(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -16,6 +17,27 @@ export function Nav() {
   const panelId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [condensed, setCondensed] = useState(false);
+
+  // Condense the bar after 24px of scroll. One passive listener, at most
+  // one read per animation frame. The header keeps a fixed 64px slot in
+  // the flow, so the 64 -> 56 change never moves the page.
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setCondensed(window.scrollY > 24);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const close = useCallback((returnFocus: boolean) => {
     setOpen(false);
@@ -66,46 +88,63 @@ export function Nav() {
   }, [open, close]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-ground">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 md:px-8">
-        <Link
-          href="/"
-          className="font-display text-[1.375rem] leading-none font-medium tracking-[-0.01em] text-ink"
-          aria-current={pathname === "/" ? "page" : undefined}
+    <header className="sticky top-0 z-50 h-16">
+      <div
+        data-condensed={condensed || undefined}
+        className={cn(
+          "border-b transition-[background-color,border-color] duration-200 ease-out motion-reduce:transition-none",
+          open
+            ? "border-line bg-ground"
+            : condensed
+              ? "border-line bg-ground/85 backdrop-blur-[12px]"
+              : "border-transparent bg-ground",
+        )}
+      >
+        <div
+          className={cn(
+            "mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 transition-[height] duration-200 ease-out motion-reduce:transition-none md:px-8",
+            condensed ? "h-14" : "h-16",
+          )}
         >
-          {SITE_NAME}
-        </Link>
+          <Link
+            href="/"
+            className="font-display text-[1.375rem] leading-none font-medium tracking-[-0.01em] text-ink"
+            aria-current={pathname === "/" ? "page" : undefined}
+          >
+            {SITE_NAME}
+          </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
-              className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-accent aria-[current=page]:underline-offset-[6px]"
+          <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
+                className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-accent aria-[current=page]:underline-offset-[6px]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={auditHref}
+              className="btn btn-primary px-4 text-[0.9375rem]"
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <a
-            href={auditHref}
-            className="btn btn-primary px-4 text-[0.9375rem]"
-          >
-            Start the audit
-          </a>
-          <button
-            ref={buttonRef}
-            type="button"
-            className="btn btn-secondary px-4 text-[0.9375rem] md:hidden"
-            aria-expanded={open}
-            aria-controls={panelId}
-            onClick={() => (open ? close(false) : setOpen(true))}
-          >
-            {open ? "Close" : "Menu"}
-          </button>
+              Start the audit
+            </a>
+            <button
+              ref={buttonRef}
+              type="button"
+              className="btn btn-secondary px-4 text-[0.9375rem] md:hidden"
+              aria-expanded={open}
+              aria-controls={panelId}
+              onClick={() => (open ? close(false) : setOpen(true))}
+            >
+              {open ? "Close" : "Menu"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -113,7 +152,7 @@ export function Nav() {
         ref={panelRef}
         id={panelId}
         hidden={!open}
-        className="border-t border-line bg-ground md:hidden"
+        className="border-b border-line bg-ground md:hidden"
       >
         <nav aria-label="Mobile" className="mx-auto w-full max-w-7xl px-5 py-4">
           <ul className="flex flex-col">

@@ -1,4 +1,4 @@
-import { STUDIO } from "@/lib/site";
+import { STUDIO, TOOLS } from "@/lib/site";
 import { AccentText } from "./AccentText";
 import { Container } from "./Container";
 import { SectionHead } from "./SectionHead";
@@ -18,6 +18,10 @@ export function Studio() {
           <div>
             <dt className="eyebrow">Hours</dt>
             <dd className="mt-3 text-base text-ink">{STUDIO.hours}</dd>
+          </div>
+          <div className="sm:col-span-2">
+            <dt className="eyebrow">Tools we work inside</dt>
+            <dd className="mt-3 font-mono text-sm leading-relaxed text-ink">{TOOLS.join(" · ")}</dd>
           </div>
         </dl>
       </Container>

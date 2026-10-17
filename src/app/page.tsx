@@ -1,6 +1,7 @@
 import { Close } from "@/components/Close";
 import { Faq } from "@/components/Faq";
 import { Hero } from "@/components/Hero";
+import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { PricesSection } from "@/components/PricesSection";
 import { ProofStrip } from "@/components/ProofStrip";
@@ -26,6 +27,7 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
+        <HowItWorks />
         <Teardowns />
         <PricesSection />
         <Studio />
