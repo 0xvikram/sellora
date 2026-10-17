@@ -31,7 +31,8 @@ type Timeline = ReturnType<Gsap["timeline"]>;
 //         appears (0.3 s fade, 6px). The product counter runs 6 -> 48
 //         while the line crosses the grid.
 //   3.20  status "measuring"; scan line fades (0.3 s)
-//   3.40  result rows clip in from the left, 0.5 s each, 90 ms stagger
+//         The results column shows its labels and three skeleton bars
+//         from t = 0, so it is never empty.
 //   4.20  figures resolve, 0.55 s apart: the skeleton bar fades and scales
 //         to 0.96, the figure fades in and rises 6px (0.35 s, ease-out)
 //   5.80  status "done"; footer note fades in (0.4 s). Ends ~6.2, holds.
@@ -39,8 +40,7 @@ type Timeline = ReturnType<Gsap["timeline"]>;
 const SCAN_START = 0.6;
 const SCAN_DUR = 2.6;
 const SCAN_END = SCAN_START + SCAN_DUR;
-const ROWS_AT = SCAN_END + 0.2;
-const RESOLVE_AT = ROWS_AT + 0.8;
+const RESOLVE_AT = SCAN_END + 1.0;
 const RESOLVE_GAP = 0.55;
 const DONE_AT = RESOLVE_AT + 2 * RESOLVE_GAP + 0.5;
 const TILT = 2.5;
@@ -192,13 +192,7 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
 
   status("measuring", SCAN_END);
 
-  // c. Result rows clip in from the left, then each figure resolves.
-  t.fromTo(
-    q('[data-pv="row"]'),
-    { clipPath: "inset(0% 100% 0% 0%)" },
-    { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, stagger: 0.09 },
-    ROWS_AT,
-  );
+  // c. Each figure resolves over its skeleton bar (rows are there from 0).
   const placeholders = q('[data-pv="placeholder"]');
   q('[data-pv="value"]').forEach((value, i) => {
     const pos = RESOLVE_AT + i * RESOLVE_GAP;

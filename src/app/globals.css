@@ -368,9 +368,6 @@ body::after {
   .pv.pv-anim [data-status="connecting"] {
     opacity: 1;
   }
-  .pv.pv-anim [data-pv="row"] {
-    clip-path: inset(0% 100% 0% 0%);
-  }
 }
 
 /* Teardown card hover: the same scan line as the crawl preview (1px accent,
