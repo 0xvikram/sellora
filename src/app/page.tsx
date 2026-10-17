@@ -1,15 +1,40 @@
+import { Close } from "@/components/Close";
 import { Faq } from "@/components/Faq";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
+import { Preview } from "@/components/Preview";
+import { PricesSection } from "@/components/PricesSection";
+import { ProofStrip } from "@/components/ProofStrip";
+import { Studio } from "@/components/Studio";
+import { Teardowns } from "@/components/Teardowns";
+import { JsonLd } from "@/lib/json-ld";
+import { FAQS } from "@/lib/site";
 
 export default function Home() {
   return (
     <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map((item) => ({
+            "@type": "Question",
+            name: item.q,
+            acceptedAnswer: { "@type": "Answer", text: item.a },
+          })),
+        }}
+      />
       <Nav />
-      <main>
+      <main id="main">
         <Hero />
+        <Preview />
+        <Teardowns />
+        <PricesSection />
+        <Studio />
+        <ProofStrip />
         <Faq />
       </main>
+      <Close />
     </>
   );
 }

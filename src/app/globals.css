@@ -19,6 +19,8 @@
   --color-leaf: #2f8f5b;
   --color-sun: #f0b84a;
 
+  --shadow-receipt: 0 30px 60px -30px rgb(22 20 15 / 0.45);
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;

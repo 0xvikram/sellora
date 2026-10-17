@@ -1,22 +1,35 @@
 import { SERVICES } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
-// The hand-torn price receipt. Removed from the hero in Oct 2026 to keep
-// the ring alone; kept here, unused, so it can return later.
-export function Receipt() {
+// The hand-torn price receipt, driven by SERVICES. "compact" sits on the
+// home page; "full" is the /prices version and also shows each unit.
+export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
+  const full = size === "full";
   return (
-    <div className="receipt-edge w-[19.5rem] bg-card px-6 pt-6 pb-9 font-mono text-[0.78rem] text-ink shadow-[0_30px_60px_-30px_rgba(22,20,15,0.45)]">
+    <div
+      className={cn(
+        "receipt-edge w-full bg-card px-6 pt-6 pb-9 font-mono text-ink shadow-receipt",
+        full ? "max-w-[34rem] text-sm md:px-9 md:pt-9" : "max-w-[22rem] text-[0.8rem]",
+      )}
+    >
       <div className="flex items-baseline justify-between">
         <span className="tracking-[0.14em] uppercase">Price list</span>
-        <span className="text-ink-3">No. 0001</span>
+        <span className="text-ink-2">No. 0001</span>
       </div>
-      <p className="mt-1 text-ink-3">Priced before the first call</p>
+      <p className="mt-1 text-ink-2">Priced before the first call</p>
       <div className="dashed-rule my-4" />
       <ul className="space-y-3">
         {SERVICES.map((service) => (
-          <li key={service.id} className="flex items-baseline justify-between gap-3">
-            <span>{service.short}</span>
-            <span className="h-px flex-1 translate-y-[-3px] border-b border-dotted border-line-2" />
-            <span className="whitespace-nowrap">{service.price}</span>
+          <li key={service.id}>
+            <div className="flex items-baseline justify-between gap-3">
+              <span>{full ? service.title : service.short}</span>
+              <span
+                className="h-px min-w-4 flex-1 translate-y-[-3px] border-b border-dotted border-line-2"
+                aria-hidden="true"
+              />
+              <span className="whitespace-nowrap">{service.price}</span>
+            </div>
+            {full ? <p className="mt-1 text-ink-2">{service.unit}</p> : null}
           </li>
         ))}
       </ul>
@@ -25,7 +38,9 @@ export function Receipt() {
         <span className="tracking-[0.14em] uppercase">Retainer required</span>
         <span className="font-semibold text-accent">None</span>
       </div>
-      <p className="mt-4 text-center text-ink-3">* * * thank you, come again * * *</p>
+      <p className="mt-4 text-center text-ink-2" aria-hidden="true">
+        * * * thank you, come again * * *
+      </p>
     </div>
   );
 }

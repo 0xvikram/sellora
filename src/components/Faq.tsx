@@ -3,9 +3,9 @@ import { SectionHead } from "./SectionHead";
 
 export function Faq() {
   return (
-    <section id="faq" className="border-t border-line bg-card">
+    <section id="faq" aria-labelledby="faq-title" className="border-t border-line bg-card">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 md:px-8 md:py-32 lg:grid-cols-[0.8fr_1.2fr]">
-        <SectionHead index="04" label="FAQ">
+        <SectionHead index="05" label="FAQ" id="faq-title">
           Questions, <span className="accent-word">answered.</span>
         </SectionHead>
 
@@ -13,7 +13,7 @@ export function Faq() {
           {FAQS.map((item) => (
             <details key={item.q} className="group border-b border-line-2">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight [&::-webkit-details-marker]:hidden">
-                {item.q}
+                <h3 className="font-sans text-lg font-medium">{item.q}</h3>
                 <span
                   className="font-mono text-xl text-accent transition-transform group-open:rotate-45"
                   aria-hidden="true"
