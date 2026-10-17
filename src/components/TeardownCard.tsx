@@ -15,7 +15,7 @@ export function TeardownCard({
 }) {
   const Heading = headingLevel;
   return (
-    <article className="group relative flex h-full flex-col border border-line-2 bg-card p-6 transition-colors focus-within:border-ink hover:border-ink">
+    <article className="card-scan group relative flex h-full flex-col overflow-hidden border border-line-2 bg-card p-6 transition-colors focus-within:border-ink hover:border-ink">
       {teardown.sample ? <SampleChip className="self-start" /> : null}
       <Heading className="type-h3 mt-5 text-ink">
         <Link
