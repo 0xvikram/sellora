@@ -4,6 +4,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { usePreviewDomain } from "@/lib/preview-domain";
 import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
+import { Storefront } from "./preview/Storefront";
 
 type Gsap = typeof import("gsap").gsap;
 type Timeline = ReturnType<Gsap["timeline"]>;
@@ -40,6 +41,7 @@ const ROWS_AT = SCAN_END + 0.2;
 const RESOLVE_AT = ROWS_AT + 0.9;
 const RESOLVE_GAP = 0.6;
 const DONE_AT = RESOLVE_AT + 2 * RESOLVE_GAP + 0.5;
+const TILT = 2.5;
 const STATUSES = ["connecting", "reading", "measuring", "done"] as const;
 
 /** Inverse of power2.inOut: the eased progress y -> linear time fraction. */
@@ -104,6 +106,10 @@ function KindChip({ kind }: { kind: Kind }) {
   );
 }
 
+function Anchor({ children }: { children: React.ReactNode }) {
+  return <span className="finding-anchor">{children}</span>;
+}
+
 function DomainText() {
   const domain = usePreviewDomain(SAMPLE_DOMAIN);
   return <span className="text-ink">{domain}</span>;
@@ -151,17 +157,18 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
   t.to(scan, { opacity: 0, duration: 0.3 }, SCAN_END);
 
   // b. Labels, as the line passes each region.
+  const chipOf = (name: string) => q(`[data-region="${name}"] [data-pv="chip"]`)[0];
   const header = regionTop("header");
   const hero = regionTop("hero");
   const grid = regionTop("products");
-  chipIn(q('[data-region="header"] [data-pv="chip"]')[0], at(header.top + 8));
-  chipIn(q('[data-region="hero"] [data-pv="chip"]')[0], at((hero.top + hero.bottom) / 2));
-  chipIn(q('[data-region="products"] [data-pv="chip"]')[0], at(grid.top + 4));
+  chipIn(chipOf("header"), at(header.top + 8));
+  chipIn(chipOf("hero"), at((hero.top + hero.bottom) / 2));
+  chipIn(chipOf("products"), at(grid.top + 4));
   if (counter) {
-    const n = { v: 0 };
+    const n = { v: 6 };
     t.fromTo(
       n,
-      { v: 0 },
+      { v: 6 },
       {
         v: 48,
         ease: "none",
@@ -173,10 +180,10 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
       at(grid.top + 4),
     );
   }
-  q('[data-region="scripts"] [data-pv="chip"]').forEach((chip) => {
-    const r = chip.getBoundingClientRect();
-    chipIn(chip, at(r.top - bodyTop + r.height / 2));
-  });
+  for (const name of ["tracking", "email"]) {
+    const r = regionTop(name);
+    chipIn(chipOf(name), at((r.top + r.bottom) / 2));
+  }
 
   status("measuring", SCAN_END);
 
@@ -245,13 +252,44 @@ export function Preview() {
     };
   }, []);
 
+  // Tilt toward the cursor, at most TILT degrees per axis (the CSS
+  // transition on .pv gives the 300 ms ease). Fine pointers with hover
+  // only, never with reduced motion; touch gets no tilt.
+  useEffect(() => {
+    const el = root.current;
+    const ok = window.matchMedia(
+      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+    );
+    if (!el || !ok.matches) return;
+    const move = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const r = el.getBoundingClientRect();
+      const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) - 0.5;
+      const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)) - 0.5;
+      // The edge nearest the cursor lifts toward the viewer.
+      el.style.setProperty("--tilt-x", `${(py * 2 * TILT).toFixed(2)}deg`);
+      el.style.setProperty("--tilt-y", `${(-px * 2 * TILT).toFixed(2)}deg`);
+    };
+    const leave = () => {
+      el.style.removeProperty("--tilt-x");
+      el.style.removeProperty("--tilt-y");
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerleave", leave);
+    return () => {
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerleave", leave);
+      leave();
+    };
+  }, []);
+
   const replay = () => tl.current?.restart();
 
   return (
     <figure
       ref={root}
       aria-label={`Sample read of ${SAMPLE_DOMAIN}`}
-      className="pv pv-anim w-full border border-line-2 bg-card"
+      className="pv pv-anim w-full"
     >
       {/* Header bar */}
       <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-2.5 font-mono text-xs text-ink-2">
@@ -275,45 +313,24 @@ export function Preview() {
         </p>
       </div>
 
-      {/* Body: the mock storefront and the results column */}
-      <div data-pv="body" className="relative grid gap-4 overflow-hidden p-4 sm:grid-cols-[minmax(0,1fr)_9.5rem]">
-        <div className="flex flex-col gap-2.5 rounded-[3px] border border-line bg-ground p-2.5">
-          {/* Store header */}
-          <div data-region="header" className="relative flex h-7 items-center gap-2 rounded-[2px] bg-ground-2 px-2">
-            <span className="h-2 w-7 rounded-[1px] bg-sand" />
-            <span className="ml-auto h-1 w-4 rounded-full bg-sand/60" />
-            <span className="h-1 w-4 rounded-full bg-sand/60" />
-            <span className="h-1 w-4 rounded-full bg-sand/60" />
-            <Finding className="absolute top-1/2 left-1 -mt-[9px]">Header · 1 nav, 6 links</Finding>
-          </div>
-
-          {/* Store hero */}
-          <div data-region="hero" className="relative h-24 rounded-[2px] bg-ground-2 p-3">
-            <span className="block h-2.5 w-3/5 rounded-[1px] bg-sand/80" />
-            <span className="mt-2 block h-1.5 w-2/5 rounded-[1px] bg-sand/50" />
-            <span className="mt-3 block h-3.5 w-12 rounded-full bg-sand" />
-            <Finding className="absolute right-1.5 bottom-1.5">Hero · 1 offer, no social proof</Finding>
-          </div>
-
-          {/* Product grid, 3 x 2 */}
-          <div data-region="products" className="relative grid grid-cols-3 gap-2">
-            {Array.from({ length: 6 }, (_, i) => (
-              <div key={i}>
-                <span className="block h-12 rounded-[3px] bg-ground-2" />
-                <span className="mt-1.5 block h-1 w-3/4 rounded-full bg-sand/60" />
-              </div>
-            ))}
-            <Finding className="absolute top-1/2 left-1/2 -mt-[9px] -ml-[68px]">
-              Products · <span data-pv="count" className="tabular-nums">48</span> pages read
-            </Finding>
-          </div>
-
-          {/* What the page loads */}
-          <div data-region="scripts" className="flex flex-col items-start gap-1.5 border-t border-dashed border-line-2 pt-2.5">
-            <Finding>Tracking · Meta pixel found, CAPI missing</Finding>
-            <Finding>Klaviyo · 3 flows, 2 gaps</Finding>
-          </div>
-        </div>
+      {/* Body: the drawn storefront and the results column */}
+      <div data-pv="body" className="pv-body relative overflow-hidden">
+        <Storefront
+          domain={<DomainText />}
+          findings={{
+            header: <Anchor><Finding>Header · 4 links, no search</Finding></Anchor>,
+            hero: <Anchor><Finding>Hero · 1 offer, no reviews shown</Finding></Anchor>,
+            products: (
+              <Anchor>
+                <Finding>
+                  Products · <span data-pv="count" className="tabular-nums">48</span> of 48 read
+                </Finding>
+              </Anchor>
+            ),
+            tracking: <Anchor><Finding>Tracking · Meta pixel found, CAPI missing</Finding></Anchor>,
+            email: <Anchor><Finding>Email · Klaviyo, 3 flows, 2 gaps</Finding></Anchor>,
+          }}
+        />
 
         <ul className="grid grid-cols-3 gap-2 sm:flex sm:flex-col" aria-label="Results">
           {RESULTS.map((r) => (

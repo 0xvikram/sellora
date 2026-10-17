@@ -31,8 +31,8 @@ export function Hero() {
           </p>
         </HeroIntro>
 
-        <div className="min-w-0 lg:justify-self-end">
-          <div className="w-full max-w-[560px]">
+        <div className="flex min-w-0 justify-end">
+          <div className="w-full max-w-[640px]">
             <Preview />
           </div>
         </div>
