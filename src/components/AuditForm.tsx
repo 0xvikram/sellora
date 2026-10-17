@@ -1,15 +1,26 @@
 "use client";
 
 import { useId, type FormEvent } from "react";
+import { setPreviewDomain } from "@/lib/preview-domain";
 import { DEMO_START_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
  * The single-field audit form. It is a plain GET form to the demo workspace
  * (DEMO_START_URL?url=<value>, new tab), so it works without JavaScript.
- * With JavaScript it only trims stray whitespace before the browser submits.
+ * With JavaScript it trims stray whitespace before the browser submits and,
+ * in the hero, mirrors the typed address into the crawl preview header.
  */
-export function AuditForm({ id, className }: { id?: string; className?: string }) {
+export function AuditForm({
+  id,
+  className,
+  linkPreview = false,
+}: {
+  id?: string;
+  className?: string;
+  /** Mirror what is typed into the hero crawl preview's header. */
+  linkPreview?: boolean;
+}) {
   const inputId = useId();
   const hintId = useId();
 
@@ -43,6 +54,7 @@ export function AuditForm({ id, className }: { id?: string; className?: string }
           required
           placeholder="yourstore.com"
           aria-describedby={hintId}
+          onChange={linkPreview ? (e) => setPreviewDomain(e.currentTarget.value) : undefined}
           className="field min-w-0 flex-1"
         />
         <button

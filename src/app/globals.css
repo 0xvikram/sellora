@@ -344,3 +344,30 @@ body::after {
 .dashed-rule {
   border-top: 1px dashed var(--color-line-2);
 }
+
+/* ---------------------------------------------------------------
+   Crawl preview (src/components/Preview.tsx). Default = final state,
+   which is what reduced motion and no-JS visitors see. With motion
+   allowed, .pv-anim puts the server HTML in the start state and the
+   GSAP timeline animates it from there (inline styles win).
+   --------------------------------------------------------------- */
+.pv [data-pv="placeholder"],
+.pv [data-status]:not([data-status="done"]) {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pv-anim [data-pv="chip"],
+  .pv-anim [data-pv="value"],
+  .pv-anim [data-pv="note"],
+  .pv-anim [data-status="done"] {
+    opacity: 0;
+  }
+  .pv-anim [data-pv="placeholder"],
+  .pv-anim [data-status="connecting"] {
+    opacity: 1;
+  }
+  .pv-anim [data-pv="row"] {
+    clip-path: inset(0% 100% 0% 0%);
+  }
+}

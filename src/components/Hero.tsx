@@ -19,7 +19,7 @@ export function Hero() {
           </h1>
           <p className="lead mt-6">{SITE_TAGLINE}</p>
 
-          <AuditForm id="audit" className="mt-8" />
+          <AuditForm id="audit" className="mt-8" linkPreview />
 
           <p className="mt-6">
             <Link href="/prices" className="text-link">
