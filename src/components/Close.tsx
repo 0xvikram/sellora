@@ -5,11 +5,13 @@ import { Reveal } from "./Reveal";
 
 // The one dark section: closing call to action and site footer, on every
 // page. Ground text on #1a1c1b (14.69:1), muted at 75% (8.75:1), accent
-// brightened to #7fb8b0 (7.66:1). It sits above the grain layer.
+// brightened to #7fb8b0 (7.66:1). It sits above the grain layer. The
+// brand wordmark at 20vw (ground at 8%, decorative) sits on its bottom
+// edge behind the footer links, so the page ends with a mark.
 export function Close() {
   return (
-    <footer id="contact" aria-labelledby="close-title" className="on-dark">
-      <Container className="pt-16 pb-10 md:pt-28">
+    <footer id="contact" aria-labelledby="close-title" className="on-dark overflow-hidden">
+      <Container className="relative z-[1] pt-16 pb-[18vw] md:pt-28 md:pb-[9vw]">
         <Reveal>
           <p className="eyebrow">Contact</p>
           <h2
@@ -47,6 +49,9 @@ export function Close() {
           </p>
         </div>
       </Container>
+      <p aria-hidden="true" className="close-mark">
+        {SITE_NAME}
+      </p>
     </footer>
   );
 }

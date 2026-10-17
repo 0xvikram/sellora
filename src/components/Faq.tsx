@@ -12,17 +12,17 @@ export function Faq() {
 
         <div className="border-t border-line-2">
           {FAQS.map((item) => (
-            <details key={item.q} className="group border-b border-line-2">
+            <details key={item.q} className="group border-b border-line">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
                 <h3 className="font-sans text-lg font-medium tracking-normal">{item.q}</h3>
                 <span
-                  className="font-mono text-xl text-accent transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                  className="font-mono text-xl text-accent transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
                   aria-hidden="true"
                 >
                   +
                 </span>
               </summary>
-              <p className="measure pb-6 text-base text-ink-2">{item.a}</p>
+              <p className="measure pb-5 text-[17px] leading-[1.6] text-ink-2">{item.a}</p>
             </details>
           ))}
         </div>

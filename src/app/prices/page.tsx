@@ -64,7 +64,7 @@ export default function PricesPage() {
           </p>
         </Container>
 
-        <section aria-labelledby="range-title" className="border-t border-line bg-card">
+        <section aria-labelledby="range-title" className="desk border-t border-line">
           <Container className="grid gap-12 py-14 md:py-24 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center lg:gap-16">
             <div className="flex justify-center">
               <Receipt size="full" />

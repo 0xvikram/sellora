@@ -58,7 +58,6 @@
   --radius-chip: 2px;
 
   --shadow-*: initial;
-  --shadow-receipt: 0 30px 60px -30px rgb(28 26 22 / 0.45);
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
@@ -87,17 +86,17 @@ body {
   color: #fff;
 }
 
-/* Grain: one fixed, static SVG noise layer over the light page (3.5%),
+/* Grain: one fixed, static SVG noise layer over the light page (5%),
    multiplied so it reads as linen. It never takes pointer events. The dark
-   closing section sits above it (.on-dark has a higher z-index), so the
-   dark ground stays clean. The nav sits above it too. */
+   sections (the report and the close) sit above it (.on-dark has a higher
+   z-index), so the dark ground stays clean. The nav sits above it too. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 40;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.05;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 220px 220px;
@@ -317,29 +316,75 @@ body::after {
   color: var(--color-accent-on-dark);
 }
 
-/* Receipt: torn bottom edge */
+/* Receipt: a perforated top edge (a row of 6px half-circle bites, 10px
+   apart) and a torn bottom edge (12px teeth). Three mask layers tile
+   disjoint bands (top strip, body, bottom teeth) and add up. */
 .receipt-edge {
   --tooth: 12px;
-  mask-image:
-    linear-gradient(#000, #000),
-    conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
+  --perf: 10px;
+  --mask-top: radial-gradient(circle at 50% 0, transparent 3px, #000 3.5px);
+  --mask-body: linear-gradient(#000, #000);
+  --mask-teeth: conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
+  mask-image: var(--mask-top), var(--mask-body), var(--mask-teeth);
   mask-size:
-    100% calc(100% - var(--tooth)),
+    var(--perf) var(--perf),
+    100% calc(100% - var(--tooth) - var(--perf)),
     var(--tooth) var(--tooth);
   mask-position:
-    top,
+    left top,
+    0 var(--perf),
     bottom left;
-  mask-repeat: no-repeat, repeat-x;
-  -webkit-mask-image:
-    linear-gradient(#000, #000),
-    conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
+  mask-repeat: repeat-x, no-repeat, repeat-x;
+  -webkit-mask-image: var(--mask-top), var(--mask-body), var(--mask-teeth);
   -webkit-mask-size:
-    100% calc(100% - var(--tooth)),
+    var(--perf) var(--perf),
+    100% calc(100% - var(--tooth) - var(--perf)),
     var(--tooth) var(--tooth);
   -webkit-mask-position:
-    top,
+    left top,
+    0 var(--perf),
     bottom left;
-  -webkit-mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-repeat: repeat-x, no-repeat, repeat-x;
+}
+
+/* The receipt's shadow lives on a wrapper (a mask would clip it), drawn
+   with drop-shadow so it follows the perforations and teeth. */
+.receipt-paper {
+  transform: rotate(1deg);
+  filter: drop-shadow(0 1px 1px rgb(74 52 30 / 0.12)) drop-shadow(0 8px 12px rgb(74 52 30 / 0.12))
+    drop-shadow(0 28px 32px rgb(74 52 30 / 0.2));
+}
+
+/* The "desk" under the receipt: ground-2 with a soft vignette, lighter
+   where the paper sits, darker toward the edges. No images. */
+.desk {
+  background-color: var(--color-ground-2);
+  background-image: radial-gradient(
+    ellipse 75% 85% at 70% 45%,
+    color-mix(in oklab, var(--color-ground-2) 70%, var(--color-card)) 0%,
+    var(--color-ground-2) 55%,
+    color-mix(in oklab, var(--color-ground-2) 90%, var(--color-ink)) 100%
+  );
+}
+
+/* Teardown cards lift on hover with a layered paper shadow (no movement,
+   so it applies with reduced motion too; only the fade is skipped). */
+.card-lift {
+  transition:
+    border-color 160ms ease,
+    box-shadow 240ms ease;
+}
+.card-lift:hover,
+.card-lift:focus-within {
+  box-shadow:
+    0 1px 2px rgb(74 52 30 / 0.06),
+    0 10px 24px -10px rgb(74 52 30 / 0.16),
+    0 36px 72px -28px rgb(74 52 30 / 0.28);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-lift {
+    transition: none;
+  }
 }
 
 .dashed-rule {
@@ -1889,4 +1934,45 @@ body::after {
 }
 .on-dark .field:focus-visible {
   outline-color: var(--color-accent-on-dark);
+}
+
+/* Studio pull-quote: H2 scale and up, the open quote hanging in the
+   margin from md (inline on phones, where the gutter is narrow). */
+.studio-quote {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4.6vw, 4rem);
+  line-height: 1.06;
+  font-weight: 450;
+  letter-spacing: -0.02em;
+}
+.studio-mark {
+  font-family: var(--font-display-italic);
+  font-style: italic;
+  color: var(--color-accent);
+}
+@media (min-width: 48rem) {
+  .studio-mark {
+    position: absolute;
+    right: 100%;
+    margin-right: 0.06em;
+  }
+}
+
+/* Closing wordmark: "Sellora" at 20vw behind the footer links, ground at
+   8% on the dark ground, sitting on the bottom edge. Decorative. */
+.close-mark {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 0.1em);
+  font-family: var(--font-display);
+  font-size: 20vw;
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: rgb(242 237 228 / 0.08);
+  pointer-events: none;
+  user-select: none;
 }
