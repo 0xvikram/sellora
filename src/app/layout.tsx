@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono, Instrument_Sans, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Gsap } from "@/components/fx/Gsap";
 import { JsonLd } from "@/lib/json-ld";
 import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
@@ -87,7 +86,6 @@ export default function RootLayout({
             areaServed: ["US", "GB", "EU", "AU"],
           }}
         />
-        <Gsap />
         {children}
       </body>
     </html>

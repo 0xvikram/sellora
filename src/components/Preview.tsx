@@ -1,14 +1,12 @@
 "use client";
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { usePreviewDomain } from "@/lib/preview-domain";
 import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
 
-if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, useGSAP);
+type Gsap = typeof import("gsap").gsap;
+type Timeline = ReturnType<Gsap["timeline"]>;
 
 // The scripted crawl preview in the hero: a code-drawn storefront mock
 // (blocks only, nothing readable), the labels a read of the store produces,
@@ -18,6 +16,11 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, useGSAP);
 // Server HTML is in the start state (.pv-anim, see globals.css). With
 // reduced motion, or without JavaScript, CSS shows the final state and no
 // timeline is built.
+//
+// GSAP core is loaded with a dynamic import once the browser is idle after
+// first paint, so it never sits on the critical path. The timeline is built
+// then, and played once by an IntersectionObserver when the panel is in view
+// (top edge above 85% of the viewport height).
 //
 // Timeline (seconds), played once when the panel enters the viewport:
 //   0.00  status "connecting"
@@ -106,111 +109,141 @@ function DomainText() {
   return <span className="text-ink">{domain}</span>;
 }
 
+/** Builds the paused crawl timeline (see the schedule at the top). */
+function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
+  const q = gsap.utils.selector(el);
+  const body = q('[data-pv="body"]')[0] as HTMLElement;
+  const scan = q('[data-pv="scan"]')[0] as HTMLElement;
+  const counter = q('[data-pv="count"]')[0]?.firstChild as Text | null;
+  const statusEls = q("[data-status]");
+
+  const bodyTop = body.getBoundingClientRect().top;
+  const H = body.offsetHeight;
+  // The time at which the eased scan line reaches a given y in the body.
+  const at = (y: number) => SCAN_START + SCAN_DUR * invInOut(y / H);
+  const regionTop = (name: string) => {
+    const r = q(`[data-region="${name}"]`)[0].getBoundingClientRect();
+    return { top: r.top - bodyTop, bottom: r.bottom - bodyTop };
+  };
+
+  const t = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
+  const status = (name: (typeof STATUSES)[number], pos: number) => {
+    t.set(statusEls, { opacity: 0, immediateRender: false }, pos).set(
+      q(`[data-status="${name}"]`),
+      { opacity: 1, immediateRender: false },
+      pos,
+    );
+  };
+  const chipIn = (chip: Element, pos: number) => {
+    t.fromTo(chip, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.3 }, pos);
+  };
+
+  status("connecting", 0);
+  status("reading", SCAN_START);
+
+  // a. The scan line: the one signature motion.
+  t.fromTo(
+    scan,
+    { y: 0, opacity: 1 },
+    { y: H - 1, duration: SCAN_DUR, ease: "power2.inOut", immediateRender: false },
+    SCAN_START,
+  );
+  t.to(scan, { opacity: 0, duration: 0.3 }, SCAN_END);
+
+  // b. Labels, as the line passes each region.
+  const header = regionTop("header");
+  const hero = regionTop("hero");
+  const grid = regionTop("products");
+  chipIn(q('[data-region="header"] [data-pv="chip"]')[0], at(header.top + 8));
+  chipIn(q('[data-region="hero"] [data-pv="chip"]')[0], at((hero.top + hero.bottom) / 2));
+  chipIn(q('[data-region="products"] [data-pv="chip"]')[0], at(grid.top + 4));
+  if (counter) {
+    const n = { v: 0 };
+    t.fromTo(
+      n,
+      { v: 0 },
+      {
+        v: 48,
+        ease: "none",
+        duration: Math.max(0.3, at(grid.bottom) - at(grid.top + 4)),
+        onUpdate: () => {
+          counter.nodeValue = String(Math.round(n.v));
+        },
+      },
+      at(grid.top + 4),
+    );
+  }
+  q('[data-region="scripts"] [data-pv="chip"]').forEach((chip) => {
+    const r = chip.getBoundingClientRect();
+    chipIn(chip, at(r.top - bodyTop + r.height / 2));
+  });
+
+  status("measuring", SCAN_END);
+
+  // c. Result rows clip in from the left, then each value resolves.
+  t.fromTo(
+    q('[data-pv="row"]'),
+    { clipPath: "inset(0% 100% 0% 0%)" },
+    { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, stagger: 0.09 },
+    ROWS_AT,
+  );
+  const placeholders = q('[data-pv="placeholder"]');
+  q('[data-pv="value"]').forEach((value, i) => {
+    const pos = RESOLVE_AT + i * RESOLVE_GAP;
+    t.fromTo(placeholders[i], { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.96, duration: 0.35 }, pos);
+    t.fromTo(value, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.35 }, pos + 0.08);
+  });
+
+  // d. Done.
+  status("done", DONE_AT);
+  t.fromTo(q('[data-pv="note"]'), { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.4 }, DONE_AT);
+
+  return t;
+}
+
 export function Preview() {
   const root = useRef<HTMLElement>(null);
-  const tl = useRef<gsap.core.Timeline | null>(null);
+  const tl = useRef<Timeline | null>(null);
   const reduced = useHydratedReducedMotion();
   const hydrated = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
-  useGSAP(
-    () => {
-      const el = root.current;
-      if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const q = gsap.utils.selector(el);
-      const body = q('[data-pv="body"]')[0] as HTMLElement;
-      const scan = q('[data-pv="scan"]')[0] as HTMLElement;
-      const counter = q('[data-pv="count"]')[0]?.firstChild as Text | null;
-      const statusEls = q("[data-status]");
+  useEffect(() => {
+    const el = root.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let cancelled = false;
+    let timeline: Timeline | null = null;
+    let observer: IntersectionObserver | null = null;
 
-      const bodyTop = body.getBoundingClientRect().top;
-      const H = body.offsetHeight;
-      // The time at which the eased scan line reaches a given y in the body.
-      const at = (y: number) => SCAN_START + SCAN_DUR * invInOut(y / H);
-      const regionTop = (name: string) => {
-        const r = q(`[data-region="${name}"]`)[0].getBoundingClientRect();
-        return { top: r.top - bodyTop, bottom: r.bottom - bodyTop };
-      };
-
-      const t = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
-      const status = (name: (typeof STATUSES)[number], pos: number) => {
-        t.set(statusEls, { opacity: 0, immediateRender: false }, pos).set(
-          q(`[data-status="${name}"]`),
-          { opacity: 1, immediateRender: false },
-          pos,
-        );
-      };
-      const chipIn = (chip: Element, pos: number) => {
-        t.fromTo(chip, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.3 }, pos);
-      };
-
-      status("connecting", 0);
-      status("reading", SCAN_START);
-
-      // a. The scan line: the one signature motion.
-      t.fromTo(
-        scan,
-        { y: 0, opacity: 1 },
-        { y: H - 1, duration: SCAN_DUR, ease: "power2.inOut", immediateRender: false },
-        SCAN_START,
+    const start = async () => {
+      const { gsap } = await import("gsap");
+      if (cancelled) return;
+      timeline = buildTimeline(gsap, el);
+      tl.current = timeline;
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          observer?.disconnect();
+          timeline?.play();
+        },
+        { rootMargin: "0px 0px -15% 0px" },
       );
-      t.to(scan, { opacity: 0, duration: 0.3 }, SCAN_END);
+      observer.observe(el);
+    };
 
-      // b. Labels, as the line passes each region.
-      const header = regionTop("header");
-      const hero = regionTop("hero");
-      const grid = regionTop("products");
-      chipIn(q('[data-region="header"] [data-pv="chip"]')[0], at(header.top + 8));
-      chipIn(q('[data-region="hero"] [data-pv="chip"]')[0], at((hero.top + hero.bottom) / 2));
-      chipIn(q('[data-region="products"] [data-pv="chip"]')[0], at(grid.top + 4));
-      if (counter) {
-        const n = { v: 0 };
-        t.fromTo(
-          n,
-          { v: 0 },
-          {
-            v: 48,
-            ease: "none",
-            duration: Math.max(0.3, at(grid.bottom) - at(grid.top + 4)),
-            onUpdate: () => {
-              counter.nodeValue = String(Math.round(n.v));
-            },
-          },
-          at(grid.top + 4),
-        );
-      }
-      q('[data-region="scripts"] [data-pv="chip"]').forEach((chip) => {
-        const r = chip.getBoundingClientRect();
-        chipIn(chip, at(r.top - bodyTop + r.height / 2));
-      });
-
-      status("measuring", SCAN_END);
-
-      // c. Result rows clip in from the left, then each value resolves.
-      t.fromTo(
-        q('[data-pv="row"]'),
-        { clipPath: "inset(0% 100% 0% 0%)" },
-        { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, stagger: 0.09 },
-        ROWS_AT,
-      );
-      const placeholders = q('[data-pv="placeholder"]');
-      q('[data-pv="value"]').forEach((value, i) => {
-        const pos = RESOLVE_AT + i * RESOLVE_GAP;
-        t.fromTo(placeholders[i], { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.96, duration: 0.35 }, pos);
-        t.fromTo(value, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.35 }, pos + 0.08);
-      });
-
-      // d. Done.
-      status("done", DONE_AT);
-      t.fromTo(q('[data-pv="note"]'), { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.4 }, DONE_AT);
-
-      tl.current = t;
-      ScrollTrigger.create({ trigger: el, start: "top 85%", once: true, onEnter: () => t.play() });
-      return () => {
-        tl.current = null;
-      };
-    },
-    { scope: root },
-  );
+    // After first paint: idle callback where supported, else a short timeout.
+    const hasIdle = "requestIdleCallback" in window;
+    const idle = hasIdle
+      ? window.requestIdleCallback(() => void start(), { timeout: 1200 })
+      : window.setTimeout(() => void start(), 200);
+    return () => {
+      cancelled = true;
+      if (hasIdle) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+      observer?.disconnect();
+      timeline?.kill();
+      tl.current = null;
+    };
+  }, []);
 
   const replay = () => tl.current?.restart();
 
