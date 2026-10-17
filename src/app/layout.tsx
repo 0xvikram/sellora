@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Cursor } from "@/components/fx/Cursor";
 import { Gsap } from "@/components/fx/Gsap";
-import { SmoothScroll } from "@/components/fx/SmoothScroll";
-import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
+import { JsonLd } from "@/lib/json-ld";
+import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
+
+const TITLE = `${SITE_NAME} — AI and automation for e-commerce brands, at fixed prices`;
 
 // Body: Inter (variable, wght 100-900).
 const inter = Inter({
@@ -13,8 +14,7 @@ const inter = Inter({
   display: "swap",
 });
 
-// Headings: Inter Tight (variable, wght 100-900). Loaded as the variable font
-// so the footer wordmark can animate its weight axis.
+// Headings: Inter Tight (variable, wght 100-900).
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin"],
@@ -29,14 +29,17 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${SITE_NAME} — Growth work for e-commerce brands, at fixed prices`,
+  title: { default: TITLE, template: `%s · ${SITE_NAME}` },
   description: SITE_TAGLINE,
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Growth work for e-commerce brands, at fixed prices`,
+    title: TITLE,
     description: SITE_TAGLINE,
+    url: "/",
   },
+  twitter: { card: "summary_large_image", title: TITLE, description: SITE_TAGLINE },
 };
 
 export default function RootLayout({
@@ -48,11 +51,25 @@ export default function RootLayout({
       className={`${inter.variable} ${interTight.variable} ${jetbrains.variable}`}
     >
       <body>
-        <SmoothScroll />
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+        >
+          Skip to content
+        </a>
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: SITE_URL,
+            email: CONTACT_EMAIL,
+            description: SITE_TAGLINE,
+            areaServed: ["US", "GB", "EU", "AU"],
+          }}
+        />
         <Gsap />
-        <Cursor />
         {children}
-        <div className="grain pointer-events-none fixed inset-0 z-[90]" aria-hidden="true" />
       </body>
     </html>
   );

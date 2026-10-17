@@ -1,37 +1,26 @@
 // Everything a founder may want to change lives in this file:
-// the name, the contact links, the services and their prices.
+// the name, the contact links, the services, prices and page copy.
 
-// PLACEHOLDER: the agency name is not final. Change it here only.
-export const SITE_NAME = "Reorder Labs";
-export const SITE_URL = "https://example.com"; // PLACEHOLDER
+export const SITE_NAME = "Sellora";
+export const SITE_URL = "https://sellora.example"; // PLACEHOLDER: real domain not bought yet.
 export const SITE_TAGLINE =
-  "AI creative, AI-search visibility, retention and automation for online stores. Fixed prices, shown up front.";
+  "AI creative, AI-search visibility, retention and automation for online stores. Fixed prices, shown up front. Start by pasting your store address.";
 
-// PLACEHOLDER: replace with the real booking link and inbox.
+// PLACEHOLDER: dummy inbox until the real one exists.
+export const CONTACT_EMAIL = "hello@sellora.example";
+// PLACEHOLDER: replace with the real booking link (Cal.com or similar).
 export const BOOKING_URL = "#contact";
-export const CONTACT_EMAIL = "hello@example.com";
 
-// PLACEHOLDER: set to the demo store URL once it is live.
-export const DEMO_STORE_URL = "";
+// The real demo workspace. It accepts ?url=<store url>.
+export const DEMO_START_URL = "https://oatleaf-demo.vikrams-builds.workers.dev/start";
+
+export const REPLY_PROMISE = "We reply within one business day.";
 
 export const NAV_LINKS = [
-  { label: "Services", href: "#services" },
-  { label: "How it works", href: "#how" },
-  { label: "Why us", href: "#why" },
-  { label: "FAQ", href: "#faq" },
-];
-
-export const TOOLS = [
-  "Shopify",
-  "WooCommerce",
-  "Klaviyo",
-  "n8n",
-  "Make",
-  "Meta Ads",
-  "Google Analytics 4",
-  "Higgsfield",
-  "Recharge",
-  "Gorgias",
+  { label: "Work", href: "/teardowns" },
+  { label: "Prices", href: "/prices" },
+  { label: "Studio", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export type Service = {
@@ -137,26 +126,89 @@ export const LADDER = [
   },
 ];
 
-export const REASONS = [
+export const STUDIO = {
+  line: "Two people. No account managers. The people on the call do the work.",
+  location: "India, working with brands in the US, UK, Europe and Australia",
+  hours: "Overlap with US mornings and UK/EU afternoons",
+};
+
+export type ProofBadge = {
+  label: string;
+  status?: "placeholder" | "verified";
+  value?: string;
+};
+
+// PLACEHOLDER: partner statuses stay "placeholder" until the partnerships
+// are real. Do not mark one "verified" before then.
+export const PROOF: ProofBadge[] = [
+  { label: "Shopify Partner", status: "placeholder" },
+  { label: "Klaviyo Partner", status: "placeholder" },
+  { label: "Teardowns published", value: "3" },
+];
+
+export type Teardown = {
+  slug: string;
+  store: string;
+  metric: string;
+  baseline: string;
+  period: string;
+  method: string;
+  summary: string;
+  findings: [string, string, string];
+  sample: boolean;
+};
+
+// SAMPLE entries so the pages render. Every one is flagged `sample: true`
+// and shows a visible "Sample" label. Replace with real teardowns.
+export const TEARDOWNS: Teardown[] = [
   {
-    title: "Prices before the first call",
-    body: "Every entry job is priced on this page.",
+    slug: "sample-supplements-us",
+    store: "Sample: supplements brand (US)",
+    metric: "+18% repeat rate in 60 days",
+    baseline: "Repeat rate 21% (90-day cohorts, Shopify orders)",
+    period: "60 days",
+    method: "Klaviyo flows rebuilt; 10% holdout group kept out of every new flow.",
+    summary:
+      "A subscription-heavy store whose replenishment emails went out on a fixed 30-day timer, regardless of pack size.",
+    findings: [
+      "Replenishment reminders ignored pack size, so 60-day buyers were nudged twice too early.",
+      "No post-purchase flow for one-off buyers, who were 64% of first orders.",
+      "Win-back started at 180 days, long after most lapsed customers had switched.",
+    ],
+    sample: true,
   },
   {
-    title: "Two people, no hand-offs",
-    body: "The people on the call do the work.",
+    slug: "sample-apparel-uk",
+    store: "Sample: apparel brand (UK)",
+    metric: "Cited in 4 of 10 AI-assistant answers",
+    baseline: "Cited in 0 of 10 tracked buyer questions",
+    period: "45 days",
+    method:
+      "Ten buyer questions asked weekly in ChatGPT, Gemini and Perplexity; structured data and product copy fixed.",
+    summary:
+      "A well-reviewed store that never appeared when assistants were asked for recommendations in its category.",
+    findings: [
+      "Product schema was missing price and availability on every variant.",
+      "Size and fabric details lived only in images, so assistants could not read them.",
+      "Review content was loaded by script and invisible to crawlers.",
+    ],
+    sample: true,
   },
   {
-    title: "Measured against your orders",
-    body: "Shopify numbers and holdout groups, not dashboards.",
-  },
-  {
-    title: "Inside your tools",
-    body: "Your Shopify, Klaviyo and ad accounts. Nothing new to buy.",
-  },
-  {
-    title: "A small first step",
-    body: "Start with one audit. No retainer required.",
+    slug: "sample-homewares-au",
+    store: "Sample: homewares brand (AU)",
+    metric: "Meta reporting 94% of Shopify orders",
+    baseline: "Meta reporting 58% of Shopify orders",
+    period: "14 days",
+    method: "Pixel and Conversions API rebuilt, de-duplicated and checked order by order.",
+    summary:
+      "Ad spend decisions were being made on half the real purchases after a checkout change broke the old pixel.",
+    findings: [
+      "The purchase event fired from a legacy thank-you page script that no longer ran.",
+      "Conversions API sent events without event IDs, so nothing de-duplicated.",
+      "GA4 counted test orders from the staff account as revenue.",
+    ],
+    sample: true,
   },
 ];
 
@@ -179,6 +231,6 @@ export const FAQS = [
   },
   {
     q: "Who is behind this?",
-    a: "A two-person studio in India, working with brands in the US, UK, Europe and Australia.",
+    a: "A small studio based in India. The Studio page covers who does the work and our working hours.",
   },
 ];
