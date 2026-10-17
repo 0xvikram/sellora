@@ -15,12 +15,16 @@ export function AuditForm({
   id,
   className,
   linkPreview = false,
+  size = "md",
 }: {
   id?: string;
   className?: string;
   /** Mirror what is typed into the hero crawl preview's header. */
   linkPreview?: boolean;
+  /** "lg" makes the field and button taller, for the contact page. */
+  size?: "md" | "lg";
 }) {
+  const lg = size === "lg";
   const inputId = useId();
   const hintId = useId();
 
@@ -39,10 +43,10 @@ export function AuditForm({
       onSubmit={onSubmit}
       className={cn("max-w-xl", className)}
     >
-      <label htmlFor={inputId} className="block text-sm font-medium text-ink">
+      <label htmlFor={inputId} className={cn("block font-medium text-ink", lg ? "text-base" : "text-sm")}>
         Your store address
       </label>
-      <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+      <div className={cn("mt-2 flex flex-col gap-3", lg ? "lg:flex-row" : "sm:flex-row")}>
         <input
           id={inputId}
           name="url"
@@ -55,11 +59,11 @@ export function AuditForm({
           placeholder="yourstore.com"
           aria-describedby={hintId}
           onChange={linkPreview ? (e) => setPreviewDomain(e.currentTarget.value) : undefined}
-          className="field min-w-0 flex-1"
+          className={cn("field min-w-0 flex-1", lg && "min-h-14 text-lg")}
         />
         <button
           type="submit"
-          className="btn btn-primary shrink-0"
+          className={cn("btn btn-primary shrink-0", lg && "min-h-14 px-7 text-lg")}
         >
           Start the audit
         </button>
