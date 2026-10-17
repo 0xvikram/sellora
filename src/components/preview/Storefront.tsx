@@ -28,6 +28,15 @@ function BagIcon() {
   );
 }
 
+/** Shown instead of the links when the store is phone-width. */
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" className="store-icon store-menu">
+      <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function LockIcon() {
   return (
     <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false" className="browser-lock">
@@ -74,6 +83,7 @@ export function Storefront({
           <p className="store-announce" aria-hidden="true">Free shipping over $60</p>
           <div className="store-navwrap">
             <div className="store-nav" aria-hidden="true">
+              <MenuIcon />
               <span className="store-wordmark">Oatleaf</span>
               <span className="store-links">
                 {LINKS.map((l) => (
@@ -114,9 +124,12 @@ export function Storefront({
         </div>
 
         <div data-region="products" className="store-region store-products">
-          <div className="store-products-head" aria-hidden="true">
-            <span className="store-section-title">Bestsellers</span>
-            <span className="store-viewall">View all 48</span>
+          <div className="store-products-head">
+            <span aria-hidden="true" className="store-products-title">
+              <span className="store-section-title">Bestsellers</span>
+              <span className="store-viewall">View all 48</span>
+            </span>
+            {findings.products}
           </div>
           <div className="store-grid" aria-hidden="true">
             {PRODUCTS.map((p, i) => (
@@ -132,7 +145,6 @@ export function Storefront({
             ))}
           </div>
           {wash}
-          {findings.products}
         </div>
 
         <div data-region="tracking" className="store-region store-trust">
