@@ -144,7 +144,28 @@ export const STUDIO = {
   accent: "do the work.",
   location: "India, working with brands in the US, UK, Europe and Australia",
   hours: "Overlap with US mornings and UK/EU afternoons",
+  how: "Two people in India do every job, from the first read of the store to the hand-over. We overlap with US mornings and UK and EU afternoons for calls, and we work inside the tools you already use.",
 };
+
+// The tools we work inside. Shown as a plain mono list, never as logos.
+export const TOOLS = [
+  "Shopify",
+  "WooCommerce",
+  "Klaviyo",
+  "n8n",
+  "Make",
+  "Meta",
+  "GA4",
+  "Gorgias",
+  "Recharge",
+];
+
+export const NOT_DO = [
+  "No retainers to start.",
+  "No passwords. Collaborator access only.",
+  "No claims without a baseline.",
+  "No AI output shipped unchecked.",
+];
 
 export type ProofBadge = {
   label: string;
