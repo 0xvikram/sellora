@@ -75,3 +75,32 @@ applies, so phones never download them. Below lg, with reduced motion, and
 without JavaScript, the five steps are stacked with figures in their final
 state. The old three-step "How it works" strip became the section's intro
 line, and the later section numbers moved up by one (Work is now 02).
+
+## 2026-10-17: Story track shortened to 3.5 screens
+
+The pinned story's track went from 600vh (5 screens of scroll) to 450vh
+(3.5 screens, 0.7 per service). Five full screens read as a long hold for
+five figures. The stage now carries the section eyebrow and H2 at the top
+of its left column (the stacked header is hidden in that layout, so the
+section is never headless while pinned) and its content is centred under
+the nav, which removes the empty band above it. The "how it works" line is
+left out of the stage for height; it stays in the stacked layout. Each
+before -> after number (1 -> 4, 21% -> 31%, 54% -> 96%) now counts its
+after value up from the before value inside its slide's window, so the
+change reads as an event. The tracking step's headline became "54% ->
+96%" (it was "96%") to match.
+
+## 2026-10-17: The report section, the page's one dark moment
+
+"The read, delivered" sits between Work and Prices on the closing
+section's dark ground (#1a1c1b, above the grain). It shows what the audit
+hands over: a sample one-page report on card paper, A4 proportions, turned
+-1deg on a second sheet, with six labelled figures, a before/after bar row
+and the line "Every figure links to the query that produced it", beside
+three statements that define Measured, Generated and Sample, and the audit
+form once more. Reasons: the lower half of the page was flat light
+sections in a row; a dark band in the middle gives the page one dramatic
+moment without a second animation library, and it makes the labelling
+promise concrete. Motion is one entrance (rise and settle, figures count
+up), once, static with reduced motion. It became section 03, so Prices,
+Studio and FAQ moved to 04 to 06.

@@ -129,7 +129,7 @@ test("crawl preview plays to the end state and the URL bar follows the form", as
   }
 });
 
-const STORY_NUMBERS = ["3–5", "1 → 4", "21% → 31%", "1", "96%"];
+const STORY_NUMBERS = ["3–5", "1 → 4", "21% → 31%", "1", "54% → 96%"];
 
 test("story: five stacked steps with their numbers at 390, no pinned stage", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -149,14 +149,17 @@ test("story: pinned stage at 1440, and the page still scrolls to the footer", as
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
   const story = page.locator("#what-changes");
-  await expect(story.locator(".story-stack")).toBeHidden();
+  await expect(story.locator(".story-stack").first()).toBeHidden();
+  await expect(story.locator(".story-stack").last()).toBeHidden();
   const stage = story.locator(".story-pin .story-stage");
   await expect(stage).toBeVisible();
+  // The stage carries the section heading, so it is never headless.
+  await expect(stage.getByRole("heading", { level: 2 })).toHaveText("Five jobs, applied to the store.");
   await expect(story.locator(".story-list > li")).toHaveCount(5);
-  // The stage is sticky inside a 600vh track; the timeline marks the
-  // active step once GSAP and ScrollTrigger have loaded.
+  // The stage is sticky inside a 450vh track (3.5 screens of scroll); the
+  // timeline marks the active step once GSAP and ScrollTrigger have loaded.
   const track = await story.locator(".story-pin").boundingBox();
-  expect(Math.round(track!.height)).toBe(900 * 6);
+  expect(Math.round(track!.height)).toBe(900 * 4.5);
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 450) {
       window.scrollTo(0, y);
@@ -176,3 +179,32 @@ test("story: reduced motion at 1440 shows all five steps, not pinned", async ({ 
   await expect(story.locator(".story-pin")).toBeHidden();
   await expect(story.locator(".story-stack > ol > li")).toHaveCount(5);
 });
+
+for (const width of [390, 1440]) {
+  test(`report section: six labelled figures and a visible sheet at ${width}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+    await page.goto("/");
+    const report = page.locator("section#report");
+    await expect(report.getByRole("heading", { level: 2 })).toHaveText("One page. Every number labelled.");
+    const sheet = report.getByRole("figure", { name: "Sample audit report" });
+    await sheet.scrollIntoViewIfNeeded();
+    await expect(sheet).toBeVisible();
+    for (const label of [
+      "Repeat rate",
+      "AI assistants citing you",
+      "Pixel to order match",
+      "Flows with gaps",
+      "Pages assistants can read",
+      "Ad hooks ready",
+    ]) {
+      await expect(sheet.locator("dt", { hasText: label })).toHaveCount(1);
+    }
+    // The figures finish counting at their final values, and the sheet
+    // settles fully opaque.
+    await expect(sheet.locator("[data-report-num]")).toHaveText(["31", "1", "54", "2", "31", "5"]);
+    await expect(sheet).toHaveCSS("opacity", "1");
+    const box = await sheet.boundingBox();
+    expect(box && box.width).toBeGreaterThan(300);
+    await expect(sheet.getByText("Every figure links to the query that produced it.")).toBeVisible();
+  });
+}

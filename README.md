@@ -13,7 +13,7 @@ Every page is static.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero with the audit form and the crawl preview, how it works, teardowns, prices, studio, proof strip, FAQ |
+| `/` | Hero with the audit form and the crawl preview; 01 What changes (five services on the sample store, pinned scroll story on desktop); 02 Work (teardown cards); 03 The read, delivered (dark section with a sample audit report sheet and the form again); 04 Prices (receipt on a desk); 05 Studio (pull-quote); proof row; 06 FAQ |
 | `/teardowns` | Index of teardowns, numbers first |
 | `/teardowns/[slug]` | One teardown: spec strip, before/after figures, method. Unknown slugs 404 |
 | `/prices` | Receipt, price ladder, terms |
@@ -22,7 +22,8 @@ Every page is static.
 | `/opengraph-image`, `/icon.svg`, `/robots.txt`, `/sitemap.xml` | Generated metadata |
 
 Every page ends with the dark closing section (`Close.tsx`), which is also
-the footer.
+the footer and ends on a large, faint "Sellora" wordmark. The home page has
+one more dark section, the report (`Report.tsx`), between Work and Prices.
 
 ## Where the copy lives
 
@@ -51,7 +52,8 @@ linen ground `#f2ede4`, ground-2 `#e7e0d3`, card `#faf7f1`, ink `#1c1a16`
 moss, sand and clay as illustrative fills, and a tinted near-black
 `#1a1c1b` for the closing section. Contrast ratios are listed at the top of
 `globals.css`; hex copies for the OG image live in `src/lib/tokens.ts`
-(keep the two in sync). A static 3.5% grain layer sits over the light page.
+(keep the two in sync). A static 5% grain layer sits over the light page;
+the two dark sections sit above it.
 
 Fonts, all via `next/font` (self-hosted, `display: swap`, fallback metrics
 set so the swap does not shift layout):
@@ -70,6 +72,15 @@ The OG image uses its own static TTFs in `src/app/og-fonts/`.
 - **One signature motion**: the scan line. It runs once in the hero crawl
   preview (`Preview.tsx`, a GSAP timeline) and once per hover on teardown
   cards (CSS only, fine pointers only).
+- **Story** (`Story.tsx`, `story/timeline.ts`): on lg and up with motion
+  allowed, a 450vh track (3.5 screens of scroll) with a sticky stage that
+  carries the section heading; one GSAP timeline scrubbed by ScrollTrigger
+  (no pin, no snap). Before -> after numbers count inside each slide's
+  window. Phones, tablets and reduced motion get the stacked layout.
+- **Report** (`Report.tsx`): once in view, the sheet rises 24px and settles
+  to -1deg (0.8 s) and its six figures count up (0.9 s, 80 ms apart).
+  IntersectionObserver, Web Animations and requestAnimationFrame; static
+  with reduced motion.
 - **Reveal once**: section headings and the closing block fade up 8px the
   first time they enter the viewport (`Reveal.tsx`, IntersectionObserver +
   Web Animations). The hero text column has a short load stagger
