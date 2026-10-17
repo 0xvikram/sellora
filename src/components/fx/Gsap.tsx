@@ -9,9 +9,8 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
  * Registers ScrollTrigger and useGSAP once for the whole page. Sections then
- * import `gsap`, `ScrollTrigger` and `useGSAP` directly. When Lenis is active,
- * SmoothScroll drives GSAP's ticker; otherwise ScrollTrigger reads native
- * scroll. Trigger positions are re-measured once the web fonts have loaded,
+ * import `gsap`, `ScrollTrigger` and `useGSAP` directly. ScrollTrigger reads
+ * native scroll (no smooth-scroll library). Trigger positions are re-measured once the web fonts have loaded,
  * because the font swap changes section heights.
  */
 export function Gsap() {

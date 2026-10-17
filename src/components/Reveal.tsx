@@ -1,28 +1,45 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef, type ReactNode } from "react";
+import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 
-// Fades content up once as it scrolls into view.
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+/**
+ * Fades its content in with an 8px rise, once, the first time it scrolls
+ * into view. The server HTML is fully visible; the start state is applied
+ * only on the client, and never when the visitor prefers reduced motion.
+ */
 export function Reveal({
   children,
-  delay = 0,
   className,
 }: {
   children: ReactNode;
-  delay?: number;
   className?: string;
 }) {
-  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useHydratedReducedMotion();
+
+  useGSAP(
+    () => {
+      if (reduced || !ref.current) return;
+      gsap.from(ref.current, {
+        opacity: 0,
+        y: 8,
+        duration: 0.6,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ref.current, start: "top 90%", once: true },
+      });
+    },
+    { dependencies: [reduced], revertOnUpdate: true },
+  );
+
   return (
-    <motion.div
-      className={className}
-      initial={reduced ? false : { opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

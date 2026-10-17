@@ -29,8 +29,6 @@
 }
 
 html {
-  /* No CSS smooth scroll: it fights Lenis on a direct /#hash load. Lenis
-     animates anchor clicks on desktop; touch gets the native jump. */
   scroll-padding-top: 88px;
 }
 
@@ -77,17 +75,8 @@ body {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-ink-3);
-}
-
-/* Faint paper grid behind the hero */
-.paper-grid {
-  background-image:
-    linear-gradient(var(--color-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 70% 60% at 60% 40%, #000 20%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 60% 40%, #000 20%, transparent 75%);
+  /* ink-2 on paper is about 6.6:1 (WCAG AA needs 4.5:1); ink-3 failed. */
+  color: var(--color-ink-2);
 }
 
 /* Receipt: torn bottom edge */
@@ -117,123 +106,4 @@ body {
 
 .dashed-rule {
   border-top: 1px dashed var(--color-line-2);
-}
-
-/* Tool strip marquee */
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-.marquee-track {
-  animation: marquee 38s linear infinite;
-}
-.marquee-mask {
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-
-/* Floating chips around the receipt */
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
-  }
-  50% {
-    transform: translate3d(0, -10px, 0) rotate(calc(var(--r, 0deg) + 1.5deg));
-  }
-}
-.chip-drift {
-  animation: drift var(--d, 7s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-/* Video progress bars inside the creative illustration */
-@keyframes progress {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-.illus-progress {
-  animation: progress 6s linear infinite;
-}
-
-/* Paper grain over the whole page */
-.grain {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  opacity: 0.09;
-}
-
-/* Oversized headline band */
-.band-track {
-  animation: marquee 34s linear infinite;
-}
-.text-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-ink);
-}
-.text-outline-light {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(245, 241, 232, 0.35);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .illus-progress,
-  .band-track {
-    animation: none;
-  }
-  .statement-word {
-    opacity: 1 !important;
-  }
-  .marquee-track,
-  .chip-drift {
-    animation: none;
-  }
-}
-
-/* --- ui components --- */
-/* Magic UI marquee / shine. Keyframes are renamed so they don't replace the
-   `marquee` keyframes the Band above relies on. */
-@theme inline {
-  --animate-marquee: mq-x var(--duration) infinite linear;
-  --animate-marquee-vertical: mq-y var(--duration) linear infinite;
-  --animate-shine: shine var(--duration) infinite linear;
-  @keyframes mq-x {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(calc(-100% - var(--gap)));
-    }
-  }
-  @keyframes mq-y {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(calc(-100% - var(--gap)));
-    }
-  }
-  @keyframes shine {
-    0% {
-      background-position: 0% 0%;
-    }
-    50% {
-      background-position: 100% 100%;
-    }
-    to {
-      background-position: 0% 0%;
-    }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .animate-marquee-vertical,
-  .animate-shine {
-    animation: none;
-  }
 }

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Cursor } from "@/components/fx/Cursor";
 import { Gsap } from "@/components/fx/Gsap";
-import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 // Body: Inter (variable, wght 100-900).
@@ -48,11 +46,8 @@ export default function RootLayout({
       className={`${inter.variable} ${interTight.variable} ${jetbrains.variable}`}
     >
       <body>
-        <SmoothScroll />
         <Gsap />
-        <Cursor />
         {children}
-        <div className="grain pointer-events-none fixed inset-0 z-[90]" aria-hidden="true" />
       </body>
     </html>
   );
