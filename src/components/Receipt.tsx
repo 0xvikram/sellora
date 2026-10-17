@@ -10,7 +10,7 @@ export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
     <div
       className={cn(
         "receipt-edge w-full bg-ground-2 px-6 pt-6 pb-9 font-mono text-ink shadow-receipt",
-        full ? "max-w-[34rem] text-sm md:px-9 md:pt-9" : "max-w-[22rem] text-[0.8rem]",
+        full ? "max-w-[38rem] text-sm md:px-10 md:pt-10 md:pb-12 md:text-base" : "max-w-[22rem] text-[0.8rem]",
       )}
     >
       <div className="flex items-baseline justify-between">

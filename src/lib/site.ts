@@ -32,11 +32,15 @@ export type Service = {
   summary: string;
   includes: string[];
   note?: string;
+  rangeNote: string; // what moves a job to the top of its price range
+  days: string; // typical working days (sample values until confirmed)
 };
 
 export const SERVICES: Service[] = [
   {
     id: "creative",
+    rangeNote: "More videos, more hooks, or extra formats per video",
+    days: "7–10",
     short: "AI ad creative",
     title: "AI ad creative",
     price: "$300–600",
@@ -51,6 +55,8 @@ export const SERVICES: Service[] = [
   },
   {
     id: "ai-search",
+    rangeNote: "More products, more markets, or a heavily customised theme",
+    days: "10–14",
     short: "AI-search audit",
     title: "AI-search visibility audit",
     price: "$500–1,000",
@@ -65,6 +71,8 @@ export const SERVICES: Service[] = [
   },
   {
     id: "retention-audit",
+    rangeNote: "More SKUs, more flows, or two markets",
+    days: "5–7",
     short: "Retention audit",
     title: "Klaviyo retention and LTV audit",
     price: "$400–800",
@@ -78,6 +86,8 @@ export const SERVICES: Service[] = [
   },
   {
     id: "connections",
+    rangeNote: "More apps in the chain, or a two-way sync",
+    days: "5–10",
     short: "Tool connections",
     title: "Tool connections",
     price: "$300–1,000",
@@ -91,6 +101,8 @@ export const SERVICES: Service[] = [
   },
   {
     id: "tracking",
+    rangeNote: "More ad platforms, or a custom checkout",
+    days: "5–7",
     short: "Tracking repair",
     title: "Tracking repair",
     price: "$500–1,000",
