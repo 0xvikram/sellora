@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Geist_Mono, Instrument_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import { Gsap } from "@/components/fx/Gsap";
 import { JsonLd } from "@/lib/json-ld";
@@ -7,22 +7,27 @@ import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 const TITLE = `${SITE_NAME} — AI and automation for e-commerce brands, at fixed prices`;
 
-// Body: Inter (variable, wght 100-900).
-const inter = Inter({
-  variable: "--font-inter",
+// Display: Newsreader (variable wght + optical size, roman and italic).
+// font-optical-sizing: auto lets the opsz axis follow the font size.
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
   display: "swap",
 });
 
-// Headings: Inter Tight (variable, wght 100-900).
-const interTight = Inter_Tight({
-  variable: "--font-inter-tight",
+// Body: Instrument Sans (variable wght, roman and italic).
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument-sans",
   subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+// Mono: Geist Mono (variable wght) for eyebrows, prices and the receipt.
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -48,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${jetbrains.variable}`}
+      className={`${newsreader.variable} ${instrumentSans.variable} ${geistMono.variable}`}
     >
       <body>
         <a
