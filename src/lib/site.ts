@@ -128,6 +128,8 @@ export const LADDER = [
 
 export const STUDIO = {
   line: "Two people. No account managers. The people on the call do the work.",
+  // The words of `line` set in the italic accent; must appear in `line`.
+  accent: "do the work.",
   location: "India, working with brands in the US, UK, Europe and Australia",
   hours: "Overlap with US mornings and UK/EU afternoons",
 };

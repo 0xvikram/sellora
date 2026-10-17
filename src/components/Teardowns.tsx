@@ -6,8 +6,8 @@ import { TeardownCard } from "./TeardownCard";
 
 export function Teardowns() {
   return (
-    <section id="work" aria-labelledby="work-title" className="border-t border-line">
-      <Container className="py-20 md:py-28">
+    <section id="work" aria-labelledby="work-title" className="border-t border-line bg-ground">
+      <Container className="py-14 md:py-24 lg:py-28">
         <SectionHead
           index="02"
           label="Work"
@@ -16,7 +16,7 @@ export function Teardowns() {
         >
           Teardowns, with the <span className="accent-word">numbers</span> first.
         </SectionHead>
-        <ul className="mt-12 grid gap-5 md:grid-cols-3">
+        <ul className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
           {TEARDOWNS.map((teardown) => (
             <li key={teardown.slug}>
               <TeardownCard teardown={teardown} />
@@ -24,10 +24,7 @@ export function Teardowns() {
           ))}
         </ul>
         <p className="mt-8">
-          <Link
-            href="/teardowns"
-            className="border-b border-ink pb-0.5 text-base font-medium text-ink hover:border-accent hover:text-accent"
-          >
+          <Link href="/teardowns" className="text-link">
             All teardowns
           </Link>
         </p>

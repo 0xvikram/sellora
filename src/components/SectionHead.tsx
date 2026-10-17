@@ -37,14 +37,14 @@ export function SectionHead({
         <Heading
           id={id}
           className={cn(
-            "max-w-3xl font-display leading-[1.04] font-semibold tracking-[-0.025em] text-balance",
-            level === "h1" ? "text-4xl md:text-6xl" : "text-3xl md:text-5xl",
+            "max-w-3xl text-ink",
+            level === "h1" ? "type-h1" : "type-h2",
           )}
         >
           {children}
         </Heading>
         {aside ? (
-          <p className="max-w-sm text-base leading-relaxed text-ink-2">{aside}</p>
+          <p className="max-w-sm text-base text-ink-2">{aside}</p>
         ) : null}
       </div>
     </Reveal>

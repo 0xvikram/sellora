@@ -70,7 +70,7 @@ export function Nav() {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 md:px-8">
         <Link
           href="/"
-          className="font-display text-xl font-bold tracking-[-0.02em] text-ink"
+          className="font-display text-[1.375rem] leading-none font-medium tracking-[-0.01em] text-ink"
           aria-current={pathname === "/" ? "page" : undefined}
         >
           {SITE_NAME}
@@ -82,7 +82,7 @@ export function Nav() {
               key={link.href}
               href={link.href}
               aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
-              className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink"
+              className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-accent aria-[current=page]:underline-offset-[6px]"
             >
               {link.label}
             </Link>
@@ -92,14 +92,14 @@ export function Nav() {
         <div className="flex items-center gap-2">
           <a
             href={auditHref}
-            className="rounded-full bg-ink px-4 py-2 text-sm font-medium whitespace-nowrap text-ground transition-colors hover:bg-accent"
+            className="btn btn-primary px-4 text-[0.9375rem]"
           >
             Start the audit
           </a>
           <button
             ref={buttonRef}
             type="button"
-            className="inline-flex h-10 items-center rounded-full border border-line-2 px-4 text-sm font-medium text-ink md:hidden"
+            className="btn btn-secondary px-4 text-[0.9375rem] md:hidden"
             aria-expanded={open}
             aria-controls={panelId}
             onClick={() => (open ? close(false) : setOpen(true))}
@@ -123,7 +123,7 @@ export function Nav() {
                   href={link.href}
                   aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
                   onClick={() => close(false)}
-                  className="block py-3 font-display text-2xl font-semibold tracking-[-0.02em] text-ink aria-[current=page]:text-accent"
+                  className="block py-3 font-display text-3xl font-normal tracking-[-0.02em] text-ink aria-[current=page]:text-accent aria-[current=page]:italic"
                 >
                   {link.label}
                 </Link>

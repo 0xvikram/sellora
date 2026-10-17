@@ -3,36 +3,33 @@ import { BOOKING_URL, CONTACT_EMAIL, NAV_LINKS, REPLY_PROMISE, SITE_NAME } from 
 import { Container } from "./Container";
 import { Reveal } from "./Reveal";
 
-// Dark closing section and site footer, shown on every page.
+// The one dark section: closing call to action and site footer, on every
+// page. Ground text on #1a1c1b (14.69:1), muted at 75% (8.75:1), accent
+// brightened to #7fb8b0 (7.66:1). It sits above the grain layer.
 export function Close() {
   return (
     <footer id="contact" aria-labelledby="close-title" className="on-dark">
-      <Container className="pt-20 pb-10 md:pt-28">
+      <Container className="pt-16 pb-10 md:pt-28">
         <Reveal>
+          <p className="eyebrow">Contact</p>
           <h2
             id="close-title"
-            className="max-w-4xl font-display text-4xl leading-[1.02] font-semibold tracking-[-0.03em] text-balance md:text-6xl"
+            className="mt-5 max-w-4xl text-[clamp(2.5rem,5.5vw,4.75rem)] leading-[1.04] text-ground"
           >
-            Tell us what is leaking. We will price the fix.
+            Tell us what is leaking. We will price <span className="accent-word">the fix.</span>
           </h2>
         </Reveal>
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <a
-            href={BOOKING_URL}
-            className="inline-flex min-h-12 items-center rounded-full bg-ground px-6 text-base font-medium text-ink transition-colors hover:bg-accent hover:text-ground"
-          >
+        <div className="mt-10 flex flex-wrap items-center gap-3 md:gap-4">
+          <a href={BOOKING_URL} className="btn btn-primary">
             Book a 20-minute call
           </a>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="inline-flex min-h-12 items-center rounded-full border border-ground/40 px-6 font-mono text-sm text-ground transition-colors hover:border-ground"
-          >
+          <a href={`mailto:${CONTACT_EMAIL}`} className="btn btn-secondary font-mono text-sm font-normal">
             {CONTACT_EMAIL}
           </a>
         </div>
         <p className="mt-5 text-base text-ground/75">{REPLY_PROMISE}</p>
 
-        <div className="mt-20 flex flex-col gap-5 border-t border-ground/20 pt-8 md:flex-row md:items-center md:justify-between">
+        <div className="mt-16 flex flex-col gap-5 border-t border-ground/20 pt-8 md:mt-20 md:flex-row md:items-center md:justify-between">
           <nav aria-label="Footer">
             <ul className="flex flex-wrap gap-x-7 gap-y-2">
               {NAV_LINKS.map((link) => (

@@ -43,16 +43,16 @@ export function AuditForm({ id, className }: { id?: string; className?: string }
           required
           placeholder="yourstore.com"
           aria-describedby={hintId}
-          className="min-h-12 w-full min-w-0 flex-1 rounded-full border border-line-2 bg-card px-5 text-base text-ink placeholder:text-ink-2"
+          className="field min-w-0 flex-1"
         />
         <button
           type="submit"
-          className="min-h-12 shrink-0 rounded-full bg-ink px-6 text-base font-medium text-ground transition-colors hover:bg-accent"
+          className="btn btn-primary shrink-0"
         >
           Start the audit
         </button>
       </div>
-      <p id={hintId} className="mt-2 text-sm text-ink-2">
+      <p id={hintId} className="mt-2.5 text-sm text-ink-3">
         Opens the audit workspace in a new tab.
       </p>
     </form>

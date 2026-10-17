@@ -86,7 +86,7 @@ body {
   color: #fff;
 }
 
-/* Grain: one fixed, static SVG noise layer over the light page (about 4%),
+/* Grain: one fixed, static SVG noise layer over the light page (3.5%),
    multiplied so it reads as linen. It never takes pointer events. The dark
    closing section sits above it (.on-dark has a higher z-index), so the
    dark ground stays clean. The nav sits above it too. */
@@ -96,7 +96,7 @@ body::after {
   inset: 0;
   z-index: 40;
   pointer-events: none;
-  opacity: 0.045;
+  opacity: 0.035;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 220px 220px;
