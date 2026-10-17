@@ -128,3 +128,51 @@ test("crawl preview plays to the end state and the URL bar follows the form", as
     await expect(value).toHaveCSS("opacity", "1");
   }
 });
+
+const STORY_NUMBERS = ["3–5", "1 → 4", "21% → 31%", "1", "96%"];
+
+test("story: five stacked steps with their numbers at 390, no pinned stage", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const story = page.locator("#what-changes");
+  await expect(story.getByRole("heading", { level: 2 })).toHaveText("Five jobs, applied to the store.");
+  await expect(story.locator(".story-pin")).toBeHidden();
+  const steps = story.locator(".story-stack > ol > li");
+  await expect(steps).toHaveCount(5);
+  for (const [i, n] of STORY_NUMBERS.entries()) {
+    await expect(steps.nth(i).locator(".story-number")).toHaveText(n);
+    await expect(steps.nth(i).locator(".sfig")).toHaveAttribute("aria-hidden", "true");
+  }
+});
+
+test("story: pinned stage at 1440, and the page still scrolls to the footer", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const story = page.locator("#what-changes");
+  await expect(story.locator(".story-stack")).toBeHidden();
+  const stage = story.locator(".story-pin .story-stage");
+  await expect(stage).toBeVisible();
+  await expect(story.locator(".story-list > li")).toHaveCount(5);
+  // The stage is sticky inside a 600vh track; the timeline marks the
+  // active step once GSAP and ScrollTrigger have loaded.
+  const track = await story.locator(".story-pin").boundingBox();
+  expect(Math.round(track!.height)).toBe(900 * 6);
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 450) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 25));
+    }
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+  await expect(stage).toHaveAttribute("data-active", /[0-4]/);
+  await expect(page.locator("footer#contact")).toBeInViewport();
+});
+
+test("story: reduced motion at 1440 shows all five steps, not pinned", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const story = page.locator("#what-changes");
+  await expect(story.locator(".story-pin")).toBeHidden();
+  await expect(story.locator(".story-stack > ol > li")).toHaveCount(5);
+});

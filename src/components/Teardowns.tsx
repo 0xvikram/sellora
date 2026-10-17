@@ -9,7 +9,7 @@ export function Teardowns() {
     <section id="work" aria-labelledby="work-title" className="border-t border-line bg-ground">
       <Container className="py-14 md:py-24 lg:py-28">
         <SectionHead
-          index="01"
+          index="02"
           label="Work"
           id="work-title"
           aside="Each teardown states the baseline, the period and how it was measured."

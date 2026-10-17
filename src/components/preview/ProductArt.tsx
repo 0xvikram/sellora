@@ -219,3 +219,15 @@ export function HeroShot({ id }: { id: string }) {
     </svg>
   );
 }
+
+/** A portrait (9:16) product shot for an ad frame: more wall, the object lower and smaller. */
+export function AdShot({ id, shape, tone, scene }: { id: string; shape: Shape; tone: Tone; scene: Tone }) {
+  const scale = { pump: 0.62, dropper: 0.68, jar: 0.8, tube: 0.6 }[shape];
+  return (
+    <svg viewBox="0 0 56 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style={toneVar(scene)}>
+      <Defs id={id} />
+      <Backdrop id={id} w={56} h={100} horizon={62} />
+      <Placed id={id} shape={shape} tone={tone} x={28} y={70} s={scale} />
+    </svg>
+  );
+}

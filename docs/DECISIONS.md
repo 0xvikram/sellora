@@ -60,3 +60,18 @@ handles restart, so it stays. Everything else moved off it: ScrollTrigger
 and `@gsap/react` were removed, the reveals use IntersectionObserver and
 the Web Animations API, and GSAP itself is dynamically imported after first
 paint on the home page only (70 KB raw, 27 KB gzip, off the critical path).
+
+## 2026-10-17: Story section, ScrollTrigger back for one section only
+
+"What changes" (between the hero and Work) applies the five services to the
+sample store as five drawn figures, each with one headline number. On lg
+and up with motion allowed it is a 600vh track with a CSS `position:
+sticky` stage, and one GSAP timeline scrubbed by ScrollTrigger (scrub 0.6,
+no snap). ScrollTrigger is used only to map scroll to the timeline, not to
+pin: sticky keeps the layout stable from first paint (no pin-spacer, no
+layout shift when the script arrives) and the page always scrolls natively.
+GSAP and ScrollTrigger are dynamically imported only when that layout
+applies, so phones never download them. Below lg, with reduced motion, and
+without JavaScript, the five steps are stacked with figures in their final
+state. The old three-step "How it works" strip became the section's intro
+line, and the later section numbers moved up by one (Work is now 02).

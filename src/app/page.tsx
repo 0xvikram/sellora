@@ -1,10 +1,10 @@
 import { Close } from "@/components/Close";
 import { Faq } from "@/components/Faq";
 import { Hero } from "@/components/Hero";
-import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { PricesSection } from "@/components/PricesSection";
 import { ProofStrip } from "@/components/ProofStrip";
+import { Story } from "@/components/Story";
 import { Studio } from "@/components/Studio";
 import { Teardowns } from "@/components/Teardowns";
 import { JsonLd } from "@/lib/json-ld";
@@ -27,7 +27,7 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
-        <HowItWorks />
+        <Story />
         <Teardowns />
         <PricesSection />
         <Studio />
