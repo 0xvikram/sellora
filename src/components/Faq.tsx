@@ -15,7 +15,7 @@ export function Faq() {
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight [&::-webkit-details-marker]:hidden">
                 <h3 className="font-sans text-lg font-medium">{item.q}</h3>
                 <span
-                  className="font-mono text-xl text-accent transition-transform group-open:rotate-45"
+                  className="font-mono text-xl text-accent group-open:rotate-45"
                   aria-hidden="true"
                 >
                   +
