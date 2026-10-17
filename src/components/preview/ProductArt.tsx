@@ -183,14 +183,14 @@ function Backdrop({ id, w, h, horizon }: { id: string; w: number; h: number; hor
   );
 }
 
-/** One product shot for a grid card: 5:4, the object on a tinted set. */
+/** One product shot for a grid card: 10:7, the object on a tinted set. */
 export function ProductShot({ id, shape, tone, scene }: { id: string; shape: Shape; tone: Tone; scene: Tone }) {
-  const scale = { pump: 1.2, dropper: 1.3, jar: 1.5, tube: 1.16 }[shape];
+  const scale = { pump: 1.04, dropper: 1.12, jar: 1.32, tube: 1.0 }[shape];
   return (
-    <svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style={toneVar(scene)}>
+    <svg viewBox="0 0 100 70" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style={toneVar(scene)}>
       <Defs id={id} />
-      <Backdrop id={id} w={100} h={80} horizon={60} />
-      <Placed id={id} shape={shape} tone={tone} x={50} y={73} s={scale} />
+      <Backdrop id={id} w={100} h={70} horizon={52} />
+      <Placed id={id} shape={shape} tone={tone} x={50} y={63} s={scale} />
     </svg>
   );
 }

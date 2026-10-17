@@ -108,5 +108,23 @@ test("reduced motion shows the crawl preview end state", async ({ page }) => {
     await expect(chip).toHaveCSS("opacity", "1");
   }
   await expect(preview.locator('[data-pv="row"]').first()).toHaveCSS("clip-path", "none");
+  await expect(preview.locator('[data-pv="chip"]')).toHaveCount(5);
+  await expect(preview.locator('[data-pv="count"]')).toHaveText("48");
+  for (const wash of await preview.locator('[data-pv="wash"]').all()) {
+    await expect(wash).toHaveCSS("opacity", "0");
+  }
   await expect(preview.getByRole("button", { name: "Replay" })).toHaveCount(0);
+});
+
+test("crawl preview plays to the end state and the URL bar follows the form", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const preview = page.locator("figure.pv");
+  await page.locator("form#audit").getByLabel("Your store address").fill("https://www.my-shop.com/x");
+  await expect(preview.locator(".browser-url")).toContainText("my-shop.com");
+  await expect(preview.locator('[data-status="done"]')).toHaveCSS("opacity", "1", { timeout: 12_000 });
+  await expect(preview.locator('[data-pv="count"]')).toHaveText("48");
+  for (const value of await preview.locator('[data-pv="value"]').all()) {
+    await expect(value).toHaveCSS("opacity", "1");
+  }
 });

@@ -38,14 +38,16 @@ function LockIcon() {
 }
 
 /**
- * `findings` places one annotation chip in each region; `wash` is the
+ * `status` sits at the right of the browser bar. `findings` places one annotation chip in each region; `wash` is the
  * accent-soft overlay the timeline flashes as the scan line passes.
  */
 export function Storefront({
   domain,
+  status,
   findings,
 }: {
   domain: ReactNode;
+  status: ReactNode;
   findings: Record<Region, ReactNode>;
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -53,35 +55,39 @@ export function Storefront({
 
   return (
     <div className="browser">
-      <div className="browser-bar" aria-hidden="true">
-        <span className="browser-dots">
+      <div className="browser-bar">
+        <span className="browser-dots" aria-hidden="true">
           <i />
           <i />
           <i />
         </span>
         <span className="browser-url">
           <LockIcon />
+          <span className="sr-only">Reading </span>
           <span className="truncate">{domain}</span>
         </span>
+        {status}
       </div>
 
       <div className="store">
         <div data-region="header" className="store-region">
           <p className="store-announce" aria-hidden="true">Free shipping over $60</p>
-          <div className="store-nav" aria-hidden="true">
-            <span className="store-wordmark">Oatleaf</span>
-            <span className="store-links">
-              {LINKS.map((l) => (
-                <span key={l}>{l}</span>
-              ))}
-            </span>
-            <span className="store-bag">
-              <BagIcon />
-              <span>2</span>
-            </span>
+          <div className="store-navwrap">
+            <div className="store-nav" aria-hidden="true">
+              <span className="store-wordmark">Oatleaf</span>
+              <span className="store-links">
+                {LINKS.map((l) => (
+                  <span key={l}>{l}</span>
+                ))}
+              </span>
+              <span className="store-bag">
+                <BagIcon />
+                <span>2</span>
+              </span>
+            </div>
+            {findings.header}
           </div>
           {wash}
-          {findings.header}
         </div>
 
         <div data-region="hero" className="store-region store-hero">
@@ -90,7 +96,6 @@ export function Storefront({
           </div>
           <div className="store-hero-copy">
             <div aria-hidden="true" className="store-hero-text">
-              <p className="store-kicker">New: the barrier routine</p>
               <p className="store-headline">Skincare that keeps its promises</p>
               <span className="store-cta">Shop the routine</span>
             </div>

@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { usePreviewDomain } from "@/lib/preview-domain";
 import { useHydratedReducedMotion } from "@/lib/use-hydrated-reduced-motion";
 import { cn } from "@/lib/utils";
-import { Storefront } from "./preview/Storefront";
+import { Storefront, type Region } from "./preview/Storefront";
 
 type Gsap = typeof import("gsap").gsap;
 type Timeline = ReturnType<Gsap["timeline"]>;
 
-// The scripted crawl preview in the hero: a code-drawn storefront mock
-// (blocks only, nothing readable), the labels a read of the store produces,
-// and three result rows. Everything is local and scripted: no network, no
-// real crawl. Every line is sample data for oatleaf.example.
+// The scripted crawl preview in the hero: a code-drawn storefront for the
+// sample brand Oatleaf (see ./preview), the findings a read of the store
+// produces, and three results. Everything is local and scripted: no
+// network, no real crawl. Every line is sample data for oatleaf.example.
 //
 // Server HTML is in the start state (.pv-anim, see globals.css). With
 // reduced motion, or without JavaScript, CSS shows the final state and no
@@ -25,21 +25,23 @@ type Timeline = ReturnType<Gsap["timeline"]>;
 //
 // Timeline (seconds), played once when the panel enters the viewport:
 //   0.00  status "connecting"
-//   0.60  status "reading"; scan line sweeps the body, 2.2 s, power2.inOut
-//         labels appear as the line reaches each region (0.3 s fade, 6px)
-//         the product counter runs 0 -> 48 while the line crosses the grid
-//   2.80  status "measuring"; scan line fades (0.3 s)
-//   3.00  result rows clip in from the left, 0.5 s each, 90 ms stagger
-//   3.90  values resolve, 0.6 s apart: placeholder fades and scales to 0.96,
-//         value fades in and rises 6px (0.35 s, ease-out)
-//   5.60  status "done"; footer note fades in (0.4 s). Ends ~6.0, holds.
+//   0.60  status "reading"; scan line sweeps the body, 2.6 s, power2.inOut.
+//         As the line reaches each store region, the region takes a brief
+//         accent-soft wash (in 0.12 s, held to 0.3 s, out 0.4 s) and its finding chip
+//         appears (0.3 s fade, 6px). The product counter runs 6 -> 48
+//         while the line crosses the grid.
+//   3.20  status "measuring"; scan line fades (0.3 s)
+//   3.40  result rows clip in from the left, 0.5 s each, 90 ms stagger
+//   4.20  figures resolve, 0.55 s apart: the skeleton bar fades and scales
+//         to 0.96, the figure fades in and rises 6px (0.35 s, ease-out)
+//   5.80  status "done"; footer note fades in (0.4 s). Ends ~6.2, holds.
 
 const SCAN_START = 0.6;
-const SCAN_DUR = 2.2;
+const SCAN_DUR = 2.6;
 const SCAN_END = SCAN_START + SCAN_DUR;
 const ROWS_AT = SCAN_END + 0.2;
-const RESOLVE_AT = ROWS_AT + 0.9;
-const RESOLVE_GAP = 0.6;
+const RESOLVE_AT = ROWS_AT + 0.8;
+const RESOLVE_GAP = 0.55;
 const DONE_AT = RESOLVE_AT + 2 * RESOLVE_GAP + 0.5;
 const TILT = 2.5;
 const STATUSES = ["connecting", "reading", "measuring", "done"] as const;
@@ -64,7 +66,7 @@ const MARKER: Record<Kind, string> = {
 
 const RESULTS: { label: string; value: string; kind: Kind }[] = [
   { label: "Repeat rate", value: "31%", kind: "Measured" },
-  { label: "AI assistants citing the store", value: "1 of 10", kind: "Generated" },
+  { label: "AI assistants citing you", value: "1 of 10", kind: "Generated" },
   { label: "Pixel to order match", value: "54%", kind: "Measured" },
 ];
 
@@ -72,27 +74,22 @@ function Marker({ kind }: { kind: Kind }) {
   return <span aria-hidden="true" className={cn("size-1.5 shrink-0", MARKER[kind])} />;
 }
 
-/** A finding label: marker square, sr-only kind, mono text. */
-function Finding({
-  kind = "Measured",
-  children,
-  className,
-}: {
-  kind?: Kind;
-  children: React.ReactNode;
-  className?: string;
-}) {
+/**
+ * A finding chip pinned to the right edge of a store region: a 6px marker,
+ * a mono label and a one-line value. The anchor positions it; the chip
+ * inside is what the timeline fades in.
+ */
+function Finding({ label, kind = "Measured", children }: { label: string; kind?: Kind; children: ReactNode }) {
   return (
-    <span
-      data-pv="chip"
-      className={cn(
-        "inline-flex max-w-full items-center gap-1.5 border border-line-2 bg-card px-1.5 py-[3px] font-mono text-[10px] leading-tight whitespace-nowrap text-ink",
-        className,
-      )}
-    >
-      <Marker kind={kind} />
-      <span className="sr-only">{kind}: </span>
-      <span className="truncate">{children}</span>
+    <span className="finding-anchor">
+      <span data-pv="chip" className="finding">
+        <Marker kind={kind} />
+        <span className="finding-label">
+          <span className="sr-only">{kind} finding, </span>
+          {label}
+        </span>
+        <span className="finding-value">{children}</span>
+      </span>
     </span>
   );
 }
@@ -106,14 +103,25 @@ function KindChip({ kind }: { kind: Kind }) {
   );
 }
 
-function Anchor({ children }: { children: React.ReactNode }) {
-  return <span className="finding-anchor">{children}</span>;
-}
-
 function DomainText() {
   const domain = usePreviewDomain(SAMPLE_DOMAIN);
-  return <span className="text-ink">{domain}</span>;
+  return <>{domain}</>;
 }
+
+const FINDINGS: Record<Region, ReactNode> = {
+  header: <Finding label="Header">4 links, no search</Finding>,
+  hero: <Finding label="Hero">1 offer, no reviews shown</Finding>,
+  products: (
+    <Finding label="Products">
+      <span data-pv="count" className="tabular-nums">
+        48
+      </span>{" "}
+      of 48 read
+    </Finding>
+  ),
+  tracking: <Finding label="Tracking">Meta pixel found, CAPI missing</Finding>,
+  email: <Finding label="Email">Klaviyo, 3 flows, 2 gaps</Finding>,
+};
 
 /** Builds the paused crawl timeline (see the schedule at the top). */
 function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
@@ -127,7 +135,7 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
   const H = body.offsetHeight;
   // The time at which the eased scan line reaches a given y in the body.
   const at = (y: number) => SCAN_START + SCAN_DUR * invInOut(y / H);
-  const regionTop = (name: string) => {
+  const regionBox = (name: Region) => {
     const r = q(`[data-region="${name}"]`)[0].getBoundingClientRect();
     return { top: r.top - bodyTop, bottom: r.bottom - bodyTop };
   };
@@ -139,9 +147,6 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
       { opacity: 1, immediateRender: false },
       pos,
     );
-  };
-  const chipIn = (chip: Element, pos: number) => {
-    t.fromTo(chip, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.3 }, pos);
   };
 
   status("connecting", 0);
@@ -156,38 +161,38 @@ function buildTimeline(gsap: Gsap, el: HTMLElement): Timeline {
   );
   t.to(scan, { opacity: 0, duration: 0.3 }, SCAN_END);
 
-  // b. Labels, as the line passes each region.
-  const chipOf = (name: string) => q(`[data-region="${name}"] [data-pv="chip"]`)[0];
-  const header = regionTop("header");
-  const hero = regionTop("hero");
-  const grid = regionTop("products");
-  chipIn(chipOf("header"), at(header.top + 8));
-  chipIn(chipOf("hero"), at((hero.top + hero.bottom) / 2));
-  chipIn(chipOf("products"), at(grid.top + 4));
-  if (counter) {
-    const n = { v: 6 };
-    t.fromTo(
-      n,
-      { v: 6 },
-      {
-        v: 48,
-        ease: "none",
-        duration: Math.max(0.3, at(grid.bottom) - at(grid.top + 4)),
-        onUpdate: () => {
-          counter.nodeValue = String(Math.round(n.v));
+  // b. Each region: a wash while the line crosses it, then its finding.
+  (["header", "hero", "products", "tracking", "email"] as const).forEach((name) => {
+    const box = regionBox(name);
+    const enter = at(box.top + 2);
+    const wash = q(`[data-region="${name}"] > [data-pv="wash"]`)[0];
+    const chip = q(`[data-region="${name}"] [data-pv="chip"]`)[0];
+    t.fromTo(wash, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "none", immediateRender: false }, enter);
+    t.to(wash, { opacity: 0, duration: 0.4, ease: "power1.out" }, Math.min(enter + 0.3, at(box.bottom)));
+    const chipAt = name === "products" ? enter : at((box.top + box.bottom) / 2);
+    t.fromTo(chip, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.3 }, chipAt);
+    if (name === "products" && counter) {
+      counter.nodeValue = "6";
+      const n = { v: 6 };
+      t.fromTo(
+        n,
+        { v: 6 },
+        {
+          v: 48,
+          ease: "none",
+          duration: Math.max(0.3, at(box.bottom) - enter),
+          onUpdate: () => {
+            counter.nodeValue = String(Math.round(n.v));
+          },
         },
-      },
-      at(grid.top + 4),
-    );
-  }
-  for (const name of ["tracking", "email"]) {
-    const r = regionTop(name);
-    chipIn(chipOf(name), at((r.top + r.bottom) / 2));
-  }
+        enter,
+      );
+    }
+  });
 
   status("measuring", SCAN_END);
 
-  // c. Result rows clip in from the left, then each value resolves.
+  // c. Result rows clip in from the left, then each figure resolves.
   t.fromTo(
     q('[data-pv="row"]'),
     { clipPath: "inset(0% 100% 0% 0%)" },
@@ -285,68 +290,41 @@ export function Preview() {
 
   const replay = () => tl.current?.restart();
 
-  return (
-    <figure
-      ref={root}
-      aria-label={`Sample read of ${SAMPLE_DOMAIN}`}
-      className="pv pv-anim w-full"
-    >
-      {/* Header bar */}
-      <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-2.5 font-mono text-xs text-ink-2">
-        <p className="min-w-0 truncate">
-          Reading <DomainText />
-        </p>
-        <p className="flex shrink-0 items-center gap-2">
-          <span aria-hidden="true" className="size-1.5 bg-accent" />
-          <span className="grid">
-            {STATUSES.map((s) => (
-              <span
-                key={s}
-                data-status={s}
-                aria-hidden={s === "done" ? undefined : true}
-                className="[grid-area:1/1]"
-              >
-                {s}
-              </span>
-            ))}
+  const status = (
+    <span className="pv-status">
+      <span aria-hidden="true" className="size-1.5 bg-accent" />
+      <span className="grid">
+        {STATUSES.map((s) => (
+          <span
+            key={s}
+            data-status={s}
+            aria-hidden={s === "done" ? undefined : true}
+            className="[grid-area:1/1]"
+          >
+            {s}
           </span>
-        </p>
-      </div>
+        ))}
+      </span>
+    </span>
+  );
 
+  return (
+    <figure ref={root} aria-label={`Sample read of ${SAMPLE_DOMAIN}`} className="pv pv-anim w-full">
       {/* Body: the drawn storefront and the results column */}
       <div data-pv="body" className="pv-body relative overflow-hidden">
-        <Storefront
-          domain={<DomainText />}
-          findings={{
-            header: <Anchor><Finding>Header · 4 links, no search</Finding></Anchor>,
-            hero: <Anchor><Finding>Hero · 1 offer, no reviews shown</Finding></Anchor>,
-            products: (
-              <Anchor>
-                <Finding>
-                  Products · <span data-pv="count" className="tabular-nums">48</span> of 48 read
-                </Finding>
-              </Anchor>
-            ),
-            tracking: <Anchor><Finding>Tracking · Meta pixel found, CAPI missing</Finding></Anchor>,
-            email: <Anchor><Finding>Email · Klaviyo, 3 flows, 2 gaps</Finding></Anchor>,
-          }}
-        />
+        <Storefront domain={<DomainText />} status={status} findings={FINDINGS} />
 
-        <ul className="grid grid-cols-3 gap-2 sm:flex sm:flex-col" aria-label="Results">
+        <ul className="pv-results" aria-label="Results">
           {RESULTS.map((r) => (
-            <li key={r.label} data-pv="row" className="flex flex-col border border-line bg-ground px-2.5 py-2.5 sm:px-3">
-              <p className="flex-1 text-xs leading-snug text-ink-2 sm:flex-none sm:text-[13px]">{r.label}</p>
-              <div className="relative mt-1.5 h-8">
-                <span
-                  data-pv="placeholder"
-                  aria-hidden="true"
-                  className="absolute top-1.5 left-0 h-5 w-14 origin-left rounded-[2px] bg-ground-2 "
-                />
-                <span data-pv="value" className="absolute top-0 left-0 font-display text-[24px] leading-none whitespace-nowrap sm:text-[28px] text-ink tabular-nums">
+            <li key={r.label} data-pv="row" className="pv-result">
+              <p className="pv-result-label">{r.label}</p>
+              <div className="pv-figure">
+                <span data-pv="placeholder" aria-hidden="true" className="pv-skeleton" />
+                <span data-pv="value" className="pv-value">
                   {r.value}
                 </span>
               </div>
-              <div className="mt-1">
+              <div className="pv-result-kind">
                 <KindChip kind={r.kind} />
               </div>
             </li>
@@ -380,7 +358,7 @@ export function Preview() {
         </div>
       </figcaption>
       <noscript>
-        <style>{`.pv-anim [data-pv],.pv-anim [data-status]{opacity:1!important;clip-path:none!important}.pv-anim [data-pv="placeholder"],.pv-anim [data-pv="scan"],.pv-anim [data-status]:not([data-status="done"]){opacity:0!important}`}</style>
+        <style>{`.pv-anim [data-pv],.pv-anim [data-status]{opacity:1!important;clip-path:none!important}.pv-anim [data-pv="placeholder"],.pv-anim [data-pv="scan"],.pv-anim [data-pv="wash"],.pv-anim [data-status]:not([data-status="done"]){opacity:0!important}`}</style>
       </noscript>
     </figure>
   );
