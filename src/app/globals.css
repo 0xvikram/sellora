@@ -77,7 +77,7 @@ body {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  /* ink-2 on paper is about 6.6:1 (WCAG AA needs 4.5:1); ink-3 failed. */
+  /* ink-2 is 6.4:1 on paper, 7.1:1 on card (AA needs 4.5:1); ink-3 was 3.2:1. */
   color: var(--color-ink-2);
 }
 
