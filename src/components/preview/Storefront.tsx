@@ -85,7 +85,16 @@ export function Storefront({
                 <span>2</span>
               </span>
             </div>
-            {findings.header}
+            {/* A quiet sub-nav strip; the header finding sits at its right
+                edge, below the nav row, so it never covers a link or the bag. */}
+            <div className="store-subnav">
+              <span aria-hidden="true" className="store-crumbs">
+                <span>New</span>
+                <span>Bestsellers</span>
+                <span>Gift sets</span>
+              </span>
+              {findings.header}
+            </div>
           </div>
           {wash}
         </div>
