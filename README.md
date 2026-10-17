@@ -100,8 +100,7 @@ local, nothing global).
 ## Deploy
 
 Hosted on Vercel from the GitHub repo `0xvikram/sellora`. `main` is
-production; `dev` is the working branch. Work on a branch, open a pull
-request into `dev`, and merge to `main` to release. Vercel builds preview
-deployments for other branches.
+production; `dev` is the working branch. Nothing is pushed to `main`
+directly.
 
 Decisions and their reasons are logged in `docs/DECISIONS.md`.
