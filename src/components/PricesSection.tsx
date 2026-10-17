@@ -5,7 +5,7 @@ import { SectionHead } from "./SectionHead";
 
 export function PricesSection() {
   return (
-    <section id="prices" aria-labelledby="prices-title" className="border-t border-line bg-paper-2">
+    <section id="prices" aria-labelledby="prices-title" className="border-t border-line bg-ground-2">
       <Container className="grid gap-12 py-20 md:py-28 lg:grid-cols-[1fr_auto] lg:items-start">
         <div>
           <SectionHead index="03" label="Prices" id="prices-title">

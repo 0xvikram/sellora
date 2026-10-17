@@ -1,25 +1,53 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------
-   Design tokens: warm paper ground, ink type, one ultramarine accent
+   Design tokens: "Linen & Moss". Warm linen ground, ink type, one
+   deep-teal accent, moss/sand/clay as illustrative colours, and one
+   tinted near-black for the closing section. Hex copies for the OG
+   image live in src/lib/tokens.ts; keep the two in sync.
+   Contrast (WCAG 2.x, computed):
+     ink        14.90 ground · 13.24 ground-2 · 16.25 card · 13.56 accent-soft
+     ink-2       9.82 ground ·  8.73 ground-2 · 10.71 card ·  8.94 accent-soft
+     ink-3       5.68 ground ·  5.04 ground-2 ·  6.19 card
+     accent      6.50 ground ·  5.78 ground-2 ·  7.09 card ·  5.92 accent-soft
+     white on accent-ink 7.58 · ground on accent 6.50
+     moss text   4.64 ground ·  5.06 card (fails 4.12 on ground-2: no moss text there)
+     clay-ink    4.87 ground ·  5.31 card (fails 4.33 on ground-2)
+     sand 1.99 / clay 3.47 on ground: fills only
+     dark: ground on ground-dark 14.69 · accent-on-dark 7.66 · ground/75% 8.75
+     line-control (ink 50%) 3.11-3.27 on the three light grounds (inputs)
    --------------------------------------------------------------- */
 
 @theme {
-  --color-paper: #f5f1e8;
-  --color-paper-2: #ece6d9;
-  --color-card: #fffdf8;
-  --color-ink: #16140f;
-  --color-ink-2: #5c574c;
-  --color-ink-3: #8c8676;
-  --color-line: rgba(22, 20, 15, 0.12);
-  --color-line-2: rgba(22, 20, 15, 0.22);
-  --color-accent: #2438e0;
-  --color-accent-soft: #e2e6ff;
-  --color-clay: #e2643c;
-  --color-leaf: #2f8f5b;
-  --color-sun: #f0b84a;
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
 
-  --shadow-receipt: 0 30px 60px -30px rgb(22 20 15 / 0.45);
+  --color-ground: #f2ede4;
+  --color-ground-2: #e7e0d3;
+  --color-card: #faf7f1;
+  --color-ink: #1c1a16;
+  --color-ink-2: #3d3934;
+  --color-ink-3: #625c52;
+  --color-line: rgb(28 26 22 / 0.12);
+  --color-line-2: rgb(28 26 22 / 0.22);
+  --color-line-control: rgb(28 26 22 / 0.5);
+  --color-accent: #1f5c63;
+  --color-accent-soft: #d9e6e4;
+  --color-accent-ink: #1f5c63;
+  --color-moss: #5f6f52;
+  --color-sand: #c2a58c;
+  --color-clay: #c6613f;
+  --color-clay-ink: #a94a28;
+  --color-ground-dark: #1a1c1b;
+  --color-accent-on-dark: #7fb8b0;
+
+  --radius-control: 4px;
+  --radius-chip: 2px;
+
+  --shadow-*: initial;
+  --shadow-receipt: 0 30px 60px -30px rgb(28 26 22 / 0.45);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-inter-tight), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -35,7 +63,7 @@ html {
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--color-ground);
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -45,6 +73,29 @@ body {
 ::selection {
   background: var(--color-accent);
   color: #fff;
+}
+
+/* Grain: one fixed, static SVG noise layer over the light page (about 4%),
+   multiplied so it reads as linen. It never takes pointer events. The dark
+   closing section sits above it (.on-dark has a higher z-index), so the
+   dark ground stays clean. The nav sits above it too. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+.on-dark {
+  position: relative;
+  z-index: 41;
+  background: var(--color-ground-dark);
+  color: var(--color-ground);
 }
 
 :focus-visible {
@@ -77,7 +128,7 @@ body {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  /* ink-2 is 6.4:1 on paper, 7.1:1 on card (AA needs 4.5:1); ink-3 was 3.2:1. */
+  /* ink-2 is 9.82:1 on ground, 8.73:1 on ground-2, 10.71:1 on card. */
   color: var(--color-ink-2);
 }
 

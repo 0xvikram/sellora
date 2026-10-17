@@ -66,7 +66,7 @@ export function Nav() {
   }, [open, close]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper">
+    <header className="sticky top-0 z-50 border-b border-line bg-ground">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 md:px-8">
         <Link
           href="/"
@@ -92,7 +92,7 @@ export function Nav() {
         <div className="flex items-center gap-2">
           <a
             href={auditHref}
-            className="rounded-full bg-ink px-4 py-2 text-sm font-medium whitespace-nowrap text-paper transition-colors hover:bg-accent"
+            className="rounded-full bg-ink px-4 py-2 text-sm font-medium whitespace-nowrap text-ground transition-colors hover:bg-accent"
           >
             Start the audit
           </a>
@@ -113,7 +113,7 @@ export function Nav() {
         ref={panelRef}
         id={panelId}
         hidden={!open}
-        className="border-t border-line bg-paper md:hidden"
+        className="border-t border-line bg-ground md:hidden"
       >
         <nav aria-label="Mobile" className="mx-auto w-full max-w-7xl px-5 py-4">
           <ul className="flex flex-col">

@@ -17,7 +17,7 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 80,
-          background: TOKENS.paper,
+          background: TOKENS.ground,
           color: TOKENS.ink,
         }}
       >

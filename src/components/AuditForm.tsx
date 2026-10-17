@@ -47,7 +47,7 @@ export function AuditForm({ id, className }: { id?: string; className?: string }
         />
         <button
           type="submit"
-          className="min-h-12 shrink-0 rounded-full bg-ink px-6 text-base font-medium text-paper transition-colors hover:bg-accent"
+          className="min-h-12 shrink-0 rounded-full bg-ink px-6 text-base font-medium text-ground transition-colors hover:bg-accent"
         >
           Start the audit
         </button>

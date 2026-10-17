@@ -45,7 +45,7 @@ export default async function TeardownPage({ params }: Props) {
       <Nav />
       <main id="main">
         {teardown.sample ? (
-          <div role="note" className="border-b border-line-2 bg-paper-2">
+          <div role="note" className="border-b border-line-2 bg-ground-2">
             <Container className="flex flex-wrap items-center gap-3 py-3 text-sm text-ink">
               <SampleChip />
               This is a sample teardown that shows the format. It is not a client result.

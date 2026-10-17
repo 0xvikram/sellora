@@ -35,7 +35,7 @@ export default function ContactPage() {
               <li>
                 <a
                   href={BOOKING_URL}
-                  className="inline-flex min-h-12 items-center rounded-full bg-ink px-6 text-base font-medium text-paper hover:bg-accent"
+                  className="inline-flex min-h-12 items-center rounded-full bg-ink px-6 text-base font-medium text-ground hover:bg-accent"
                 >
                   Book a 20-minute call
                 </a>
