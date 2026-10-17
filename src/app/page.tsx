@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { PricesSection } from "@/components/PricesSection";
 import { ProofStrip } from "@/components/ProofStrip";
+import { Report } from "@/components/Report";
 import { Story } from "@/components/Story";
 import { Studio } from "@/components/Studio";
 import { Teardowns } from "@/components/Teardowns";
@@ -29,6 +30,7 @@ export default function Home() {
         <Hero />
         <Story />
         <Teardowns />
+        <Report />
         <PricesSection />
         <Studio />
         <ProofStrip />
