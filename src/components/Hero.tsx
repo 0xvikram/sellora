@@ -8,7 +8,7 @@ import { Preview } from "./Preview";
 export function Hero() {
   return (
     <section id="top" aria-labelledby="hero-title" className="bg-ground">
-      <Container className="grid gap-12 pt-12 pb-16 md:pt-20 md:pb-24 lg:grid-cols-[46fr_54fr] lg:items-center lg:gap-14 lg:pt-14 lg:pb-20">
+      <Container className="grid gap-12 pt-12 pb-16 md:pt-20 md:pb-24 lg:grid-cols-[48fr_52fr] lg:items-start lg:gap-14 lg:pt-10 lg:pb-20">
         <HeroIntro className="min-w-0">
           <p data-intro className="eyebrow">For e-commerce and D2C brands</p>
           <h1
@@ -31,10 +31,11 @@ export function Hero() {
           </p>
         </HeroIntro>
 
-        <div className="flex min-w-0 justify-end">
-          <div className="w-full max-w-[640px]">
-            <Preview />
-          </div>
+        {/* On lg the panel starts 24px below the top of the H1 (the eyebrow
+            line is 0.9rem plus its 1.5rem gap). On mobile it runs under the
+            form with 16px gutters. */}
+        <div className="-mx-1 min-w-0 md:mx-0 lg:mt-[calc(2.4rem+24px)]">
+          <Preview />
         </div>
       </Container>
     </section>
