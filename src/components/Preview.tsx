@@ -133,7 +133,11 @@ export function Preview() {
 
       const t = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
       const status = (name: (typeof STATUSES)[number], pos: number) => {
-        t.set(statusEls, { opacity: 0 }, pos).set(q(`[data-status="${name}"]`), { opacity: 1 }, pos);
+        t.set(statusEls, { opacity: 0, immediateRender: false }, pos).set(
+          q(`[data-status="${name}"]`),
+          { opacity: 1, immediateRender: false },
+          pos,
+        );
       };
       const chipIn = (chip: Element, pos: number) => {
         t.fromTo(chip, { opacity: 0, x: -6 }, { opacity: 1, x: 0, duration: 0.3 }, pos);

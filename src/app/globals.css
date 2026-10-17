@@ -357,17 +357,17 @@ body::after {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .pv-anim [data-pv="chip"],
-  .pv-anim [data-pv="value"],
-  .pv-anim [data-pv="note"],
-  .pv-anim [data-status="done"] {
+  .pv.pv-anim [data-pv="chip"],
+  .pv.pv-anim [data-pv="value"],
+  .pv.pv-anim [data-pv="note"],
+  .pv.pv-anim [data-status="done"] {
     opacity: 0;
   }
-  .pv-anim [data-pv="placeholder"],
-  .pv-anim [data-status="connecting"] {
+  .pv.pv-anim [data-pv="placeholder"],
+  .pv.pv-anim [data-status="connecting"] {
     opacity: 1;
   }
-  .pv-anim [data-pv="row"] {
+  .pv.pv-anim [data-pv="row"] {
     clip-path: inset(0% 100% 0% 0%);
   }
 }
