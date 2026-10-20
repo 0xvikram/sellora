@@ -7,7 +7,7 @@ import { Preview } from "./Preview";
 
 export function Hero() {
   return (
-    <section id="top" aria-labelledby="hero-title" className="bg-ground">
+    <section id="top" aria-labelledby="hero-title" data-ground="bone">
       <Container className="grid gap-12 pt-12 pb-16 md:pt-20 md:pb-24 lg:grid-cols-[48fr_52fr] lg:items-start lg:gap-14 lg:pt-10 lg:pb-20">
         <HeroIntro className="min-w-0">
           <p data-intro className="eyebrow">For e-commerce and D2C brands</p>

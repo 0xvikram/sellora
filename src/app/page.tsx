@@ -1,5 +1,6 @@
 import { Close } from "@/components/Close";
 import { Faq } from "@/components/Faq";
+import { GroundShift } from "@/components/GroundShift";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { PricesSection } from "@/components/PricesSection";
@@ -25,6 +26,7 @@ export default function Home() {
           })),
         }}
       />
+      <GroundShift />
       <Nav />
       <main id="main">
         <Hero />

@@ -8,7 +8,7 @@ import { Reveal } from "./Reveal";
 // bordered card on the linen ground.
 export function Studio() {
   return (
-    <section id="studio" aria-labelledby="studio-title" className="border-t border-line bg-ground-2">
+    <section id="studio" aria-labelledby="studio-title" data-ground="bone">
       <Container className="py-14 md:py-24 lg:py-28">
         <Reveal>
           <p className="flex items-center gap-3">

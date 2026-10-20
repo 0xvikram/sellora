@@ -6,7 +6,7 @@ import { Container } from "./Container";
 // so visibly, so nothing unverified reads as a claim.
 export function ProofStrip() {
   return (
-    <section aria-label="Proof" className="border-t border-line bg-ground">
+    <section aria-label="Proof" data-ground="bone">
       <Container className="py-8 md:py-10">
         <ul className="grid divide-y divide-line-2 border border-line-2 bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {PROOF.map((badge) => (

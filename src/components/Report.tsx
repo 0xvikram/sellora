@@ -102,7 +102,7 @@ export function Report() {
   }, []);
 
   return (
-    <section id="report" aria-labelledby="report-title" className="on-dark report overflow-hidden">
+    <section id="report" aria-labelledby="report-title" data-ground="ink" className="report overflow-hidden">
       <Container className="py-16 md:py-28">
         <p className="flex items-center gap-3">
           <span className="eyebrow">03</span>

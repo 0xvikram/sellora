@@ -6,7 +6,7 @@ import { TeardownCard } from "./TeardownCard";
 
 export function Teardowns() {
   return (
-    <section id="work" aria-labelledby="work-title" className="border-t border-line bg-ground">
+    <section id="work" aria-labelledby="work-title" data-ground="sage">
       <Container className="py-14 md:py-24 lg:py-28">
         <SectionHead
           index="02"

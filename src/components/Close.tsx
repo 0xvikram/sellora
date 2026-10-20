@@ -10,7 +10,7 @@ import { Reveal } from "./Reveal";
 // edge behind the footer links, so the page ends with a mark.
 export function Close() {
   return (
-    <footer id="contact" aria-labelledby="close-title" className="on-dark overflow-hidden">
+    <footer id="contact" aria-labelledby="close-title" data-ground="ink" className="on-dark overflow-hidden">
       <Container className="relative z-[1] pt-16 pb-[18vw] md:pt-28 md:pb-[9vw]">
         <Reveal>
           <p className="eyebrow">Contact</p>

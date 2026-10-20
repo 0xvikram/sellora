@@ -4,7 +4,7 @@ import { SectionHead } from "./SectionHead";
 
 export function Faq() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="border-t border-line bg-card">
+    <section id="faq" aria-labelledby="faq-title" data-ground="bone">
       <Container className="grid gap-10 py-14 md:gap-12 md:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:py-28">
         <SectionHead index="06" label="FAQ" id="faq-title">
           Questions, <span className="accent-word">answered.</span>

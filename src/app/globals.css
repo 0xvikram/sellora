@@ -134,6 +134,23 @@ body {
   color: var(--color-ink);
 }
 
+/* The shared ground behind the home page (GroundShift.tsx). It sits
+   behind all content (negative z-index, body is not a stacking context)
+   and never takes pointer events. */
+.ground-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-bone);
+  transition: background-color 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ground-layer {
+    transition: none;
+  }
+}
+
 /* The closing footer is its own ink panel on every page. */
 .on-dark {
   position: relative;
@@ -1977,17 +1994,6 @@ body {
   height: 0.5rem;
   background: var(--color-lime);
   transform: translateY(-0.2em);
-}
-
-/* The audit form on the dark ground. */
-.on-dark form label {
-  color: var(--color-ground);
-}
-.on-dark form p {
-  color: rgb(243 245 238 / 0.75);
-}
-.on-dark .field:focus-visible {
-  outline-color: var(--color-lime);
 }
 
 /* Studio pull-quote: H2 scale and up, the open quote hanging in the

@@ -156,7 +156,7 @@ export function Story() {
   }, []);
 
   return (
-    <section id="what-changes" aria-labelledby="story-title" className="story border-t border-line bg-ground">
+    <section id="what-changes" aria-labelledby="story-title" data-ground="bone" className="story">
       <Container className="story-stack pt-14 md:pt-24 lg:pt-28">
         <SectionHead index="01" label="What changes" id="story-title">
           <Head />
