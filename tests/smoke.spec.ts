@@ -332,3 +332,193 @@ test("only one 3D scene renders at a time", async ({ page }) => {
   await expect(pipe).toHaveAttribute("data-active", "false");
   await expect(running).toHaveCount(1);
 });
+
+// Scene robustness (piece 4). The scenes must fall back to their posters
+// whenever they cannot or should not run, and never take the page down.
+
+/** Counts WebGL draw calls on the page (both scenes, shadow pass included). */
+async function countDraws(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __draws: number };
+    w.__draws = 0;
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ["drawElements", "drawArrays", "drawElementsInstanced", "drawArraysInstanced"] as const) {
+        const original = (proto as unknown as Record<string, (...a: unknown[]) => unknown>)[name];
+        if (!original) continue;
+        (proto as unknown as Record<string, unknown>)[name] = function (this: unknown, ...args: unknown[]) {
+          w.__draws++;
+          return original.apply(this, args);
+        };
+      }
+    }
+  });
+  return async (ms = 600) => {
+    const before = await page.evaluate(() => (window as unknown as { __draws: number }).__draws);
+    await page.waitForTimeout(ms);
+    return (await page.evaluate(() => (window as unknown as { __draws: number }).__draws)) - before;
+  };
+}
+
+/** Pretends the tab is hidden (or visible again) and fires visibilitychange. */
+async function setHidden(page: Page, hidden: boolean) {
+  await page.evaluate((hidden) => {
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => (hidden ? "hidden" : "visible") });
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => hidden });
+    document.dispatchEvent(new Event("visibilitychange"));
+  }, hidden);
+}
+
+test("scenes: resizing below 1024 unmounts the canvas and shows the poster; back up remounts", async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const hero = page.locator("figure[data-diorama]");
+  await expect(hero).toHaveAttribute("data-diorama", "live", { timeout: 8_000 });
+  await expect(hero.locator("canvas")).toHaveCount(1);
+
+  await page.setViewportSize({ width: 900, height: 900 });
+  await expect(hero).toHaveAttribute("data-diorama", "poster");
+  await expect(page.locator("canvas")).toHaveCount(0);
+  const poster = hero.locator("img[data-dio-poster]");
+  await expect(poster).toBeVisible();
+  await expect(poster).toHaveCSS("opacity", "1");
+  await expect(hero.getByRole("button", { name: "Replay" })).toHaveCount(0);
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(hero).toHaveAttribute("data-diorama", "live", { timeout: 8_000 });
+  await expect(hero.locator("canvas")).toHaveCount(1);
+  expect(errors).toEqual([]);
+});
+
+test("scenes: the frame loop stops when off-screen and when the tab is hidden", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const draws = await countDraws(page);
+  await page.goto("/");
+  const hero = page.locator("figure[data-diorama]");
+  const pipe = page.locator("figure[data-pipeline]");
+  await expect(hero).toHaveAttribute("data-diorama", "live", { timeout: 8_000 });
+  expect(await draws()).toBeGreaterThan(0);
+
+  await setHidden(page, true);
+  await expect(hero).toHaveAttribute("data-active", "false");
+  await page.waitForTimeout(200);
+  expect(await draws()).toBe(0);
+  await setHidden(page, false);
+  await expect(hero).toHaveAttribute("data-active", "true");
+  expect(await draws()).toBeGreaterThan(0);
+
+  // Between the two scenes (the story): nothing renders.
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 1.8));
+  await expect(hero).toHaveAttribute("data-active", "false");
+  await page.waitForTimeout(200);
+  expect(await draws()).toBe(0);
+
+  await pipe.scrollIntoViewIfNeeded();
+  await expect(pipe).toHaveAttribute("data-active", "true", { timeout: 10_000 });
+  expect(await draws()).toBeGreaterThan(0);
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(pipe).toHaveAttribute("data-active", "false");
+  await page.waitForTimeout(200);
+  expect(await draws()).toBe(0);
+});
+
+test("scenes: without WebGL both cards keep their posters, no 3D chunk, no errors", async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+      if (/webgl/i.test(type)) return null;
+      return (original as (...a: unknown[]) => unknown).call(this, type, ...rest);
+    } as typeof original;
+  });
+  const threeChunks: string[] = [];
+  page.on("response", async (res) => {
+    if (res.request().resourceType() !== "script") return;
+    const body = await res.text().catch(() => "");
+    if (body.includes("WebGLRenderer")) threeChunks.push(res.url());
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500);
+  const hero = page.locator("figure[data-diorama]");
+  const pipe = page.locator("figure[data-pipeline]");
+  await expect(hero).toHaveAttribute("data-diorama", "poster");
+  await expect(hero.locator("img[data-dio-poster]")).toBeVisible();
+  await pipe.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  await expect(pipe).toHaveAttribute("data-pipeline", "poster");
+  await expect(pipe.locator("img[data-pipe-poster]")).toBeVisible();
+  await expect(page.locator("canvas")).toHaveCount(0);
+  expect(threeChunks).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("scenes: a lost WebGL context falls back to the poster and the page stays up", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const hero = page.locator("figure[data-diorama]");
+  await expect(hero).toHaveAttribute("data-diorama", "live", { timeout: 8_000 });
+  await page.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-dio-canvas] canvas")!;
+    const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+  });
+  await expect(hero).toHaveAttribute("data-diorama", "poster");
+  await expect(hero.locator("canvas")).toHaveCount(0);
+  await expect(hero.locator("img[data-dio-poster]")).toHaveCSS("opacity", "1");
+  await expect(page.locator("h1")).toBeVisible();
+});
+
+test("scenes: reduced motion on desktop shows both posters, no canvas", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  const pipe = page.locator("figure[data-pipeline]");
+  await pipe.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  await expect(pipe).toHaveAttribute("data-pipeline", "poster");
+  await expect(pipe.locator("img[data-pipe-poster]")).toBeVisible();
+  await expect(page.locator("figure[data-diorama]")).toHaveAttribute("data-diorama", "poster");
+  await expect(page.locator("canvas")).toHaveCount(0);
+});
+
+test("scenes: keyboard reaches Replay, never the floating labels; hidden lists name findings and gates", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const hero = page.locator("figure[data-diorama]");
+  await expect(hero).toHaveAttribute("data-diorama", "live", { timeout: 8_000 });
+  const replay = hero.getByRole("button", { name: "Replay the sample read" });
+  await expect(replay).toBeVisible();
+
+  let reached = false;
+  for (let i = 0; i < 20 && !reached; i++) {
+    await page.keyboard.press("Tab");
+    const where = await page.evaluate(() => {
+      const el = document.activeElement;
+      return {
+        replay: el?.getAttribute("aria-label") === "Replay the sample read",
+        inLabel: !!el?.closest(".dio-finding, .pipe-label, canvas"),
+      };
+    });
+    expect(where.inLabel).toBe(false);
+    reached = where.replay;
+  }
+  expect(reached).toBe(true);
+  await page.keyboard.press("Enter");
+  await expect(hero.locator('[data-finding][data-on]')).toHaveCount(4, { timeout: 6_000 });
+
+  // Floating labels are decorative; the hidden lists carry the content.
+  await expect(hero.locator(".dio-finding[aria-hidden='true']")).toHaveCount(4);
+  await expect(hero.locator("ul.sr-only > li")).toHaveCount(4);
+  const pipe = page.locator("figure[data-pipeline]");
+  await pipe.scrollIntoViewIfNeeded();
+  await expect(pipe).toHaveAttribute("data-pipeline", "live", { timeout: 10_000 });
+  await expect(pipe.locator(".pipe-label[aria-hidden='true']")).toHaveCount(5);
+  await expect(pipe.locator("ol.sr-only > li")).toHaveCount(5);
+  expect(await page.locator(".dio-finding, .pipe-label").evaluateAll((els) =>
+    els.flatMap((el) => [...el.querySelectorAll("a, button, input, [tabindex]")]).length,
+  )).toBe(0);
+});

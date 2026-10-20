@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { wantScene, useSceneActive } from "./three/active";
 import { FINDINGS } from "./three/layout";
 import { hasWebGL, LIVE_QUERY } from "./three/live-gate";
+import { SceneBoundary } from "./three/SceneBoundary";
 import type { Pointer } from "./three/Diorama";
 
 // The 3D chunk (three, fiber, drei) is never in the initial bundle: it is
@@ -75,14 +76,17 @@ export function HeroDiorama() {
   const scroll = useRef(0);
   const still = useSyncExternalStore<Still>(noopSubscribe, stillMode, () => "");
   const [gated, setGated] = useState(false);
-  const live = gated || !!still;
+  // Set when the canvas throws or loses its context (SceneBoundary): the
+  // card keeps its poster for the rest of the visit.
+  const [failed, setFailed] = useState(false);
+  const live = (gated && !failed) || !!still;
   const [ready, setReady] = useState(false);
   const [onScreen, setOnScreen] = useState(true);
   const [tabVisible, setTabVisible] = useState(true);
   const [replay, setReplay] = useState(0);
   // One scene renders at a time (./three/active.ts): the hero asks to run
   // while it is mounted, on screen and the tab is visible.
-  const wants = gated && !still && onScreen && tabVisible;
+  const wants = gated && !failed && !still && onScreen && tabVisible;
   useEffect(() => {
     wantScene("hero", wants);
     return () => wantScene("hero", false);
@@ -165,7 +169,7 @@ export function HeroDiorama() {
       aria-label={`Sample read of ${SAMPLE_DOMAIN}`}
       data-diorama={live ? (ready ? "live" : "loading") : "poster"}
       data-dio-compact={still === "still-m" || undefined}
-      data-active={gated && !still ? String(running) : undefined}
+      data-active={gated && !failed && !still ? String(running) : undefined}
       className={cn("w-full", still === "still-m" && "w-[390px]")}
     >
       <div
@@ -194,8 +198,12 @@ export function HeroDiorama() {
         )}
 
         {live && (
-          <div
+          <SceneBoundary
             data-dio-canvas
+            onFail={() => {
+              setFailed(true);
+              setReady(false);
+            }}
             className={cn(
               "absolute inset-0 transition-opacity duration-400 ease-out",
               ready || still ? "opacity-100" : "opacity-0",
@@ -209,7 +217,7 @@ export function HeroDiorama() {
               still={!!still}
               onReady={() => setReady(true)}
             />
-          </div>
+          </SceneBoundary>
         )}
 
         {!still && <Chip />}
@@ -230,6 +238,7 @@ export function HeroDiorama() {
             <button
               type="button"
               onClick={() => setReplay((n) => n + 1)}
+              aria-label="Replay the sample read"
               className="shrink-0 underline decoration-line-2 underline-offset-4 hover:text-ink hover:decoration-ink"
             >
               Replay

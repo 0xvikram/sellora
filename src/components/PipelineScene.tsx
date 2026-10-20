@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { useSceneActive, wantScene } from "./three/active";
 import { hasWebGL, LIVE_QUERY } from "./three/live-gate";
+import { SceneBoundary } from "./three/SceneBoundary";
 import { PIPELINE_GATES } from "./three/pipeline-layout";
 import type { Pointer } from "./three/Pipeline";
 
@@ -36,12 +37,15 @@ export function PipelineScene() {
   const progress = useRef(0);
   const still = useSyncExternalStore<Still>(noopSubscribe, stillMode, () => "");
   const [gated, setGated] = useState(false);
-  const live = gated || !!still;
+  // Set when the canvas throws or loses its context (SceneBoundary): the
+  // card keeps its poster for the rest of the visit.
+  const [failed, setFailed] = useState(false);
+  const live = (gated && !failed) || !!still;
   const [ready, setReady] = useState(false);
   const [onScreen, setOnScreen] = useState(false);
   const [tabVisible, setTabVisible] = useState(true);
 
-  const wants = gated && !still && onScreen && tabVisible;
+  const wants = gated && !failed && !still && onScreen && tabVisible;
   useEffect(() => {
     wantScene("pipeline", wants);
     return () => wantScene("pipeline", false);
@@ -130,7 +134,7 @@ export function PipelineScene() {
       aria-label="A sample store's orders passing the five gates"
       data-pipeline={live ? (ready ? "live" : "loading") : "poster"}
       data-pipe-compact={still === "still-m" || undefined}
-      data-active={gated && !still ? String(running) : undefined}
+      data-active={gated && !failed && !still ? String(running) : undefined}
       className={cn("w-full", still === "still-m" && "w-[390px]")}
     >
       <div
@@ -159,8 +163,12 @@ export function PipelineScene() {
         )}
 
         {live && (
-          <div
+          <SceneBoundary
             data-pipe-canvas
+            onFail={() => {
+              setFailed(true);
+              setReady(false);
+            }}
             className={cn(
               "absolute inset-0 transition-opacity duration-400 ease-out",
               ready || still ? "opacity-100" : "opacity-0",
@@ -173,7 +181,7 @@ export function PipelineScene() {
               still={!!still}
               onReady={() => setReady(true)}
             />
-          </div>
+          </SceneBoundary>
         )}
 
         <ol className="sr-only">
