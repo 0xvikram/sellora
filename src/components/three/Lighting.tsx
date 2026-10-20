@@ -16,12 +16,15 @@ export function Lights({
   shadows,
   bounds = 3.4,
   keyAt = [0, 0, 0],
+  mapSize = 1024,
 }: {
   shadows: boolean;
   bounds?: number;
   keyAt?: [number, number, number];
+  mapSize?: number;
 }) {
   const key = useRef<DirectionalLight>(null);
+  const [kx, ky, kz] = keyAt;
   useEffect(() => {
     const l = key.current;
     if (!l) return;
@@ -32,10 +35,9 @@ export function Lights({
     l.shadow.camera.near = 1;
     l.shadow.camera.far = 22;
     l.shadow.camera.updateProjectionMatrix();
-    l.target.position.set(...keyAt);
+    l.target.position.set(kx, ky, kz);
     l.target.updateMatrixWorld();
-  }, [bounds, keyAt]);
-  const [kx, ky, kz] = keyAt;
+  }, [bounds, kx, ky, kz]);
   return (
     <>
       <directionalLight
@@ -44,7 +46,7 @@ export function Lights({
         intensity={2.8}
         position={[kx - 5, ky + 7.5, kz + 1.2]}
         castShadow={shadows}
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[mapSize, mapSize]}
         shadow-bias={-0.0004}
         shadow-normalBias={0.02}
         shadow-radius={3}

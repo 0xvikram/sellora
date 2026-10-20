@@ -4,7 +4,9 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePreviewDomain } from "@/lib/preview-domain";
 import { cn } from "@/lib/utils";
+import { wantScene, useSceneActive } from "./three/active";
 import { FINDINGS } from "./three/layout";
+import { hasWebGL, LIVE_QUERY } from "./three/live-gate";
 import type { Pointer } from "./three/Diorama";
 
 // The 3D chunk (three, fiber, drei) is never in the initial bundle: it is
@@ -12,20 +14,6 @@ import type { Pointer } from "./three/Diorama";
 const Diorama = dynamic(() => import("./three/Diorama"), { ssr: false });
 
 export const SAMPLE_DOMAIN = "oatleaf.example";
-
-/** Desktop with a mouse, motion allowed. WebGL is checked separately. */
-const LIVE_QUERY = "(pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference)";
-
-function hasWebGL() {
-  try {
-    const c = document.createElement("canvas");
-    const gl = c.getContext("webgl2") ?? c.getContext("webgl");
-    gl?.getExtension("WEBGL_lose_context")?.loseContext();
-    return !!gl;
-  } catch {
-    return false;
-  }
-}
 
 type Still = "" | "still" | "still-m";
 const noopSubscribe = () => () => {};
@@ -92,6 +80,14 @@ export function HeroDiorama() {
   const [onScreen, setOnScreen] = useState(true);
   const [tabVisible, setTabVisible] = useState(true);
   const [replay, setReplay] = useState(0);
+  // One scene renders at a time (./three/active.ts): the hero asks to run
+  // while it is mounted, on screen and the tab is visible.
+  const wants = gated && !still && onScreen && tabVisible;
+  useEffect(() => {
+    wantScene("hero", wants);
+    return () => wantScene("hero", false);
+  }, [wants]);
+  const running = useSceneActive("hero") && wants;
 
   // Gate and idle mount.
   useEffect(() => {
@@ -169,6 +165,7 @@ export function HeroDiorama() {
       aria-label={`Sample read of ${SAMPLE_DOMAIN}`}
       data-diorama={live ? (ready ? "live" : "loading") : "poster"}
       data-dio-compact={still === "still-m" || undefined}
+      data-active={gated && !still ? String(running) : undefined}
       className={cn("w-full", still === "still-m" && "w-[390px]")}
     >
       <div
@@ -208,7 +205,7 @@ export function HeroDiorama() {
               replay={replay}
               pointer={pointer}
               scroll={scroll}
-              active={onScreen && tabVisible}
+              active={running}
               still={!!still}
               onReady={() => setReady(true)}
             />

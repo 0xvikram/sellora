@@ -186,7 +186,8 @@ export default function Diorama({
   replay: number;
   pointer: RefObject<Pointer>;
   scroll: RefObject<number>;
-  /** False pauses the frame loop (hero off-screen or tab hidden). */
+  /** False pauses the frame loop (hero off-screen, tab hidden, or the
+   *  pipeline scene is the one rendering). */
   active: boolean;
   /** Poster mode: end state, no idle motion, no pointer. */
   still?: boolean;

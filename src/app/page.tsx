@@ -3,6 +3,7 @@ import { Faq } from "@/components/Faq";
 import { GroundShift } from "@/components/GroundShift";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
+import { PipelineSection } from "@/components/PipelineSection";
 import { PricesSection } from "@/components/PricesSection";
 import { ProofStrip } from "@/components/ProofStrip";
 import { Report } from "@/components/Report";
@@ -31,6 +32,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Story />
+        <PipelineSection />
         <Teardowns />
         <Report />
         <PricesSection />

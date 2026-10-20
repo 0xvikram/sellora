@@ -196,6 +196,7 @@ html.ground-live[data-ground-current="ink"] main,
 .surface,
 .dio-chip,
 .dio-finding,
+.pipe-label,
 .sfig {
   --color-ink: #0a140f;
   --color-ink-2: #2b352f;
@@ -573,6 +574,85 @@ section[data-ground="ink"] {
     gap: 6px;
     padding-inline: 8px 10px;
   }
+}
+
+/* ---------------------------------------------------------------
+   Pipeline card (src/components/PipelineScene.tsx, three/Pipeline.tsx).
+   Full bleed on the sage ground: a lighter sage at the top with a soft
+   bone glow behind the belt, settling into the ground's sage at the
+   foot. The poster and the transparent canvas sit on it; the gate labels
+   are HTML over the canvas.
+   --------------------------------------------------------------- */
+.pipe-card {
+  border-radius: var(--radius-frame);
+  background:
+    radial-gradient(55% 80% at 50% 38%, color-mix(in oklab, var(--color-bone) 72%, var(--color-sage)) 0%, rgb(243 245 238 / 0) 78%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-sage) 40%, var(--color-bone)) 0%,
+      color-mix(in oklab, var(--color-sage) 75%, var(--color-bone)) 55%,
+      var(--color-sage) 100%
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(10 20 15 / 0.07),
+    0 30px 60px -36px rgb(10 20 15 / 0.22);
+}
+
+/* A gate label: the origin is the top of the gate's beam; a short leader
+   runs up from it to a white mono pill. The marker lights lime while an
+   item passes the gate (data-hot, set from the scene). */
+.pipe-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -100%);
+}
+.pipe-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px 6px 8px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgb(10 20 15 / 0.07),
+    0 8px 20px -12px rgb(10 20 15 / 0.35);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.pipe-index {
+  color: var(--color-ink-3);
+}
+.pipe-marker {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: rgb(10 20 15 / 0.18);
+  transition: background-color 120ms ease-out;
+}
+.pipe-label[data-hot] .pipe-marker {
+  background: var(--color-lime);
+  box-shadow: 0 0 0 1px rgb(10 20 15 / 0.12);
+}
+.pipe-leader {
+  width: 1px;
+  height: 16px;
+  background: rgb(10 20 15 / 0.4);
+}
+[data-pipe-compact] .pipe-pill {
+  gap: 5px;
+  padding: 4px 7px 4px 6px;
+  border-radius: 6px;
+  font-size: 9px;
+}
+[data-pipe-compact] .pipe-leader {
+  height: 10px;
 }
 
 /* A finding: the element's origin is the 3D anchor. The leader (length
