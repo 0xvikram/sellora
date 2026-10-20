@@ -15,8 +15,10 @@ import { GROUND_HEX, GROUND_SELECTOR, groundOf } from "@/lib/ground";
  * scroll listener re-measures only those sections in between, because a
  * tall section (the 450vh story track) crosses few thresholds.
  *
- * Until this runs, each section paints its own ground (globals.css); it
- * sets html.ground-live, which makes the sections transparent.
+ * Until this runs, each section paints its own ground and scopes its own
+ * text (globals.css). It sets html.ground-live, which makes the sections
+ * transparent, and html[data-ground-current], which the text tokens of
+ * <main> follow, cross-fading with the layer.
  */
 export function GroundShift() {
   const ref = useRef<HTMLDivElement>(null);
@@ -42,6 +44,7 @@ export function GroundShift() {
             current = ground;
             layer.style.backgroundColor = GROUND_HEX[ground];
             layer.dataset.ground = ground;
+            document.documentElement.dataset.groundCurrent = ground;
           }
           return;
         }
@@ -68,6 +71,7 @@ export function GroundShift() {
     window.addEventListener("resize", schedule);
     return () => {
       document.documentElement.classList.remove("ground-live");
+      delete document.documentElement.dataset.groundCurrent;
       observer.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);

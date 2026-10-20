@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Geist_Mono, Instrument_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { JsonLd } from "@/lib/json-ld";
 import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
@@ -16,15 +17,19 @@ const archivo = Archivo({
   display: "swap",
 });
 
-// Accent: Archivo's own italic (same axes), only ever the one accent word
-// per heading, so it is not preloaded.
-const archivoItalic = Archivo({
+// Accent: Archivo's own italic, one static cut (wght 600, wdth 70, latin
+// subset, 41 KB, OFL) from Google Fonts, self-hosted. It sets the accent
+// word in the H1 (the LCP element), so it is preloaded; the full variable
+// italic would be 100 KB. No metric-adjusted fallback: the CSS stack falls
+// back to the Archivo roman, which is already loaded and the same width.
+// Source: fonts.googleapis.com css2?family=Archivo:ital,wdth,wght@1,70,600
+const archivoItalic = localFont({
+  src: "./fonts/Archivo-Italic-600-wdth70-latin.woff2",
   variable: "--font-archivo-italic",
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["wdth"],
+  weight: "600",
+  style: "italic",
   display: "swap",
-  preload: false,
+  adjustFontFallback: false,
 });
 
 // Body: Instrument Sans (variable wght, roman only: the site sets no sans italic).

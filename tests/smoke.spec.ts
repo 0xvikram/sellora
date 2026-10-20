@@ -208,3 +208,34 @@ for (const width of [390, 1440]) {
     await expect(sheet.getByText("Every figure links to the query that produced it.")).toBeVisible();
   });
 }
+
+test("nav pill is fixed and takes the tint of the section beneath it; the ground follows", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const pill = page.locator("[data-nav-pill]");
+  const layer = page.locator("[data-ground-layer]");
+  await expect(pill).toHaveAttribute("data-ground", "bone");
+  await expect(page.locator("html")).toHaveClass(/ground-live/);
+  // The heading sits well inside each section, so the band under the pill
+  // and more than half the viewport are both on that section.
+  const goTo = (id: string) =>
+    page.evaluate((id) => {
+      const el = document.getElementById(id)!;
+      window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 120);
+    }, id);
+  await goTo("work");
+  await expect(pill).toHaveAttribute("data-ground", "sage");
+  await expect(layer).toHaveAttribute("data-ground", "sage");
+  await expect(layer).toHaveCSS("background-color", "rgb(183, 195, 167)");
+  await goTo("report");
+  await expect(pill).toHaveAttribute("data-ground", "ink");
+  await expect(layer).toHaveAttribute("data-ground", "ink");
+  await expect(pill.getByRole("link", { name: "Work" })).toHaveCSS("color", "rgba(243, 245, 238, 0.75)");
+  await goTo("prices");
+  await expect(pill).toHaveAttribute("data-ground", "bone");
+  await expect(layer).toHaveAttribute("data-ground", "bone");
+  const box = await pill.boundingBox();
+  expect(Math.round(box!.y)).toBe(16);
+  expect(Math.round(box!.height)).toBe(60);
+});

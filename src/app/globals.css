@@ -14,10 +14,10 @@
      ink on lime 15.03 · ink on clay 6.03 · lime on ink 15.03
      line-control (ink 50%) 3.43 bone · 3.36 ground-2 · 3.51 card
      lime 1.14 / clay 2.83 / sage 1.68 on bone: fills only, never text
-   Sage scope ([data-ground="sage"]): ink-3 -> #3f4a43 (5.01 sage, 9.24
+   Sage scope: ink-3 -> #3f4a43 (5.01 sage, 9.24
    card), lime-ink -> #2f4400 (5.84 sage, 10.78 card), line-control ->
    ink 60% (3.92 sage).
-   Ink scope ([data-ground="ink"], .on-dark): ink -> bone (17.06), ink-2
+   Ink scope: ink -> bone (17.06), ink-2
    -> bone 75% (9.84), ink-3 -> bone 60% (6.63), lime-ink -> lime
    (15.03), line-control -> bone 50% (4.97). White panels inside it
    (.surface) restore the light tokens.
@@ -100,15 +100,86 @@ body {
   color: var(--color-dark);
 }
 
-/* Token scopes. Sections sit on the shared ground (GroundShift.tsx) and
-   say which one with data-ground; text tokens follow it. */
-[data-ground="sage"] {
+/* Token scopes. Text tokens follow the ground. On the home page, once
+   GroundShift runs (html.ground-live), they follow the CURRENT ground
+   (html[data-ground-current]) on all of <main>, so the part of the
+   previous section still on screen flips with the ground instead of
+   being left ink on ink. The tokens are registered colours, so they
+   cross-fade with the ground over the same 600 ms. Without JavaScript,
+   each section scopes its own text to its own painted ground. The nav
+   pill and the footer carry their own scope. */
+@property --color-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0a140f;
+}
+@property --color-ink-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #2b352f;
+}
+@property --color-ink-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #5a665e;
+}
+@property --color-lime-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3f5a00;
+}
+@property --color-line {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(10 20 15 / 0.12);
+}
+@property --color-line-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(10 20 15 / 0.22);
+}
+@property --color-line-control {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(10 20 15 / 0.5);
+}
+@property --color-ground-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8ebe0;
+}
+
+main {
+  color: var(--color-ink);
+}
+html.ground-live main {
+  transition:
+    --color-ink 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-ink-2 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-ink-3 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-lime-ink 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-line 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-line-2 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-line-control 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    --color-ground-2 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.ground-live main {
+    transition: none;
+  }
+}
+
+html:not(.ground-live) section[data-ground="sage"],
+html.ground-live[data-ground-current="sage"] main,
+[data-nav-pill][data-ground="sage"] {
   --color-ink-3: #3f4a43;
   --color-lime-ink: #2f4400;
   --color-line-control: rgb(10 20 15 / 0.6);
 }
 
-[data-ground="ink"],
+html:not(.ground-live) section[data-ground="ink"],
+html.ground-live[data-ground-current="ink"] main,
+[data-nav-pill][data-ground="ink"],
 .on-dark {
   --color-ink: #f3f5ee;
   --color-ink-2: rgb(243 245 238 / 0.75);
@@ -122,7 +193,9 @@ body {
 }
 
 /* A white panel inside a dark scope gets the light tokens back. */
-.surface {
+.surface,
+.pv,
+.sfig {
   --color-ink: #0a140f;
   --color-ink-2: #2b352f;
   --color-ink-3: #5a665e;
@@ -320,16 +393,12 @@ section[data-ground="ink"] {
     color: var(--color-bone);
   }
 
-  [data-ground="ink"] .btn-primary:hover,
-  .on-dark .btn-primary:hover {
+  :is(html:not(.ground-live) section[data-ground="ink"], html.ground-live[data-ground-current="ink"] main, [data-nav-pill][data-ground="ink"], .on-dark) .btn-primary:hover {
     border-color: var(--color-bone);
     background: var(--color-bone);
     color: var(--color-dark);
   }
-  [data-ground="ink"] .btn-secondary,
-  .on-dark .btn-secondary,
-  [data-ground="ink"] .btn-ghost:hover,
-  .on-dark .btn-ghost:hover {
+  :is(html:not(.ground-live) section[data-ground="ink"], html.ground-live[data-ground-current="ink"] main, [data-nav-pill][data-ground="ink"], .on-dark) :is(.btn-secondary, .btn-ghost:hover) {
     color: var(--color-dark);
   }
 

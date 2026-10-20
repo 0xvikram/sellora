@@ -10,9 +10,9 @@ export function ProofStrip() {
       <Container className="py-8 md:py-10">
         <ul className="grid gap-3 sm:grid-cols-3">
           {PROOF.map((badge) => (
-            <li key={badge.label} className="flex min-h-28 flex-col justify-between gap-3 rounded-panel border border-line bg-card px-5 py-4 md:px-6 md:py-5">
+            <li key={badge.label} className="surface flex min-h-28 flex-col justify-between gap-3 rounded-panel border border-line bg-card px-5 py-4 md:px-6 md:py-5">
               {badge.value ? (
-                <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold uppercase">
+                <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold">
                   {badge.value}
                 </span>
               ) : (

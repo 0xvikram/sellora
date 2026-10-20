@@ -178,7 +178,6 @@ export function Nav() {
           ref={panelRef}
           id={panelId}
           hidden={!open}
-          data-ground="bone"
           className="mx-auto mt-2 w-full max-w-[1240px] rounded-panel border border-line bg-bone shadow-float md:hidden"
         >
           <nav aria-label="Mobile" className="px-5 py-3">

@@ -23,7 +23,7 @@ export function Studio() {
           <AccentText text={STUDIO.line} accent={STUDIO.accent} />
         </h2>
         </Reveal>
-        <dl className="mt-12 grid gap-8 rounded-panel border border-line bg-card p-6 sm:grid-cols-2 md:mt-16 md:p-8 lg:grid-cols-[1fr_1fr_1.4fr] lg:gap-10">
+        <dl className="surface mt-12 grid gap-8 rounded-panel border border-line bg-card p-6 sm:grid-cols-2 md:mt-16 md:p-8 lg:grid-cols-[1fr_1fr_1.4fr] lg:gap-10">
           <div>
             <dt className="eyebrow">Where</dt>
             <dd className="mt-3 text-base text-ink">{STUDIO.location}</dd>

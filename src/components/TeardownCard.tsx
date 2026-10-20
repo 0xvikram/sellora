@@ -40,7 +40,7 @@ export function TeardownCard({
         <figcaption className="font-mono text-xs text-ink-2">{key.label}</figcaption>
         <p className="mt-1.5 flex items-baseline gap-3">
           <span className="sr-only">After </span>
-          <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold uppercase">
+          <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold">
             {formatValue(key.after, key.unit)}
           </span>
           <span className="font-mono text-xs text-ink-2 tabular-nums">

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
   const full = size === "full";
   return (
-    <div className={cn("receipt-paper w-full", full ? "max-w-[38rem]" : "max-w-[22rem]")}>
+    <div className={cn("receipt-paper surface w-full", full ? "max-w-[38rem]" : "max-w-[22rem]")}>
       <div
         className={cn(
           "rounded-panel px-6 pt-7 pb-7 font-mono text-ink",
