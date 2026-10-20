@@ -277,3 +277,80 @@ ANGLE Metal, 1440 x 900): hero 60 fps and pipeline 60 fps at DPR 1 and 2
 100 / 100 on two runs (TBT 10 ms, LCP 0.8 s); the first run after a server
 start gave 95 / 96 (TBT 180 ms, and a finding sampled mid fade-in failed
 contrast). Mobile 90 / 100 / 100 / 100 (LCP 3.7 s, the H1, as before).
+
+## 2026-10-20: Piece 4, final QA
+
+**Inner pages.** `/prices`, `/about`, `/contact`, `/teardowns`, each
+teardown and the 404 now follow the home page's register instead of the
+light re-skin from piece 1: every section sits on bone (the ground-2 and
+white full-width bands are gone, so the nav pill always reads bone on
+bone until the ink footer), content lives in white 8px panels (`.panel`,
+which also restores the light tokens), every H1 and H2 is Archivo
+condensed uppercase with one lime-ink accent word, eyebrows are mono, and
+the page head and sections use the home page's padding (`.page-head`,
+`.page-section`). Teardown H1s (and the index rows and the next-teardown
+link) accent their first figure ("+18%", "4", "94%") through
+`MetricAccent`, so the number is the accent, which fits "numbers first".
+Prices: receipt beside a white "range" panel, ladder rows as panels with
+condensed titles and lime-ink prices, terms as a definition list in a
+panel. Contact: the audit form large in its own panel with the next
+steps, email with Copy and the booking button in a second panel, hours
+(overlap, reply, location) in a third. 404: lime and ghost buttons. DOM
+contrast check (every visible text node against its composited
+background) on all routes at 1440 and 390: 1,431 nodes, 0 failures; the
+nav pill's colour-mixed background and the diorama chip's gradient are
+not machine-checked (bone 80% on bone, and the chip is a white panel).
+
+**Scene robustness.** Checked: resizing a live page from 1440 to 900
+unmounts both canvases and restores the posters (opacity 1, the 4:3
+poster), and back to 1440 remounts the hero at once and the pipeline when
+it is next near the viewport; WebGL draw calls drop to zero while a scene
+is off-screen, between the two scenes and in a hidden tab, and resume
+after; with WebGL blocked both cards keep their posters, the 3D chunk is
+never fetched and nothing is logged; reduced motion on desktop shows both
+posters; the floating labels are `aria-hidden` and hold nothing
+focusable, the hidden lists name the four findings and five gates, and
+Tab reaches Replay; 30 s idle on each live scene with four replays logs
+no errors (one warning per canvas, `THREE.Clock` deprecated, comes from
+`@react-three/fiber` 9.8.1 itself).
+
+One real bug found and fixed: if WebGL context creation failed after the
+`live-gate` probe had passed (simulated by refusing the second
+`getContext`), three.js threw inside the canvas and React took down the
+whole page to the Next error screen. `three/SceneBoundary.tsx` now wraps
+each canvas in an error boundary and a capture-phase `webglcontextlost`
+listener: on either, the card returns to its poster for the rest of the
+visit. Losses on purpose (R3F forces one when it disposes an unmounted
+canvas) are ignored because that canvas is no longer connected. Replay's
+accessible name is now "Replay the sample read". Not changed: once GSAP
+and ScrollTrigger have loaded (desktop home only), their tickers keep
+about 120 `requestAnimationFrame` calls a second running even when
+nothing moves; cheap, but it is not the 3D loop, which does stop.
+
+**Performance** (Lighthouse 12.8.2, `next start`, M5 MacBook Air,
+default simulated throttling):
+
+| Route | Desktop perf | Desktop LCP | Mobile perf | Mobile LCP (element) |
+| --- | --- | --- | --- | --- |
+| `/` | 100 | 0.8 s (poster) | 90 | 3.7 s (H1) |
+| `/prices` | 100 | 0.6 s | 95 | 3.0 s (H1) |
+| `/teardowns/sample-supplements-us` | 100 | 0.6 s | 94 | 3.1 s (H1) |
+
+Accessibility, best practices and SEO are 100 on all six runs; CLS 0,
+TBT 0 to 10 ms. `font-display: optional` for the Archivo roman and the
+static italic was tried because the home H1 is the mobile LCP at 3.7 s:
+no change on any route (Lighthouse's simulation still counts the
+preloaded fonts in the H1's render delay), and on a slow first visit it
+would show the headings in a fallback that is not condensed, so `swap`
+stays. The remaining mobile cost is bytes before the H1 can paint: the
+variable Archivo roman (90 KB), the italic (41 KB), Instrument Sans and
+Geist Mono, and on the home page the 45 KB poster at high priority.
+
+The three.js chunk (one file, 270 KB gzip, 1,000 KB raw) is never
+requested at 390 (checked on every route with a full scroll of the home
+page) and on desktop it is requested after the load event (+94 ms).
+Initial JS, the scripts in the HTML, gzip: about 160 KB on every route
+(159.6 home, prices and about; 160.6 teardowns and a teardown; 161.2
+contact), nearly all of it Next and React. Posters: hero 91 KB (1120 x
+1400), hero mobile 45 KB (780 x 586), pipeline 115 KB (2112 x 926),
+pipeline mobile 46 KB (780 x 588).
