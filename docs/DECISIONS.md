@@ -212,3 +212,68 @@ slab and four findings rise in as it passes. Reasons and choices:
   this piece). 60 fps in headless Chromium on ANGLE Metal at DPR 1 and 2
   (rAF-capped); SwiftShader gives 15 to 24 fps and trips the
   PerformanceMonitor down to DPR 1.
+
+## 2026-10-20: Piece 3, framing pass and the pipeline scene
+
+**Hero framing and materials.** The slab sat in the middle of the card
+with empty bands above and below. The camera now comes in (0.8 of a full
+fit), rises to 46 deg and aims well above the slab, so the slab fills the
+card's width and its near corner runs off the bottom edge, after
+squared-media.nl's island; the empty band above is the gradient. The
+small (4:3) poster gets its own, gentler framing so its findings stay in
+the card. The card gradient is now a real sunrise: bone, a peach band,
+sage, with a warm radial glow behind the slab. The peach is
+`color-mix(in srgb, color-mix(in srgb, clay 24%, bone) 92%, lime)`, about
+#f3d3b0: clay and bone alone mix to a pink (#f6d3c3), so a touch of lime
+warms it toward the asked-for #f6d5b8 without a new hex. Bevels (r 0.03
+to 0.045, clamped by part thickness: shelf sides and top were thickened
+to take them), roughness 0.55 to 0.8 per part, a lime hairline on the gate
+beam, a rim light from behind, a larger and softer contact shadow. Craft
+details: an ink sign plate with "48" in raised seven-segment strokes (one
+merged geometry, so one draw call), tape both ways on the parcels, a door
+mat, a second product and a folded bag on the counter. GL draw calls per
+frame (counted by wrapping the WebGL draw functions, shadow pass
+included, the same total renderer.info reports): 123 before, 126 after;
+new small parts cast no shadows.
+
+**The pipeline**, a new sage section between the story and the
+teardowns: "Five jobs" / "Every order passes five gates." Choices:
+
+- **No pinning.** The camera dolly is tied to how far the card has
+  crossed the viewport, damped, while the page scrolls natively; the
+  story above is the one pinned sequence on the page.
+- **Deterministic.** Item positions come from one clock; tags, gate heat,
+  label markers and the lime sheets are all functions of those
+  positions, so there is no per-item state to drift, a pause resumes
+  cleanly and the poster still is exact.
+- **Instanced.** Legs, braces, feet, slats, items, both tapes, tags,
+  posts, beams, strips and hairlines are instanced meshes; the five scan
+  sheets are separate (per-gate opacity) and drawn only while they glow.
+  About 34 GL draw calls per frame with shadows. Parcels on the belt use a
+  yellower sand (`parcelSand`) because the diorama's parcel tint read pink
+  on the sage card.
+- **One scene at a time.** `three/active.ts`: each scene asks to run
+  while it is mounted, on screen and the tab is visible; the most recent
+  ask wins and the other's frame loop pauses. Both figures expose
+  `data-active`.
+- **Gate labels** are drei `Html` pills (the hero's findings' style, with
+  a 01 to 05 index), mounted after the first frame for the same reason as
+  the findings. A visually hidden list in the card names the five gates.
+- **Posters**: 16:7 at 1.5x (2112 x 924, 115 KB) rather than 2x, since it
+  is a lazy, below-the-fold image; 4:3 at 2x below lg. The 4:3 camera
+  swings round to 62 deg and up to 30 deg so all five gates fit.
+- **The section has no number** (the brief gives the eyebrow as "Five
+  jobs"), so Work stays 02 and the rest keep their numbers.
+
+**Home rhythm.** The story track goes from 450vh to 350vh (half a screen
+of scroll per service) so two scroll-driven sequences do not run back to
+back at full length, and the pipeline section's top padding drops to 2rem
+on lg, since the sticky story stage already ends in a band of empty
+ground. Report stays on ink, Prices on bone.
+
+Measured on 2026-10-20 (M5 MacBook Air, `next start`, headless Chromium on
+ANGLE Metal, 1440 x 900): hero 60 fps and pipeline 60 fps at DPR 1 and 2
+(rAF-capped, p95 frame 16.8 ms). Lighthouse 12.8.2: desktop 100 / 100 /
+100 / 100 on two runs (TBT 10 ms, LCP 0.8 s); the first run after a server
+start gave 95 / 96 (TBT 180 ms, and a finding sampled mid fade-in failed
+contrast). Mobile 90 / 100 / 100 / 100 (LCP 3.7 s, the H1, as before).

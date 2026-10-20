@@ -270,3 +270,65 @@ test("nav pill is fixed and takes the tint of the section beneath it; the ground
   expect(Math.round(box!.y)).toBe(16);
   expect(Math.round(box!.height)).toBe(60);
 });
+
+// The pipeline scene. Like the hero: server HTML is a poster (lazy, mid
+// page); the live scene mounts on desktop when the card nears the viewport.
+const GATE_IDS = ["creative", "ai-search", "klaviyo", "connections", "tracking"];
+
+for (const [width, file, ratio] of [
+  [390, "/posters/pipeline-m.jpg", 4 / 3],
+  [1440, "/posters/pipeline.jpg", 16 / 7],
+] as const) {
+  test(`pipeline poster is present, loaded and sized at ${width}`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+    await page.goto("/");
+    const section = page.locator("section#pipeline");
+    await expect(section.getByRole("heading", { level: 2 })).toHaveText("Every order passes five gates.");
+    const poster = section.locator("img[data-pipe-poster]");
+    await poster.scrollIntoViewIfNeeded();
+    await expect(poster).toBeVisible();
+    await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+    expect(await poster.evaluate((img: HTMLImageElement) => new URL(img.currentSrc).pathname)).toBe(file);
+    const box = (await section.locator(".pipe-card").boundingBox())!;
+    expect(box.width / box.height).toBeCloseTo(ratio, 2);
+    await expect(section.locator("figure[data-pipeline]")).toHaveAttribute("data-pipeline", "poster");
+    await expect(section.locator(".pipe-card ol.sr-only > li")).toHaveCount(5);
+  });
+}
+
+test("pipeline: on desktop the canvas mounts when scrolled into view, with the five gate labels", async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.waitForLoadState("load");
+  const figure = page.locator("figure[data-pipeline]");
+  // Not mounted while far below the fold.
+  await expect(figure.locator("canvas")).toHaveCount(0);
+  await figure.scrollIntoViewIfNeeded();
+  await expect(figure.locator("canvas")).toHaveCount(1, { timeout: 10_000 });
+  await expect(figure).toHaveAttribute("data-pipeline", "live", { timeout: 10_000 });
+  for (const id of GATE_IDS) await expect(figure.locator(`[data-gate="${id}"]`)).toHaveCount(1);
+  await expect(figure.locator("[data-gate]")).toHaveText([/Creative/, /AI search/, /Klaviyo/, /Connections/, /Tracking/]);
+  expect(errors).toEqual([]);
+});
+
+test("only one 3D scene renders at a time", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const hero = page.locator("figure[data-diorama]");
+  const pipe = page.locator("figure[data-pipeline]");
+  const running = page.locator('figure[data-active="true"]');
+  await expect(hero).toHaveAttribute("data-active", "true", { timeout: 5_000 });
+  await expect(running).toHaveCount(1);
+
+  await pipe.scrollIntoViewIfNeeded();
+  await expect(pipe).toHaveAttribute("data-active", "true", { timeout: 10_000 });
+  await expect(hero).toHaveAttribute("data-active", "false");
+  await expect(running).toHaveCount(1);
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(hero).toHaveAttribute("data-active", "true");
+  await expect(pipe).toHaveAttribute("data-active", "false");
+  await expect(running).toHaveCount(1);
+});

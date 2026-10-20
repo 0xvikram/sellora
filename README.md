@@ -13,7 +13,7 @@ Every page is static.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero with the audit form and the 3D diorama card; 01 What changes (five services on the sample store, pinned scroll story on desktop); 02 Work (teardown cards); 03 The read, delivered (ink ground, a sample audit report sheet and the form again); 04 Prices (receipt); 05 Studio (pull-quote); proof row; 06 FAQ |
+| `/` | Hero with the audit form and the 3D diorama card; 01 What changes (five services on the sample store, pinned scroll story on desktop); Five jobs (sage ground, the 3D pipeline: an order passing five gates); 02 Work (teardown cards); 03 The read, delivered (ink ground, a sample audit report sheet and the form again); 04 Prices (receipt); 05 Studio (pull-quote); proof row; 06 FAQ |
 | `/teardowns` | Index of teardowns, numbers first |
 | `/teardowns/[slug]` | One teardown: spec strip, before/after figures, method. Unknown slugs 404 |
 | `/prices` | Receipt, price ladder, terms |
@@ -98,6 +98,11 @@ The OG image uses static Archivo TTFs in `src/app/og-fonts/` (OFL).
   slab (2.4 s, ease in-out) and four findings rise in as it passes; see
   "Hero diorama" below. Teardown cards keep the scan line once per hover
   (CSS only, fine pointers only).
+- **Pipeline** (`PipelineScene.tsx`, `three/Pipeline.tsx`): parcels and
+  products loop along a conveyor through five gates; each gate flares lime
+  and tags the item as it passes. The camera dollies along the belt with
+  the section's scroll progress (scrubbed and damped, no pinning) and
+  follows the pointer by 2 deg. See "3D scenes" below.
 - **Story** (`Story.tsx`, `story/timeline.ts`): on lg and up with motion
   allowed, a 350vh track (2.5 screens of scroll) with a sticky stage that
   carries the section heading; one GSAP timeline scrubbed by ScrollTrigger
@@ -112,14 +117,24 @@ The OG image uses static Archivo TTFs in `src/app/og-fonts/` (OFL).
   Web Animations). The hero text column has a short load stagger
   (`HeroIntro.tsx`); the H1 never animates.
 - **Reduced motion**: with `prefers-reduced-motion: reduce` nothing moves.
-  The hero shows the diorama poster (no canvas), reveals are skipped, and
+  The hero and the pipeline show their posters (no canvas), reveals are skipped, and
   hover transforms are off. Without JavaScript the hero also shows the
   poster.
-- GSAP (story and report) and three.js (hero diorama) are both loaded with
-  dynamic imports after first paint, only on the home page; three only on
-  desktop.
+- GSAP (story and report) and three.js (hero diorama, pipeline) are both
+  loaded with dynamic imports after first paint, only on the home page;
+  three only on desktop.
+- **One scene at a time**: `three/active.ts` lets only one canvas run its
+  frame loop; when the pipeline is on screen the hero pauses, and back.
+  Each scene's figure carries `data-active="true|false"`.
 
-## Hero diorama
+## 3D scenes
+
+Two real-time scenes, the hero diorama and the pipeline, share one
+studio (`Lighting.tsx`: warm key with PCF shadows, cool fill, a rim from
+behind, hemisphere bounce, a Lightformer environment), one palette and
+one gate (`live-gate.ts`).
+
+### Hero diorama
 
 A real-time scene built in code with three.js, `@react-three/fiber` and
 `@react-three/drei`: no models, no textures, no image files. The parts
@@ -128,16 +143,17 @@ live in `src/components/three/`:
 | File | Part |
 | --- | --- |
 | `Slab.tsx` | Floating rounded slab, thick bevel; vertex colour blends a bone top into darker sage sides; a walkway inset from the gate to the door |
-| `Shop.tsx` | Shop: body and roof cap with a vent, extruded taller facade, ink sign band, teal door with handle and step, white window in an ink frame with mullion and sill, ink awning |
-| `Shelves.tsx` | Three open oak shelf units with twelve rounded products in the Oatleaf tints (teal, clay, sand, moss) |
-| `Counter.tsx` | Counter with an oak top, an ink card terminal with an emissive lime screen, and one product |
-| `Parcels.tsx` | Three sand parcels stacked by the door, each with an ink tape band |
-| `Gate.tsx` | Thin ink scanner arch at the left end with a lime emitter strip |
+| `Shop.tsx` | Shop: body and roof cap with a vent, a bevelled facade standing proud, an ink sign plate with "48" in raised strokes, teal door with handle, step and mat, white window in an ink frame with mullion and sill, ink awning |
+| `Digits.tsx` | Seven-segment numbers in raised strokes, merged into one geometry |
+| `Shelves.tsx` | Three open oak shelf units (bevelled sides and top) with twelve rounded products in the Oatleaf tints (teal, clay, sand, moss) |
+| `Counter.tsx` | Counter with an oak top, an ink card terminal with an emissive lime screen, and two products beside a folded bag |
+| `Parcels.tsx` | Three sand parcels stacked by the door, taped in ink both ways |
+| `Gate.tsx` | Thin ink scanner arch at the left end with a lime emitter strip and a lime hairline along the beam |
 | `Sweep.tsx` | The reading light: a lime plane (opacity 0.35), a faint trail and a bright floor line |
 | `Finding.tsx` | One finding: drei `Html`, a white pill (mono 11px, 8px radius, 6px lime marker) on a leader |
 | `Box.tsx` | `Block`, the matte box every part is built from (shared geometry per size) |
 | `layout.ts`, `palette.ts` | Positions, the four findings, colours |
-| `Diorama.tsx` | Canvas, lights (warm key with PCF shadows, cool fill, hemisphere, Lightformer environment), contact shadows, camera rig, timeline |
+| `Diorama.tsx` | Canvas, contact shadows, camera rig (framed so the slab fills the card and runs off its bottom edge), timeline |
 
 Timeline from the first rendered frame: the card cross-fades from the
 poster (400 ms); at 0.35 s the light leaves the gate and crosses the slab
@@ -158,11 +174,41 @@ drops; the frame loop pauses when the card is off-screen or the tab is
 hidden. The chip (local time, "Reading <domain>") follows the hero form
 through `src/lib/preview-domain.ts`.
 
-**Regenerate the posters** whenever the scene changes:
+The card sits on a sunrise gradient (bone, a peach band mixed from clay
+and bone, sage) with a warm glow behind the slab (`.dio-card`).
+
+### Pipeline
+
+`three/Pipeline.tsx`, in the "Five jobs" section (`PipelineSection.tsx`,
+sage ground, between the story and the teardowns): a full-bleed card,
+16:7 on lg and 4:3 below. A 17-unit ink belt on sage legs runs diagonally
+through the frame; 26 items (sand parcels taped both ways, product boxes
+in the Oatleaf tints) loop along it. Five thin ink arches (Creative, AI
+search, Klaviyo, Connections, Tracking; data in `pipeline-layout.ts`)
+each have a lime strip and hairline, a faint lime sheet and a floating
+mono label (drei `Html`, `.pipe-label`). As an item crosses a gate the
+strip flares, the label's marker lights and the item gains a lime tag,
+so items leave the belt with five. Every value derives from one clock
+and the items' positions, so a still is exact. Legs, items, tapes, tags,
+slats and gate parts are instanced: about 34 GL draw calls per frame.
+
+Camera: the target dollies from x -2.8 to 2.8 along the belt as the card
+crosses the viewport (bottom edge enters to top edge leaves), damped;
+pointer parallax 2 deg. A 4:3 card swings further round and up so the
+belt runs steeply and all five gates fit.
+
+Loading: the server HTML is a lazy poster (`public/posters/pipeline.jpg`,
+2112 x 924 for lg, `pipeline-m.jpg`, 780 x 586 below lg). On desktop with
+a mouse, motion and WebGL, the canvas mounts once the page has loaded and
+the card is within 400px of the viewport, then cross-fades in. DPR cap
+1.5, PerformanceMonitor, paused off-screen, in hidden tabs and while the
+hero is the active scene.
+
+**Regenerate the posters** whenever a scene changes:
 
 ```bash
 npm run build && npx next start -p 3457   # in another terminal
-npm run posters                           # renders ?diorama=still and ?diorama=still-m on the GPU
+npm run posters                           # renders ?diorama=still|still-m and ?pipeline=still|still-m on the GPU
 ```
 
 ## Commands
@@ -173,7 +219,7 @@ npm run build                 # production build
 npx next start -p 3457        # serve the build on http://localhost:3457
 npm test                      # Playwright smoke tests (starts next start on 3457 if nothing is running there)
 npm run lint                  # ESLint
-npm run posters               # re-render the hero diorama posters (server on 3457 must be running)
+npm run posters               # re-render the hero and pipeline posters (server on 3457 must be running)
 ```
 
 First test run on a machine: `npx playwright install chromium` (project
