@@ -324,7 +324,7 @@ visit. Losses on purpose (R3F forces one when it disposes an unmounted
 canvas) are ignored because that canvas is no longer connected. Replay's
 accessible name is now "Replay the sample read". Not changed: once GSAP
 and ScrollTrigger have loaded (desktop home only), their tickers keep
-about 120 `requestAnimationFrame` calls a second running even when
+60 to 120 `requestAnimationFrame` calls a second running even when
 nothing moves; cheap, but it is not the 3D loop, which does stop.
 
 **Performance** (Lighthouse 12.8.2, `next start`, M5 MacBook Air,

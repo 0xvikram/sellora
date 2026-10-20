@@ -14,12 +14,18 @@ Every page is static.
 | Route | What it is |
 | --- | --- |
 | `/` | Hero with the audit form and the 3D diorama card; 01 What changes (five services on the sample store, pinned scroll story on desktop); Five jobs (sage ground, the 3D pipeline: an order passing five gates); 02 Work (teardown cards); 03 The read, delivered (ink ground, a sample audit report sheet and the form again); 04 Prices (receipt); 05 Studio (pull-quote); proof row; 06 FAQ |
-| `/teardowns` | Index of teardowns, numbers first |
-| `/teardowns/[slug]` | One teardown: spec strip, before/after figures, method. Unknown slugs 404 |
-| `/prices` | Receipt, price ladder, terms |
-| `/about` | Studio: how we work, tools, 30-day timeline, what we do not do |
-| `/contact` | Audit form, next steps, email with a Copy button, hours |
+| `/teardowns` | Index of teardowns, numbers first: one white panel, a row per teardown, the first figure of each metric as the accent |
+| `/teardowns/[slug]` | One teardown: spec strip of white cells, the metric as H1 (first figure accented), findings as panels with before/after bars (after in lime), "How we found it" panel, next teardown, audit form panel. Unknown slugs 404 |
+| `/prices` | Receipt (white, ink border, lime "None" pill) beside a range panel, price ladder (panel rows, lime-ink prices), terms as a definition list in a panel |
+| `/about` | Studio: how we work and tools panels, the first 30 days as four panels, what we do not do, proof row |
+| `/contact` | Large audit form panel with next steps, email with a Copy button and booking, hours panel |
 | `/opengraph-image`, `/icon.svg`, `/robots.txt`, `/sitemap.xml` | Generated metadata |
+
+Inner pages and the 404 share the home page's register: every section on
+bone (so the nav pill reads bone until the ink footer), content in white
+8px panels (`.panel`), Archivo condensed uppercase H1/H2 with one lime-ink
+accent word, mono eyebrows, and the home page's padding (`.page-head`,
+`.page-section` in `globals.css`).
 
 Every page ends with the ink closing section (`Close.tsx`), which is also
 the footer and ends on a large, faint condensed "SELLORA" wordmark. On the
@@ -204,6 +210,30 @@ the card is within 400px of the viewport, then cross-fades in. DPR cap
 1.5, PerformanceMonitor, paused off-screen, in hidden tabs and while the
 hero is the active scene.
 
+### Fallbacks
+
+Every case where a scene cannot or should not run shows its poster, and
+nothing else on the page changes:
+
+| Case | What shows |
+| --- | --- |
+| Phone, tablet, touch, width < 1024 | Poster; the 3D chunk is never requested |
+| Resized below 1024 while live | Canvas unmounts, poster returns; remounts when back above |
+| `prefers-reduced-motion: reduce` | Poster on every width |
+| No WebGL (probe in `live-gate.ts`) | Poster; no 3D chunk, no console errors |
+| Renderer throws or the GPU drops the context | `three/SceneBoundary.tsx` catches it; poster for the rest of the visit |
+| No JavaScript | Poster (server HTML) |
+| Off-screen, hidden tab, or the other scene running | Canvas stays mounted, frame loop paused (zero draw calls) |
+
+The floating labels (findings, gate labels) are `aria-hidden` and hold
+nothing focusable; a visually hidden list in each card carries the same
+content. Replay (hero, live only) is a real button, "Replay the sample
+read".
+
+Posters in `public/posters/`: `hero-diorama.jpg` 1120 x 1400, 91 KB;
+`hero-diorama-m.jpg` 780 x 586, 45 KB; `pipeline.jpg` 2112 x 926, 115 KB;
+`pipeline-m.jpg` 780 x 588, 46 KB.
+
 **Regenerate the posters** whenever a scene changes:
 
 ```bash
@@ -211,15 +241,30 @@ npm run build && npx next start -p 3457   # in another terminal
 npm run posters                           # renders ?diorama=still|still-m and ?pipeline=still|still-m on the GPU
 ```
 
+## Budgets
+
+Checked on 2026-10-20 (Lighthouse 12.8.2 against `next start`, details
+in `docs/DECISIONS.md`):
+
+- Lighthouse performance: desktop >= 90 and mobile >= 70 on `/`,
+  `/prices` and a teardown. Last run: desktop 100 / 100 / 100, mobile
+  90 / 95 / 94; accessibility, best practices and SEO 100; CLS 0.
+- Initial JS (scripts in the HTML): about 160 KB gzip on every route.
+- three.js (one 270 KB gzip chunk) never loads below 1024 px or before
+  the load event; only on the home page.
+- Posters under 120 KB each; text contrast WCAG AA on every route at
+  1440 and 390.
+
 ## Commands
 
 ```bash
 npm install
 npm run build                 # production build
 npx next start -p 3457        # serve the build on http://localhost:3457
-npm test                      # Playwright smoke tests (starts next start on 3457 if nothing is running there)
+npm test                      # Playwright tests, 33 (starts next start on 3457 if nothing is running there)
 npm run lint                  # ESLint
 npm run posters               # re-render the hero and pipeline posters (server on 3457 must be running)
+npx lighthouse@12.8.2 http://localhost:3457/ --preset=desktop   # budgets (drop --preset for mobile)
 ```
 
 First test run on a machine: `npx playwright install chromium` (project
