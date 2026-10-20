@@ -99,7 +99,7 @@ The OG image uses static Archivo TTFs in `src/app/og-fonts/` (OFL).
   "Hero diorama" below. Teardown cards keep the scan line once per hover
   (CSS only, fine pointers only).
 - **Story** (`Story.tsx`, `story/timeline.ts`): on lg and up with motion
-  allowed, a 450vh track (3.5 screens of scroll) with a sticky stage that
+  allowed, a 350vh track (2.5 screens of scroll) with a sticky stage that
   carries the section heading; one GSAP timeline scrubbed by ScrollTrigger
   (no pin, no snap). Before -> after numbers count inside each slide's
   window. Phones, tablets and reduced motion get the stacked layout.

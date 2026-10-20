@@ -13,7 +13,7 @@ import { GROUND_HEX, GROUND_SELECTOR, groundOf } from "@/lib/ground";
  * An IntersectionObserver (thresholds every 5%) keeps the set of sections
  * on screen and re-measures on each crossing; a passive, rAF-throttled
  * scroll listener re-measures only those sections in between, because a
- * tall section (the 450vh story track) crosses few thresholds.
+ * tall section (the 350vh story track) crosses few thresholds.
  *
  * Until this runs, each section paints its own ground and scopes its own
  * text (globals.css). It sets html.ground-live, which makes the sections

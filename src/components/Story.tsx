@@ -15,7 +15,7 @@ import { AdsFigure, AnswerFigure, ConnectFigure, FlowFigure, TrackingFigure } fr
 //  - Stacked (below lg, any width with reduced motion, and without
 //    JavaScript): each step is the service text with its figure under it,
 //    figures in their final state, each step revealed once.
-//  - Pinned (lg and up, motion allowed): a 450vh track (3.5 screens of
+//  - Pinned (lg and up, motion allowed): a 350vh track (2.5 screens of
 //    scroll) with a sticky 100vh stage. Left, the section eyebrow and H2
 //    (the stacked header is hidden here, so the section is never headless
 //    while pinned; the "how it works" line is left out, for height), then

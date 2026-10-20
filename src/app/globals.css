@@ -923,10 +923,12 @@ section[data-ground="ink"] {
   .story-stack {
     display: none;
   }
-  /* 100vh of stage plus 3.5 screens of scroll (0.7 screen per service). */
+  /* 100vh of stage plus 2.5 screens of scroll (half a screen per service),
+     short enough that the pipeline section after it is not a second long
+     scrubbed sequence straight after this one. */
   .story-pin {
     display: block;
-    height: 450vh;
+    height: 350vh;
   }
   /* The stage fills the viewport under the 64px nav and centres its
      content in that space, so there is no dead band above it. */

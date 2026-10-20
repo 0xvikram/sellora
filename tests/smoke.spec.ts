@@ -187,10 +187,10 @@ test("story: pinned stage at 1440, and the page still scrolls to the footer", as
   // The stage carries the section heading, so it is never headless.
   await expect(stage.getByRole("heading", { level: 2 })).toHaveText("Five jobs, applied to the store.");
   await expect(story.locator(".story-list > li")).toHaveCount(5);
-  // The stage is sticky inside a 450vh track (3.5 screens of scroll); the
+  // The stage is sticky inside a 350vh track (2.5 screens of scroll); the
   // timeline marks the active step once GSAP and ScrollTrigger have loaded.
   const track = await story.locator(".story-pin").boundingBox();
-  expect(Math.round(track!.height)).toBe(900 * 4.5);
+  expect(Math.round(track!.height)).toBe(900 * 3.5);
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 450) {
       window.scrollTo(0, y);

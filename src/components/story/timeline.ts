@@ -1,7 +1,7 @@
 // The Story section's scrubbed timeline (lg and up, motion allowed).
 //
 // The timeline is 5 units long, one per service, and ScrollTrigger maps
-// the 3.5 screens of scroll through the 450vh track onto it with scrub 0.6
+// the 2.5 screens of scroll through the 350vh track onto it with scrub 0.6
 // (no pin, no snap: the stage is CSS position: sticky, so the page scrolls
 // natively).
 //
