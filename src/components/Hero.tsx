@@ -13,7 +13,7 @@ export function Hero() {
           <p data-intro className="eyebrow">For e-commerce and D2C brands</p>
           <h1
             id="hero-title"
-            className="type-h1 mt-6 text-ink lg:text-[clamp(2.75rem,4.3vw,4.25rem)]"
+            className="type-h1 mt-6 text-ink lg:text-[clamp(3.5rem,5.4vw,6rem)]"
           >
             See what AI and automation would change on{" "}
             <span className="accent-word">your</span> store.

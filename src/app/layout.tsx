@@ -1,33 +1,30 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Instrument_Sans, Newsreader } from "next/font/google";
-import localFont from "next/font/local";
+import { Archivo, Geist_Mono, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { JsonLd } from "@/lib/json-ld";
 import { CONTACT_EMAIL, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 const TITLE = `${SITE_NAME} — AI and automation for e-commerce brands, at fixed prices`;
 
-// Display: Newsreader roman (variable wght + optical size).
-// font-optical-sizing: auto lets the opsz axis follow the font size.
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+// Display: Archivo roman, variable weight and width (wdth 62-125). Headings
+// set it condensed (font-stretch 70%) and uppercase.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   style: ["normal"],
-  axes: ["opsz"],
+  axes: ["wdth"],
   display: "swap",
 });
 
-// Accent: Newsreader italic as one static instance (wght 400, opsz pinned at
-// 48, latin subset), self-hosted. The italic is only ever the accent word, so
-// the full variable italic (147 KB) is not worth preloading; this is 25 KB.
-// Source: fonts.googleapis.com css2?family=Newsreader:ital,opsz,wght@1,48,400
-const newsreaderItalic = localFont({
-  src: "./fonts/Newsreader-Italic-400-opsz48.woff2",
-  variable: "--font-newsreader-italic",
-  weight: "400",
-  style: "italic",
+// Accent: Archivo's own italic (same axes), only ever the one accent word
+// per heading, so it is not preloaded.
+const archivoItalic = Archivo({
+  variable: "--font-archivo-italic",
+  subsets: ["latin"],
+  style: ["italic"],
+  axes: ["wdth"],
   display: "swap",
-  adjustFontFallback: "Times New Roman",
+  preload: false,
 });
 
 // Body: Instrument Sans (variable wght, roman only: the site sets no sans italic).
@@ -66,12 +63,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${newsreaderItalic.variable} ${instrumentSans.variable} ${geistMono.variable}`}
+      className={`${archivo.variable} ${archivoItalic.variable} ${instrumentSans.variable} ${geistMono.variable}`}
     >
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-ground"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bone"
         >
           Skip to content
         </a>

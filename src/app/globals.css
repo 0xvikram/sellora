@@ -153,8 +153,8 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Type: Newsreader display (opsz follows size), Instrument Sans body,
-   Geist Mono labels. One italic accent word per headline.
+   Type: Archivo display (condensed, uppercase, 600), Instrument Sans
+   body, Geist Mono labels. One accent word per headline, in lime-ink.
    --------------------------------------------------------------- */
 @layer base {
   body {
@@ -163,39 +163,62 @@ body {
   }
 
   h1,
-  h2,
+  h2 {
+    font-family: var(--font-display);
+    font-stretch: 70%;
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
   h3 {
     font-family: var(--font-display);
-    font-optical-sizing: auto;
-    font-weight: 450;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 }
 
 @layer components {
+  .type-display {
+    font-family: var(--font-display);
+    font-stretch: 70%;
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
   .type-h1 {
     font-family: var(--font-display);
-    font-size: clamp(2.75rem, 6.5vw, 5.5rem);
-    line-height: 1.02;
-    font-weight: 450;
-    letter-spacing: -0.02em;
+    font-stretch: 70%;
+    font-size: clamp(3.5rem, 9vw, 8.5rem);
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   .type-h2 {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 3.6vw, 3.25rem);
-    line-height: 1.08;
-    font-weight: 450;
-    letter-spacing: -0.02em;
+    font-stretch: 70%;
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   .type-h3 {
     font-family: var(--font-display);
+    font-stretch: 100%;
     font-size: 1.5rem;
-    line-height: 1.2;
-    font-weight: 500;
-    letter-spacing: -0.015em;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: none;
   }
 
   /* Lead paragraph under a heading, and the 65ch cap for body copy. */
@@ -219,7 +242,7 @@ body {
     min-height: 2.75rem;
     padding-inline: 1.375rem;
     border: 1px solid transparent;
-    border-radius: 9999px;
+    border-radius: var(--radius-pill);
     font-family: var(--font-sans);
     font-size: 1rem;
     font-weight: 500;
@@ -231,59 +254,71 @@ body {
       color 160ms ease;
   }
 
-  /* Ink fill with ground text (14.90:1); hover goes to the accent with
-     white text (7.58:1). */
+  /* Primary: lime fill, ink text (15.03:1), ink 1px border. Hover: ink
+     fill, bone text (17.06:1). Fixed colours, so it reads the same in
+     every scope; on the ink ground the hover goes to bone instead. */
   .btn-primary {
-    background: var(--color-ink);
-    color: var(--color-ground);
+    border-color: var(--color-dark);
+    background: var(--color-lime);
+    color: var(--color-dark);
   }
   .btn-primary:hover {
-    background: var(--color-lime-ink);
-    color: #fff;
+    background: var(--color-dark);
+    color: var(--color-bone);
   }
 
+  /* Secondary: ink fill, bone text. In the ink scope --color-ink is bone,
+     so it inverts on its own. */
   .btn-secondary {
-    border-color: var(--color-line-2);
-    color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-bone);
   }
   .btn-secondary:hover {
+    background: var(--color-ink-2);
+  }
+
+  /* Ghost: 1px ink border. */
+  .btn-ghost {
     border-color: var(--color-ink);
-  }
-
-  .on-dark .btn-primary {
-    background: var(--color-ground);
     color: var(--color-ink);
   }
+  .btn-ghost:hover {
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  [data-ground="ink"] .btn-primary:hover,
   .on-dark .btn-primary:hover {
-    background: var(--color-lime);
-    color: var(--color-ink);
+    border-color: var(--color-bone);
+    background: var(--color-bone);
+    color: var(--color-dark);
   }
-  .on-dark .btn-secondary {
-    border-color: rgb(243 245 238 / 0.3);
-    color: var(--color-ground);
-  }
-  .on-dark .btn-secondary:hover {
-    border-color: var(--color-ground);
+  [data-ground="ink"] .btn-secondary,
+  .on-dark .btn-secondary,
+  [data-ground="ink"] .btn-ghost:hover,
+  .on-dark .btn-ghost:hover {
+    color: var(--color-dark);
   }
 
-  /* Inputs: card fill, a 3:1 control border (ink at 50%), accent ring. */
+  /* Inputs: white fill, ink 50% border (3.51:1 on white), lime 2px focus
+     ring with the border going to ink (the ring alone is 1.14:1 on bone). */
   .field {
     min-height: 2.75rem;
     width: 100%;
     padding-inline: 1rem;
-    border: 1px solid var(--color-line-control);
+    border: 1px solid rgb(10 20 15 / 0.5);
     border-radius: var(--radius-control);
-    background: var(--color-card);
-    color: var(--color-ink);
+    background: #fff;
+    color: var(--color-dark);
     font-size: 1rem;
   }
   .field::placeholder {
-    color: var(--color-ink-3);
+    color: #5a665e;
   }
   .field:focus-visible {
     outline: 2px solid var(--color-lime);
     outline-offset: 1px;
-    border-color: var(--color-lime);
+    border-color: var(--color-dark);
   }
 
   /* Underlined text link. */
@@ -314,21 +349,17 @@ body {
   }
 }
 
-/* Accent word inside headings: Newsreader italic, regular weight, accent. */
+/* Accent word inside headings: Archivo's own italic (a real italic cut,
+   same width axis, so it stays condensed and uppercase with the line) in
+   lime-ink (7.15:1 on bone; lime on the ink ground via the scope). */
 .accent-word {
-  font-family: var(--font-display-italic);
+  font-family: var(--font-archivo-italic), var(--font-display);
   font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
   color: var(--color-lime-ink);
 }
 
-.on-dark .accent-word {
-  color: var(--color-lime);
-}
-
-/* Small mono label above sections: 12px uppercase, ink-2 (9.82:1 on
-   ground, 8.73:1 on ground-2, 10.71:1 on card). */
+/* Small mono label above sections: 12px uppercase, ink-2 (11.56:1 on
+   bone, 10.52 on ground-2, 12.70 on card, 6.88 on sage). */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -337,10 +368,6 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-ink-2);
-}
-
-.on-dark .eyebrow {
-  color: var(--color-lime);
 }
 
 /* Receipt: a perforated top edge (a row of 6px half-circle bites, 10px

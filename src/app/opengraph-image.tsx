@@ -8,15 +8,17 @@ export const alt = `${SITE_NAME}: ${SITE_TAGLINE}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Static Newsreader cuts (opsz 72; medium roman and regular italic, OFL),
-// as TTF because the image renderer cannot read the woff2 files that
-// next/font serves to the page. The image is rendered once at build time.
+// Static Archivo cuts (OFL) from Google Fonts: condensed semibold (wdth 75)
+// roman and italic for the headline, normal-width medium for the tagline.
+// TTF because the image renderer cannot read the woff2 files next/font
+// serves to the page. The image is rendered once at build time.
 const FONT_DIR = join(process.cwd(), "src/app/og-fonts");
 
 export default async function OpengraphImage() {
-  const [medium, italic] = await Promise.all([
-    readFile(join(FONT_DIR, "Newsreader-Display-Medium.ttf")),
-    readFile(join(FONT_DIR, "Newsreader-Display-Italic.ttf")),
+  const [condensed, condensedItalic, medium] = await Promise.all([
+    readFile(join(FONT_DIR, "Archivo-Condensed-SemiBold.ttf")),
+    readFile(join(FONT_DIR, "Archivo-Condensed-SemiBoldItalic.ttf")),
+    readFile(join(FONT_DIR, "Archivo-Medium.ttf")),
   ]);
 
   return new ImageResponse(
@@ -28,32 +30,56 @@ export default async function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: 80,
+          padding: 72,
           background: TOKENS.ground,
           color: TOKENS.ink,
-          borderBottom: `16px solid ${TOKENS.lime}`,
+          fontFamily: "Archivo",
         }}
       >
-        <div style={{ fontFamily: "Newsreader", fontSize: 44, fontWeight: 500, letterSpacing: -0.5 }}>
-          {SITE_NAME}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              fontFamily: "Archivo Condensed",
+              fontSize: 40,
+              fontWeight: 600,
+              letterSpacing: 0.5,
+              textTransform: "uppercase",
+            }}
+          >
+            {SITE_NAME}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              padding: "12px 26px",
+              borderRadius: 999,
+              border: `2px solid ${TOKENS.ink}`,
+              background: TOKENS.lime,
+              fontSize: 24,
+              fontWeight: 500,
+            }}
+          >
+            Start the audit
+          </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
-              fontFamily: "Newsreader",
-              fontSize: 76,
-              fontWeight: 500,
-              lineHeight: 1.04,
-              letterSpacing: -1.5,
-              maxWidth: 1000,
+              fontFamily: "Archivo Condensed",
+              fontSize: 118,
+              fontWeight: 600,
+              lineHeight: 0.92,
+              letterSpacing: -1,
+              textTransform: "uppercase",
+              maxWidth: 1060,
             }}
           >
             <span>Prices, before the&nbsp;</span>
-            <span style={{ fontStyle: "italic", fontWeight: 400, color: TOKENS.limeInk }}>first call.</span>
+            <span style={{ fontStyle: "italic", color: TOKENS.limeInk }}>first call.</span>
           </div>
-          <div style={{ fontSize: 30, fontWeight: 500, lineHeight: 1.35, color: TOKENS.ink2, maxWidth: 980 }}>
+          <div style={{ fontSize: 28, fontWeight: 500, lineHeight: 1.35, color: TOKENS.ink2, maxWidth: 980 }}>
             {SITE_TAGLINE}
           </div>
         </div>
@@ -62,8 +88,9 @@ export default async function OpengraphImage() {
     {
       ...size,
       fonts: [
-        { name: "Newsreader", data: medium, weight: 500, style: "normal" },
-        { name: "Newsreader", data: italic, weight: 400, style: "italic" },
+        { name: "Archivo Condensed", data: condensed, weight: 600, style: "normal" },
+        { name: "Archivo Condensed", data: condensedItalic, weight: 600, style: "italic" },
+        { name: "Archivo", data: medium, weight: 500, style: "normal" },
       ],
     },
   );

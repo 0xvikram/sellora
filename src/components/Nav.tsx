@@ -139,7 +139,7 @@ export function Nav() {
             <button
               ref={buttonRef}
               type="button"
-              className="btn btn-secondary px-4 text-[0.9375rem] md:hidden"
+              className="btn btn-ghost px-4 text-[0.9375rem] md:hidden"
               aria-expanded={open}
               aria-controls={panelId}
               onClick={() => (open ? close(false) : setOpen(true))}

@@ -25,7 +25,7 @@ export function Close() {
           <a href={BOOKING_URL} className="btn btn-primary">
             Book a 20-minute call
           </a>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="btn btn-secondary font-mono text-sm font-normal">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="btn btn-ghost font-mono text-sm font-normal">
             {CONTACT_EMAIL}
           </a>
         </div>
