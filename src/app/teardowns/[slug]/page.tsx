@@ -125,7 +125,7 @@ export default async function TeardownPage({ params }: Props) {
               <h2 id="how-title" className="type-h3">
                 How we found it
               </h2>
-              <dl className="mt-5 max-w-3xl border border-line-2 bg-card px-5 py-4 font-mono text-sm leading-relaxed">
+              <dl className="mt-5 max-w-3xl rounded-panel border border-line bg-card px-5 py-4 font-mono text-sm leading-relaxed">
                 {how.map((line) => (
                   <div key={line.term} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 py-1">
                     <dt className="text-ink-2 uppercase tracking-[0.1em] text-xs leading-[1.7rem]">{line.term}</dt>
@@ -142,7 +142,7 @@ export default async function TeardownPage({ params }: Props) {
                   href={`/teardowns/${next.slug}`}
                   className="group mt-3 flex items-baseline justify-between gap-6 text-ink transition-colors hover:text-lime-ink"
                 >
-                  <span className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight tracking-[-0.015em]">
+                  <span className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight font-semibold tracking-[-0.01em]">
                     {next.metric}
                   </span>
                   <span aria-hidden="true" className="font-mono text-lime-ink transition-transform group-hover:translate-x-1 motion-reduce:transition-none">

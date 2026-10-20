@@ -1,18 +1,18 @@
 import { PROOF } from "@/lib/site";
 import { Container } from "./Container";
 
-// One bordered row of three proof cells: a Newsreader value where there is
+// One row of three white proof cells: an Archivo condensed value where there is
 // one, then a mono label. A badge whose status is still "placeholder" says
 // so visibly, so nothing unverified reads as a claim.
 export function ProofStrip() {
   return (
     <section aria-label="Proof" data-ground="bone">
       <Container className="py-8 md:py-10">
-        <ul className="grid divide-y divide-line-2 border border-line-2 bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <ul className="grid gap-3 sm:grid-cols-3">
           {PROOF.map((badge) => (
-            <li key={badge.label} className="flex min-h-24 flex-col justify-between gap-3 px-5 py-4 md:px-6 md:py-5">
+            <li key={badge.label} className="flex min-h-28 flex-col justify-between gap-3 rounded-panel border border-line bg-card px-5 py-4 md:px-6 md:py-5">
               {badge.value ? (
-                <span className="font-display text-[28px] leading-none tracking-[-0.02em] text-ink tabular-nums">
+                <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold uppercase">
                   {badge.value}
                 </span>
               ) : (

@@ -14,6 +14,9 @@ import { GROUND_HEX, GROUND_SELECTOR, groundOf } from "@/lib/ground";
  * on screen and re-measures on each crossing; a passive, rAF-throttled
  * scroll listener re-measures only those sections in between, because a
  * tall section (the 450vh story track) crosses few thresholds.
+ *
+ * Until this runs, each section paints its own ground (globals.css); it
+ * sets html.ground-live, which makes the sections transparent.
  */
 export function GroundShift() {
   const ref = useRef<HTMLDivElement>(null);
@@ -60,9 +63,11 @@ export function GroundShift() {
       { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
     );
     sections.forEach((s) => observer.observe(s));
+    document.documentElement.classList.add("ground-live");
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
+      document.documentElement.classList.remove("ground-live");
       observer.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);

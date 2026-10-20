@@ -27,7 +27,7 @@ export default function TeardownsPage() {
             Each teardown states the baseline, the period and how it was measured.
           </p>
           {anySample ? (
-            <p className="mt-6 max-w-2xl border-l-2 border-ink bg-lime/30 px-5 py-4 text-base text-ink">
+            <p className="mt-6 max-w-2xl rounded-panel border border-ink bg-lime px-5 py-4 text-base text-ink">
               The entries marked Sample are illustrations of the format, not client results.
             </p>
           ) : null}
@@ -39,7 +39,7 @@ export default function TeardownsPage() {
                   href={`/teardowns/${t.slug}`}
                   className="group grid gap-x-8 gap-y-3 py-6 transition-colors hover:bg-card md:grid-cols-[minmax(0,1fr)_16rem_6rem_5.5rem_1.5rem] md:items-center md:px-4"
                 >
-                  <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-[450] tracking-[-0.015em] text-ink">
+                  <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-semibold tracking-[-0.01em] text-ink">
                     {t.metric}
                   </h2>
                   <span className="text-sm text-ink-2">{t.store}</span>

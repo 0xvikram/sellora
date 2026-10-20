@@ -6,10 +6,10 @@ export function SampleChip({ className }: { className?: string }) {
   return <span className={cn("chip", className)}>Sample</span>;
 }
 
-// One teardown as a card on card paper. On hover (fine pointers) it lifts
-// with a layered paper shadow and the scan line runs once. The headline
-// finding is drawn as two bars, before in the 3:1 control grey and after
-// in the accent, with the after value in Newsreader.
+// One teardown as a white card (8px radius). On hover it takes the ambient
+// shadow and (fine pointers) the scan line runs once. The headline finding
+// is drawn as two bars, before in the 3:1 control grey and after in lime,
+// with the after value in Archivo condensed.
 export function TeardownCard({
   teardown,
   headingLevel = "h3",
@@ -22,7 +22,7 @@ export function TeardownCard({
   const max = key.max ?? (key.unit === "%" ? 100 : Math.max(key.before, key.after, 1));
   const width = (v: number) => `${v > 0 ? Math.max(Math.min(100, (v / max) * 100), 1.5) : 0}%`;
   return (
-    <article className="card-scan card-lift group relative flex h-full flex-col overflow-hidden border border-line-2 bg-card p-6 transition-colors focus-within:border-ink hover:border-ink">
+    <article className="card-scan card-lift surface group relative flex h-full flex-col overflow-hidden rounded-panel border border-line bg-card p-6 transition-colors focus-within:border-ink hover:border-ink">
       <div className="flex items-start justify-between gap-4">
         <Heading className="type-h3 text-ink">
           <Link
@@ -40,7 +40,7 @@ export function TeardownCard({
         <figcaption className="font-mono text-xs text-ink-2">{key.label}</figcaption>
         <p className="mt-1.5 flex items-baseline gap-3">
           <span className="sr-only">After </span>
-          <span className="font-display text-[32px] leading-none tracking-[-0.02em] text-ink tabular-nums">
+          <span className="font-display text-[40px] leading-none text-ink tabular-nums [font-stretch:70%] font-semibold uppercase">
             {formatValue(key.after, key.unit)}
           </span>
           <span className="font-mono text-xs text-ink-2 tabular-nums">
@@ -48,11 +48,11 @@ export function TeardownCard({
           </span>
         </p>
         <div aria-hidden="true" className="mt-3 grid gap-1.5">
-          <span className="block h-1.5 bg-ground-2">
-            <span className="block h-full bg-line-control" style={{ width: width(key.before) }} />
+          <span className="block h-1.5 rounded-full bg-ground-2">
+            <span className="block h-full rounded-full bg-line-control" style={{ width: width(key.before) }} />
           </span>
-          <span className="block h-1.5 bg-ground-2">
-            <span className="block h-full bg-lime" style={{ width: width(key.after) }} />
+          <span className="block h-1.5 rounded-full bg-ground-2">
+            <span className="block h-full rounded-full bg-lime shadow-[inset_0_0_0_1px_rgb(10_20_15/0.35)]" style={{ width: width(key.after) }} />
           </span>
         </div>
       </figure>

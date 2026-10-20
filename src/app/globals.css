@@ -151,6 +151,22 @@ body {
   }
 }
 
+/* Until GroundShift runs (no JavaScript, or before hydration) each section
+   paints its own ground, so text is never left on the wrong colour. Once
+   it runs it sets html.ground-live and the sections turn transparent. */
+section[data-ground="bone"] {
+  background-color: var(--color-bone);
+}
+section[data-ground="sage"] {
+  background-color: var(--color-sage);
+}
+section[data-ground="ink"] {
+  background-color: var(--color-dark);
+}
+.ground-live section[data-ground] {
+  background-color: transparent;
+}
+
 /* The closing footer is its own ink panel on every page. */
 .on-dark {
   position: relative;
@@ -387,59 +403,23 @@ body {
   color: var(--color-ink-2);
 }
 
-/* Receipt: a perforated top edge (a row of 6px half-circle bites, 10px
-   apart) and a torn bottom edge (12px teeth). Three mask layers tile
-   disjoint bands (top strip, body, bottom teeth) and add up. */
-.receipt-edge {
-  --tooth: 12px;
-  --perf: 10px;
-  --mask-top: radial-gradient(circle at 50% 0, transparent 3px, #000 3.5px);
-  --mask-body: linear-gradient(#000, #000);
-  --mask-teeth: conic-gradient(from -45deg at 50% 100%, transparent 0 90deg, #000 0);
-  mask-image: var(--mask-top), var(--mask-body), var(--mask-teeth);
-  mask-size:
-    var(--perf) var(--perf),
-    100% calc(100% - var(--tooth) - var(--perf)),
-    var(--tooth) var(--tooth);
-  mask-position:
-    left top,
-    0 var(--perf),
-    bottom left;
-  mask-repeat: repeat-x, no-repeat, repeat-x;
-  -webkit-mask-image: var(--mask-top), var(--mask-body), var(--mask-teeth);
-  -webkit-mask-size:
-    var(--perf) var(--perf),
-    100% calc(100% - var(--tooth) - var(--perf)),
-    var(--tooth) var(--tooth);
-  -webkit-mask-position:
-    left top,
-    0 var(--perf),
-    bottom left;
-  -webkit-mask-repeat: repeat-x, no-repeat, repeat-x;
-}
-
-/* The receipt's shadow lives on a wrapper (a mask would clip it), drawn
-   with drop-shadow so it follows the perforations and teeth. */
+/* The receipt: a white panel with a 1px ink border and the ambient
+   shadow. Clean, not papery: no perforations, no rotation. */
 .receipt-paper {
-  transform: rotate(1deg);
-  filter: drop-shadow(0 1px 1px rgb(10 20 15 / 0.12)) drop-shadow(0 8px 12px rgb(10 20 15 / 0.12))
-    drop-shadow(0 28px 32px rgb(10 20 15 / 0.2));
+  width: 100%;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-panel);
+  background: var(--color-card);
+  box-shadow: var(--shadow-float);
 }
 
-/* The "desk" under the receipt: ground-2 with a soft vignette, lighter
-   where the paper sits, darker toward the edges. No images. */
+/* The flat ground-2 band the /prices receipt sits on. */
 .desk {
   background-color: var(--color-ground-2);
-  background-image: radial-gradient(
-    ellipse 75% 85% at 70% 45%,
-    color-mix(in oklab, var(--color-ground-2) 70%, var(--color-card)) 0%,
-    var(--color-ground-2) 55%,
-    color-mix(in oklab, var(--color-ground-2) 90%, var(--color-ink)) 100%
-  );
 }
 
-/* Teardown cards lift on hover with a layered paper shadow (no movement,
-   so it applies with reduced motion too; only the fade is skipped). */
+/* Teardown cards take the ambient shadow on hover (no movement, so it
+   applies with reduced motion too; only the fade is skipped). */
 .card-lift {
   transition:
     border-color 160ms ease,
@@ -449,8 +429,7 @@ body {
 .card-lift:focus-within {
   box-shadow:
     0 1px 2px rgb(10 20 15 / 0.06),
-    0 10px 24px -10px rgb(10 20 15 / 0.16),
-    0 36px 72px -28px rgb(10 20 15 / 0.28);
+    0 18px 40px -16px rgb(10 20 15 / 0.12);
 }
 @media (prefers-reduced-motion: reduce) {
   .card-lift {
@@ -543,13 +522,12 @@ body {
    --------------------------------------------------------------- */
 .pv {
   container: pv / inline-size;
-  border-radius: 8px;
+  border-radius: var(--radius-frame);
   border: 1px solid var(--color-line);
   background: var(--color-card);
   box-shadow:
     0 1px 2px rgb(10 20 15 / 0.06),
-    0 10px 24px -10px rgb(10 20 15 / 0.16),
-    0 36px 72px -28px rgb(10 20 15 / 0.28);
+    0 24px 60px -24px rgb(10 20 15 / 0.12);
   transform: perspective(1400px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 300ms ease;
 }
@@ -568,7 +546,7 @@ body {
 
 .browser {
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: var(--radius-panel);
   border: 1px solid var(--color-line);
   background: var(--color-card);
 }
@@ -580,7 +558,7 @@ body {
   height: 1.875rem;
   padding-inline: 0.625rem;
   border-bottom: 1px solid var(--color-line);
-  background: color-mix(in oklab, var(--color-ground-2) 70%, var(--color-card));
+  background: var(--color-ground);
 }
 
 .browser-dots {
@@ -591,13 +569,13 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: color-mix(in oklab, var(--color-clay) 75%, var(--color-card));
+  background: var(--color-clay);
 }
 .browser-dots i:nth-child(2) {
-  background: color-mix(in oklab, var(--store-sand) 85%, var(--color-card));
+  background: var(--color-lime);
 }
 .browser-dots i:nth-child(3) {
-  background: color-mix(in oklab, var(--store-moss) 75%, var(--color-card));
+  background: var(--color-sage);
 }
 
 .browser-url {
@@ -968,11 +946,9 @@ body {
   row-gap: 2px;
   padding: 5px 9px 6px 8px;
   border: 1px solid var(--color-line-2);
-  border-radius: 3px;
+  border-radius: 6px;
   background: var(--color-card);
-  box-shadow:
-    0 1px 1px rgb(10 20 15 / 0.06),
-    0 6px 14px -8px rgb(10 20 15 / 0.4);
+  box-shadow: 0 1px 1px rgb(10 20 15 / 0.05), 0 8px 18px -10px rgb(10 20 15 / 0.25);
   white-space: nowrap;
 }
 .finding-label {
@@ -1252,11 +1228,12 @@ body {
 }
 .story-number {
   font-family: var(--font-display);
-  font-optical-sizing: auto;
+  font-stretch: 70%;
   font-size: clamp(72px, 7.2vw, 120px);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   text-wrap: balance;
   overflow-wrap: anywhere;
   color: var(--color-ink);
@@ -1309,8 +1286,7 @@ body {
   }
   .story-title {
     margin-top: 0.875rem;
-    font-size: clamp(2rem, 2.9vw, 2.75rem);
-    line-height: 1.08;
+    font-size: clamp(2.5rem, 4vw, 4rem);
     color: var(--color-ink);
   }
   .story-listwrap {
@@ -1328,7 +1304,7 @@ body {
   .story-rail-fill {
     position: absolute;
     inset: 0;
-    background: var(--color-lime);
+    background: var(--color-ink);
     transform-origin: top;
   }
   .story-list {
@@ -1351,7 +1327,7 @@ body {
     right: 0;
     top: -1px;
     height: 2px;
-    background: var(--color-lime);
+    background: var(--color-ink);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 400ms cubic-bezier(0.5, 1, 0.89, 1);
@@ -1376,11 +1352,10 @@ body {
   }
   .story-item-title {
     font-family: var(--font-display);
-    font-optical-sizing: auto;
     font-size: clamp(1.375rem, 1.9vw, 1.75rem);
-    font-weight: 450;
+    font-weight: 600;
     line-height: 1.15;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
   }
   .story-item .story-price {
     margin-left: auto;
@@ -1626,7 +1601,7 @@ body {
 .fg-line-fill {
   height: 2px;
   margin-top: -0.5px;
-  background: var(--color-lime);
+  background: var(--color-ink);
   transform-origin: left;
 }
 .fg-node {
@@ -1716,13 +1691,13 @@ body {
   background: var(--color-ink);
 }
 .fg-key-added {
-  background: var(--color-lime);
+  background: var(--color-lime); box-shadow: inset 0 0 0 1px var(--color-ink);
 }
 
 /* 04 connections */
 .fg-connect {
   background:
-    radial-gradient(circle at 50% 50%, color-mix(in oklab, color-mix(in oklab, var(--color-lime) 35%, transparent) 70%, transparent), transparent 45%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-lime) 30%, transparent), transparent 45%),
     var(--color-card);
 }
 .fg-connect svg {
@@ -1739,7 +1714,7 @@ body {
   stroke-dasharray: 100;
 }
 .fg-dash {
-  stroke: var(--color-lime);
+  stroke: var(--color-lime-ink);
   stroke-width: 0.8;
   stroke-linecap: round;
   stroke-dasharray: 8 200;
@@ -1753,12 +1728,15 @@ body {
 }
 .fg-hub {
   padding: 2cqi 3.6cqi;
-  border-radius: 1.2cqi;
+  border-radius: 999px;
   background: var(--color-ink);
-  color: var(--color-card);
+  color: var(--color-bone);
   font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 600;
+  text-transform: uppercase;
   font-size: clamp(0.875rem, 3.4cqi, 1.375rem);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
 }
 .fg-tool {
   display: grid;
@@ -1814,13 +1792,13 @@ body {
   transform-origin: left;
 }
 .fg-bar-shop {
-  background: color-mix(in oklab, var(--store-sand) 70%, var(--color-card));
+  background: var(--color-sage);
 }
 .fg-bar-before {
   background: var(--color-clay);
 }
 .fg-bar-meta {
-  background: var(--color-lime);
+  background: var(--color-lime); box-shadow: inset 0 0 0 1px rgb(10 20 15 / 0.35);
 }
 .fg-bar-value {
   font-family: var(--font-mono);
@@ -1853,23 +1831,20 @@ body {
 .report-under {
   position: absolute;
   inset: 0;
-  background: color-mix(in oklab, var(--color-card) 80%, var(--color-dark));
+  border-radius: var(--radius-panel);
+  background: color-mix(in oklab, var(--color-bone) 22%, var(--color-dark));
   transform: rotate(2.25deg) translate(6px, 6px);
-  box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.6);
 }
 
 .report-sheet {
   position: relative;
   width: 100%;
   padding: clamp(1.25rem, 4.5vw, 2.75rem);
+  border-radius: var(--radius-panel);
   background: var(--color-card);
   color: var(--color-ink);
   transform: rotate(-1deg);
-  box-shadow:
-    0 1px 1px rgb(0 0 0 / 0.25),
-    0 2px 4px rgb(0 0 0 / 0.2),
-    0 14px 28px -10px rgb(0 0 0 / 0.5),
-    0 44px 80px -24px rgb(0 0 0 / 0.65);
+  box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.6);
 }
 @media (min-width: 48rem) {
   .report-sheet {
@@ -1899,8 +1874,9 @@ body {
   margin-top: 1rem;
   font-family: var(--font-display);
   font-size: 1.375rem;
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
 }
 
 .report-grid {
@@ -1930,11 +1906,11 @@ body {
 }
 .report-value {
   font-family: var(--font-display);
-  font-optical-sizing: auto;
-  font-size: 56px;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-stretch: 70%;
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 .report-of {
@@ -1985,9 +1961,10 @@ body {
   align-items: baseline;
   font-family: var(--font-display);
   font-size: clamp(1.375rem, 2vw, 1.75rem);
+  font-weight: 500;
   line-height: 1.25;
-  letter-spacing: -0.015em;
-  color: var(--color-ground);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
 }
 .report-tick {
   width: 0.5rem;
@@ -2001,13 +1978,15 @@ body {
 .studio-quote {
   position: relative;
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 4.6vw, 4rem);
-  line-height: 1.06;
-  font-weight: 450;
-  letter-spacing: -0.02em;
+  font-stretch: 70%;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 .studio-mark {
-  font-family: var(--font-display-italic);
+  font-family: var(--font-archivo-italic), var(--font-display);
   font-style: italic;
   color: var(--color-lime-ink);
 }
@@ -2025,12 +2004,14 @@ body {
   position: absolute;
   left: 50%;
   bottom: 0;
-  transform: translate(-50%, 0.1em);
+  transform: translate(-50%, 0.12em);
   font-family: var(--font-display);
-  font-size: 20vw;
-  font-weight: 400;
+  font-stretch: 70%;
+  font-size: 26vw;
+  font-weight: 700;
   line-height: 0.8;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   white-space: nowrap;
   color: rgb(243 245 238 / 0.08);
   pointer-events: none;

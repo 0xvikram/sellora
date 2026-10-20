@@ -1,10 +1,9 @@
 import { SERVICES } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-// The price receipt, driven by SERVICES and printed on card paper (ink-2
-// 10.71:1, accent 7.09:1). It sits on a "desk" (.desk, ground-2 with a
-// soft vignette), turned 1deg, with a layered paper shadow, a perforated
-// top edge and a torn bottom edge (.receipt-edge). "compact" sits on the
+// The price receipt, driven by SERVICES: a white panel with a 1px ink
+// border, 8px radius and the ambient shadow (ink-2 12.70:1 on white). The
+// "None" sits on a lime pill (ink on lime 15.03:1). "compact" sits on the
 // home page; "full" is the /prices version and also shows each unit.
 export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
   const full = size === "full";
@@ -12,7 +11,7 @@ export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
     <div className={cn("receipt-paper w-full", full ? "max-w-[38rem]" : "max-w-[22rem]")}>
       <div
         className={cn(
-          "receipt-edge bg-card px-6 pt-8 pb-9 font-mono text-ink",
+          "rounded-panel px-6 pt-7 pb-7 font-mono text-ink",
           full ? "text-sm md:px-10 md:pt-12 md:pb-12 md:text-base" : "text-[0.8rem]",
         )}
       >
@@ -40,12 +39,8 @@ export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
         <div className="dashed-rule mt-4 mb-3" />
         <div className="flex items-baseline justify-between gap-4">
           <span className="font-medium tracking-[0.14em] uppercase">Retainer required</span>
-          <span className="font-display text-[32px] leading-none tracking-[-0.02em] text-lime-ink">None</span>
+          <span className={"rounded-full border border-dark bg-lime px-3.5 pt-1.5 pb-1 font-display text-[28px] leading-none text-dark [font-stretch:70%] font-semibold uppercase"}>None</span>
         </div>
-        <div className="dashed-rule mt-3" />
-        <p className="mt-4 text-center text-ink-2" aria-hidden="true">
-          * * * thank you, come again * * *
-        </p>
       </div>
     </div>
   );

@@ -3,20 +3,21 @@ import { BOOKING_URL, CONTACT_EMAIL, NAV_LINKS, REPLY_PROMISE, SITE_NAME, STUDIO
 import { Container } from "./Container";
 import { Reveal } from "./Reveal";
 
-// The one dark section: closing call to action and site footer, on every
-// page. Ground text on #1a1c1b (14.69:1), muted at 75% (8.75:1), accent
-// brightened to #7fb8b0 (7.66:1). It sits above the grain layer. The
-// brand wordmark at 20vw (ground at 8%, decorative) sits on its bottom
-// edge behind the footer links, so the page ends with a mark.
+// The closing call to action and site footer, on every page: the ink
+// ground (its own background, and data-ground="ink" so the home ground and
+// the nav pill follow it). Bone text (17.06:1), muted at 75% (9.84:1),
+// lime accent (15.03:1), the lime CTA. The wordmark at 26vw (Archivo
+// condensed, bone at 8%, decorative) sits on its bottom edge behind the
+// footer links, so the page ends with a mark.
 export function Close() {
   return (
     <footer id="contact" aria-labelledby="close-title" data-ground="ink" className="on-dark overflow-hidden">
-      <Container className="relative z-[1] pt-16 pb-[18vw] md:pt-28 md:pb-[9vw]">
+      <Container className="relative z-[1] pt-16 pb-[22vw] md:pt-28 md:pb-[14vw]">
         <Reveal>
           <p className="eyebrow">Contact</p>
           <h2
             id="close-title"
-            className="mt-5 max-w-4xl text-[clamp(2.5rem,5.5vw,4.75rem)] leading-[1.04] text-ground"
+            className="mt-5 max-w-5xl text-[clamp(2.75rem,7vw,6.5rem)] text-ink"
           >
             Tell us what is leaking. We will price <span className="accent-word">the fix.</span>
           </h2>
@@ -29,22 +30,22 @@ export function Close() {
             {CONTACT_EMAIL}
           </a>
         </div>
-        <p className="mt-5 text-base text-ground/75">{REPLY_PROMISE}</p>
-        <p className="mt-1 text-base text-ground/75">{STUDIO.hours}.</p>
+        <p className="mt-5 text-base text-ink-2">{REPLY_PROMISE}</p>
+        <p className="mt-1 text-base text-ink-2">{STUDIO.hours}.</p>
 
-        <div className="mt-16 flex flex-col gap-5 border-t border-ground/20 pt-8 md:mt-20 md:flex-row md:items-center md:justify-between">
+        <div className="mt-16 flex flex-col gap-5 border-t border-line-2 pt-8 md:mt-20 md:flex-row md:items-center md:justify-between">
           <nav aria-label="Footer">
             <ul className="flex flex-wrap gap-x-7 gap-y-2">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-ground/75 transition-colors hover:text-ground">
+                  <Link href={link.href} className="text-sm text-ink-2 transition-colors hover:text-ink">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
-          <p className="font-mono text-xs text-ground/75">
+          <p className="font-mono text-xs text-ink-2">
             © {new Date().getFullYear()} {SITE_NAME}
           </p>
         </div>

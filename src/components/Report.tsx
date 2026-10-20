@@ -6,9 +6,9 @@ import { AuditForm } from "./AuditForm";
 import { BeforeAfter } from "./BeforeAfter";
 import { Container } from "./Container";
 
-// "The read, delivered": the one dark moment inside <main>. A sample audit
-// report sheet (card paper, A4 proportions, rotated -1deg, layered paper
-// shadow) on the dark ground, beside three statements that define the
+// "The read, delivered": the ink ground inside <main> (data-ground="ink",
+// painted by GroundShift). A sample audit report sheet (white, A4
+// proportions, rotated -1deg, lime markers) on the ink ground, beside three statements that define the
 // labels, and the audit form once more.
 //
 // Motion (once, when the sheet first enters the viewport, never with
@@ -106,10 +106,10 @@ export function Report() {
       <Container className="py-16 md:py-28">
         <p className="flex items-center gap-3">
           <span className="eyebrow">03</span>
-          <span className="h-px w-8 bg-ground/25" aria-hidden="true" />
+          <span className="h-px w-8 bg-line-2" aria-hidden="true" />
           <span className="eyebrow">The read, delivered</span>
         </p>
-        <h2 id="report-title" className="type-h2 mt-5 max-w-3xl text-ground">
+        <h2 id="report-title" className="type-h2 mt-5 max-w-4xl text-ink">
           One page. Every number <span className="accent-word">labelled.</span>
         </h2>
 
@@ -117,7 +117,7 @@ export function Report() {
           <div className="report-desk">
             <div className="report-stack">
               <span aria-hidden="true" className="report-under" />
-              <figure ref={sheetRef} aria-label="Sample audit report" className="report-sheet">
+              <figure ref={sheetRef} aria-label="Sample audit report" className="report-sheet surface">
                 <p className="report-meta">
                   <span>oatleaf.example</span>
                   <span aria-hidden="true">·</span>
@@ -140,7 +140,7 @@ export function Report() {
                         {f.of ? <span className="report-of"> of {f.of}</span> : null}
                       </dd>
                       <dd className="report-kind">
-                        <span aria-hidden="true" className={`size-1.5 shrink-0 ${MARKER[f.kind]}`} />
+                        <span aria-hidden="true" className={`size-2 shrink-0 rounded-full border border-dark/40 ${MARKER[f.kind]}`} />
                         {f.kind}
                       </dd>
                     </div>
@@ -170,12 +170,12 @@ export function Report() {
                 <li key={s.lead} className="report-statement">
                   <span aria-hidden="true" className="report-tick" />
                   <p>
-                    <span className="text-lime">{s.lead}</span> {s.rest}
+                    <span className="text-lime-ink">{s.lead}</span> {s.rest}
                   </p>
                 </li>
               ))}
             </ul>
-            <div className="mt-10 border-t border-ground/20 pt-8">
+            <div className="mt-10 border-t border-line-2 pt-8">
               <AuditForm />
             </div>
           </div>

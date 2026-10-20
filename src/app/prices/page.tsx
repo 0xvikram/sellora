@@ -94,7 +94,7 @@ export default function PricesPage() {
               {LADDER.map((rung, i) => (
                 <li key={rung.step}>
                   {i > 0 ? <span aria-hidden="true" className="ml-8 block h-6 w-px bg-line-control" /> : null}
-                  <div className="grid gap-x-6 gap-y-2 border border-line-2 bg-card p-5 md:grid-cols-[2.5rem_8rem_minmax(0,1fr)_auto] md:items-baseline md:p-6">
+                  <div className="grid gap-x-6 gap-y-2 rounded-panel border border-line bg-card p-5 md:grid-cols-[2.5rem_8rem_minmax(0,1fr)_auto] md:items-baseline md:p-6">
                     <p className="eyebrow">{rung.step}</p>
                     <h3 className="type-h3">{rung.title}</h3>
                     <p className="text-base text-ink-2">{rung.body}</p>
