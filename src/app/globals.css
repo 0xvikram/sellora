@@ -1273,7 +1273,7 @@ body {
     position: sticky;
     top: 0;
     height: 100vh;
-    padding-top: 4rem; /* the sticky nav */
+    padding-top: 92px; /* the fixed nav pill and its gaps */
     overflow: hidden;
   }
   .story-grid {
