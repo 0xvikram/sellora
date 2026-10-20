@@ -27,7 +27,7 @@ export default function TeardownsPage() {
             Each teardown states the baseline, the period and how it was measured.
           </p>
           {anySample ? (
-            <p className="mt-6 max-w-2xl border-l-2 border-accent bg-accent-soft px-5 py-4 text-base text-ink">
+            <p className="mt-6 max-w-2xl border-l-2 border-ink bg-lime/30 px-5 py-4 text-base text-ink">
               The entries marked Sample are illustrations of the format, not client results.
             </p>
           ) : null}
@@ -49,13 +49,13 @@ export default function TeardownsPage() {
                   </span>
                   <span className="flex items-center justify-between md:block">
                     {t.sample ? <SampleChip /> : null}
-                    <span aria-hidden="true" className="font-mono text-accent md:hidden">
+                    <span aria-hidden="true" className="font-mono text-lime-ink md:hidden">
                       →
                     </span>
                   </span>
                   <span
                     aria-hidden="true"
-                    className="hidden font-mono text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:block"
+                    className="hidden font-mono text-lime-ink transition-transform group-hover:translate-x-1 motion-reduce:transition-none md:block"
                   >
                     →
                   </span>

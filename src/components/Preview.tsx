@@ -59,9 +59,9 @@ export const SAMPLE_DOMAIN = "oatleaf.example";
 type Kind = "Measured" | "Generated" | "Sample";
 
 const MARKER: Record<Kind, string> = {
-  Measured: "bg-accent",
-  Generated: "bg-moss",
-  Sample: "bg-sand",
+  Measured: "bg-lime",
+  Generated: "bg-ink",
+  Sample: "bg-clay",
 };
 
 const RESULTS: { label: string; value: string; kind: Kind }[] = [
@@ -286,7 +286,7 @@ export function Preview() {
 
   const status = (
     <span className="pv-status">
-      <span aria-hidden="true" className="size-1.5 bg-accent" />
+      <span aria-hidden="true" className="size-1.5 bg-lime" />
       <span className="grid">
         {STATUSES.map((s) => (
           <span
@@ -326,8 +326,8 @@ export function Preview() {
         </ul>
 
         {/* The scan line: 1px accent with a 24px soft trail above it. */}
-        <div data-pv="scan" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-accent opacity-0 will-change-transform">
-          <span className="absolute inset-x-0 bottom-full h-6 bg-gradient-to-b from-transparent to-accent-soft mix-blend-multiply" />
+        <div data-pv="scan" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-lime-ink opacity-0 will-change-transform">
+          <span className="absolute inset-x-0 bottom-full h-6 bg-gradient-to-b from-transparent to-lime/40 mix-blend-multiply" />
         </div>
       </div>
 

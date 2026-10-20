@@ -52,13 +52,13 @@ export function TeardownCard({
             <span className="block h-full bg-line-control" style={{ width: width(key.before) }} />
           </span>
           <span className="block h-1.5 bg-ground-2">
-            <span className="block h-full bg-accent" style={{ width: width(key.after) }} />
+            <span className="block h-full bg-lime" style={{ width: width(key.after) }} />
           </span>
         </div>
       </figure>
       <p className="mt-6 flex items-center justify-between border-t border-line pt-4 font-mono text-xs font-medium tracking-[0.12em] text-ink-2 uppercase">
         Over {teardown.period}
-        <span aria-hidden="true" className="text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
+        <span aria-hidden="true" className="text-lime-ink transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
           →
         </span>
       </p>

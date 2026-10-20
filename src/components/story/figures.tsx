@@ -14,9 +14,9 @@ type FigureProps = { id: string };
 
 /* 01  AI ad creative: three 9:16 ad frames fanned out, a hook on each. */
 const ADS: { hook: string; shape: Shape; tone: Tone; scene: Tone }[] = [
-  { hook: "Why my skin stopped flaking", shape: "pump", tone: "accent", scene: "sand" },
+  { hook: "Why my skin stopped flaking", shape: "pump", tone: "teal", scene: "sand" },
   { hook: "The 30-second routine", shape: "dropper", tone: "clay", scene: "moss" },
-  { hook: "Barrier cream, tested 8 weeks", shape: "jar", tone: "sand", scene: "accent" },
+  { hook: "Barrier cream, tested 8 weeks", shape: "jar", tone: "sand", scene: "teal" },
 ];
 
 export function AdsFigure({ id }: FigureProps) {

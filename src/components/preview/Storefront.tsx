@@ -10,11 +10,11 @@ export type Region = "header" | "hero" | "products" | "tracking" | "email";
 
 const PRODUCTS: { name: string; price: string; shape: Shape; tone: Tone; scene: Tone }[] = [
   { name: "Oat Cleanser", price: "$24", shape: "pump", tone: "sand", scene: "sand" },
-  { name: "Barrier Cream", price: "$32", shape: "jar", tone: "accent", scene: "accent" },
+  { name: "Barrier Cream", price: "$32", shape: "jar", tone: "teal", scene: "teal" },
   { name: "Night Oil", price: "$38", shape: "dropper", tone: "clay", scene: "clay" },
   { name: "Body Wash", price: "$22", shape: "pump", tone: "moss", scene: "moss" },
   { name: "Hand Balm", price: "$16", shape: "tube", tone: "clay", scene: "sand" },
-  { name: "Daily SPF", price: "$28", shape: "tube", tone: "accent", scene: "moss" },
+  { name: "Daily SPF", price: "$28", shape: "tube", tone: "teal", scene: "moss" },
 ];
 
 const LINKS = ["Shop", "Sets", "Story", "Journal"];

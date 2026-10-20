@@ -98,7 +98,7 @@ export default function PricesPage() {
                     <p className="eyebrow">{rung.step}</p>
                     <h3 className="type-h3">{rung.title}</h3>
                     <p className="text-base text-ink-2">{rung.body}</p>
-                    <p className="font-mono text-base font-medium whitespace-nowrap text-accent tabular-nums">
+                    <p className="font-mono text-base font-medium whitespace-nowrap text-lime-ink tabular-nums">
                       {rung.price}
                     </p>
                   </div>

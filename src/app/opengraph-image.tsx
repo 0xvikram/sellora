@@ -31,7 +31,7 @@ export default async function OpengraphImage() {
           padding: 80,
           background: TOKENS.ground,
           color: TOKENS.ink,
-          borderBottom: `16px solid ${TOKENS.accent}`,
+          borderBottom: `16px solid ${TOKENS.lime}`,
         }}
       >
         <div style={{ fontFamily: "Newsreader", fontSize: 44, fontWeight: 500, letterSpacing: -0.5 }}>
@@ -51,7 +51,7 @@ export default async function OpengraphImage() {
             }}
           >
             <span>Prices, before the&nbsp;</span>
-            <span style={{ fontStyle: "italic", fontWeight: 400, color: TOKENS.accent }}>first call.</span>
+            <span style={{ fontStyle: "italic", fontWeight: 400, color: TOKENS.limeInk }}>first call.</span>
           </div>
           <div style={{ fontSize: 30, fontWeight: 500, lineHeight: 1.35, color: TOKENS.ink2, maxWidth: 980 }}>
             {SITE_TAGLINE}

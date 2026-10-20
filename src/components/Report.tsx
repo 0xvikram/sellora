@@ -43,8 +43,8 @@ const STATEMENTS: { lead: string; rest: string }[] = [
 ];
 
 const MARKER: Record<Kind, string> = {
-  Measured: "bg-accent",
-  Generated: "bg-moss",
+  Measured: "bg-lime",
+  Generated: "bg-ink",
 };
 
 const SETTLED = "translateY(0) rotate(-1deg)";
@@ -170,7 +170,7 @@ export function Report() {
                 <li key={s.lead} className="report-statement">
                   <span aria-hidden="true" className="report-tick" />
                   <p>
-                    <span className="text-accent-on-dark">{s.lead}</span> {s.rest}
+                    <span className="text-lime">{s.lead}</span> {s.rest}
                   </p>
                 </li>
               ))}

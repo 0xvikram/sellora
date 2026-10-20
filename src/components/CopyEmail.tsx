@@ -44,7 +44,7 @@ export function CopyEmail({ email }: { email: string }) {
     <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
       <a
         href={`mailto:${email}`}
-        className="font-mono text-[clamp(1.25rem,2.4vw,1.75rem)] leading-tight break-all text-ink underline decoration-line-control decoration-1 underline-offset-[6px] transition-colors hover:text-accent hover:decoration-accent"
+        className="font-mono text-[clamp(1.25rem,2.4vw,1.75rem)] leading-tight break-all text-ink underline decoration-line-control decoration-1 underline-offset-[6px] transition-colors hover:text-lime-ink hover:decoration-lime-ink"
       >
         <span ref={textRef}>{email}</span>
       </a>

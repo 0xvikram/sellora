@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------
-   Design tokens: "Linen & Moss". Warm linen ground, ink type, one
-   deep-teal accent, moss/sand/clay as illustrative colours, and one
-   tinted near-black for the closing section. Hex copies for the OG
-   image live in src/lib/tokens.ts; keep the two in sync.
+   Design tokens: "Bone & Lime". A cool bone ground, near-black green ink,
+   one lime that is a FILL ONLY (text on lime is always ink), lime-ink for
+   lime-coloured text, sage as a secondary ground for one section, clay as
+   a fill-only warning / illustrative colour, and ink as the dark ground.
+   Hex copies for the OG image live in src/lib/tokens.ts; keep in sync.
    Contrast (WCAG 2.x, computed):
-     ink        14.90 ground · 13.24 ground-2 · 16.25 card · 13.56 accent-soft
-     ink-2       9.82 ground ·  8.73 ground-2 · 10.71 card ·  8.94 accent-soft
-     ink-3       5.68 ground ·  5.04 ground-2 ·  6.19 card
-     accent      6.50 ground ·  5.78 ground-2 ·  7.09 card ·  5.92 accent-soft
-     white on accent-ink 7.58 · ground on accent 6.50
-     moss text   4.64 ground ·  5.06 card (fails 4.12 on ground-2: no moss text there)
-     clay-ink    4.87 ground ·  5.31 card (fails 4.33 on ground-2)
-     sand 1.99 / clay 3.47 on ground: fills only
-     dark: ground on ground-dark 14.69 · accent-on-dark 7.66 · ground/75% 8.75
-     line-control (ink 50%) 3.11-3.27 on the three light grounds (inputs)
+     ink        17.06 bone · 15.53 ground-2 · 18.75 card · 10.16 sage
+     ink-2      11.56 bone · 10.52 ground-2 · 12.70 card ·  6.88 sage
+     ink-3       5.46 bone ·  4.97 ground-2 ·  6.01 card · (3.25 sage: remapped)
+     lime-ink    7.15 bone ·  6.50 ground-2 ·  7.85 card · (4.26 sage: remapped)
+     ink on lime 15.03 · ink on clay 6.03 · lime on ink 15.03
+     line-control (ink 50%) 3.43 bone · 3.36 ground-2 · 3.51 card
+     lime 1.14 / clay 2.83 / sage 1.68 on bone: fills only, never text
+   Sage scope ([data-ground="sage"]): ink-3 -> #3f4a43 (5.01 sage, 9.24
+   card), lime-ink -> #2f4400 (5.84 sage, 10.78 card), line-control ->
+   ink 60% (3.92 sage).
+   Ink scope ([data-ground="ink"], .on-dark): ink -> bone (17.06), ink-2
+   -> bone 75% (9.84), ink-3 -> bone 60% (6.63), lime-ink -> lime
+   (15.03), line-control -> bone 50% (4.97). White panels inside it
+   (.surface) restore the light tokens.
    --------------------------------------------------------------- */
 
 @theme {
@@ -24,24 +29,22 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --color-ground: #f2ede4;
-  --color-ground-2: #e7e0d3;
-  --color-card: #faf7f1;
-  --color-ink: #1c1a16;
-  --color-ink-2: #3d3934;
-  --color-ink-3: #625c52;
-  --color-line: rgb(28 26 22 / 0.12);
-  --color-line-2: rgb(28 26 22 / 0.22);
-  --color-line-control: rgb(28 26 22 / 0.5);
-  --color-accent: #1f5c63;
-  --color-accent-soft: #d9e6e4;
-  --color-accent-ink: #1f5c63;
-  --color-moss: #5f6f52;
-  --color-sand: #c2a58c;
-  --color-clay: #c6613f;
-  --color-clay-ink: #a94a28;
-  --color-ground-dark: #1a1c1b;
-  --color-accent-on-dark: #7fb8b0;
+  --color-ground: #f3f5ee;
+  --color-ground-2: #e8ebe0;
+  --color-card: #ffffff;
+  --color-ink: #0a140f;
+  --color-ink-2: #2b352f;
+  --color-ink-3: #5a665e;
+  --color-line: rgb(10 20 15 / 0.12);
+  --color-line-2: rgb(10 20 15 / 0.22);
+  --color-line-control: rgb(10 20 15 / 0.5);
+  --color-lime: #d3f502;
+  --color-lime-ink: #3f5a00;
+  --color-sage: #b7c3a7;
+  --color-clay: #ff5a2c;
+  /* Fixed values that never remap inside a scope. */
+  --color-bone: #f3f5ee;
+  --color-dark: #0a140f;
 
   /* Type scale. Body copy is 17px/1.55 (18px from lg, below); small and
      muted copy is 15px. */
@@ -54,23 +57,34 @@
   --text-lg: 1.1875rem;
   --text-lg--line-height: 1.55;
 
-  --radius-control: 4px;
-  --radius-chip: 2px;
+  --radius-pill: 999px;
+  --radius-panel: 8px;
+  --radius-frame: 12px;
+  --radius-control: 8px;
+  --radius-chip: 8px;
 
   --shadow-*: initial;
+  /* One soft ambient shadow for floating things (nav pill, cards on hover). */
+  --shadow-float: 0 1px 2px rgb(10 20 15 / 0.06), 0 12px 32px -12px rgb(10 20 15 / 0.12);
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
-  --font-display-italic: var(--font-newsreader-italic), ui-serif, Georgia, "Times New Roman", serif;
+  --font-display: var(--font-archivo), "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 :root {
   color-scheme: light;
+  /* The drawn sample store (Oatleaf) keeps its own brand palette. These
+     are illustration colours inside the hero preview and the ad figures,
+     never site text or chrome. */
+  --store-sand: #c2a58c;
+  --store-moss: #5f6f52;
+  --store-clay: #c6613f;
+  --store-teal: #1f5c63;
 }
 
 html {
-  scroll-padding-top: 88px;
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -82,31 +96,48 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: #fff;
+  background: var(--color-lime);
+  color: var(--color-dark);
 }
 
-/* Grain: one fixed, static SVG noise layer over the light page (5%),
-   multiplied so it reads as linen. It never takes pointer events. The dark
-   sections (the report and the close) sit above it (.on-dark has a higher
-   z-index), so the dark ground stays clean. The nav sits above it too. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
+/* Token scopes. Sections sit on the shared ground (GroundShift.tsx) and
+   say which one with data-ground; text tokens follow it. */
+[data-ground="sage"] {
+  --color-ink-3: #3f4a43;
+  --color-lime-ink: #2f4400;
+  --color-line-control: rgb(10 20 15 / 0.6);
 }
 
+[data-ground="ink"],
+.on-dark {
+  --color-ink: #f3f5ee;
+  --color-ink-2: rgb(243 245 238 / 0.75);
+  --color-ink-3: rgb(243 245 238 / 0.6);
+  --color-lime-ink: #d3f502;
+  --color-line: rgb(243 245 238 / 0.14);
+  --color-line-2: rgb(243 245 238 / 0.26);
+  --color-line-control: rgb(243 245 238 / 0.5);
+  --color-ground-2: rgb(243 245 238 / 0.08);
+  color: var(--color-ink);
+}
+
+/* A white panel inside a dark scope gets the light tokens back. */
+.surface {
+  --color-ink: #0a140f;
+  --color-ink-2: #2b352f;
+  --color-ink-3: #5a665e;
+  --color-lime-ink: #3f5a00;
+  --color-line: rgb(10 20 15 / 0.12);
+  --color-line-2: rgb(10 20 15 / 0.22);
+  --color-line-control: rgb(10 20 15 / 0.5);
+  --color-ground-2: #e8ebe0;
+  color: var(--color-ink);
+}
+
+/* The closing footer is its own ink panel on every page. */
 .on-dark {
   position: relative;
-  z-index: 41;
-  background: var(--color-ground-dark);
-  color: var(--color-ground);
+  background: var(--color-dark);
 }
 
 @media (min-width: 64rem) {
@@ -117,12 +148,8 @@ body::after {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-ink);
   outline-offset: 3px;
-}
-
-.on-dark :focus-visible {
-  outline-color: var(--color-accent-on-dark);
 }
 
 /* ---------------------------------------------------------------
@@ -211,7 +238,7 @@ body::after {
     color: var(--color-ground);
   }
   .btn-primary:hover {
-    background: var(--color-accent-ink);
+    background: var(--color-lime-ink);
     color: #fff;
   }
 
@@ -228,11 +255,11 @@ body::after {
     color: var(--color-ink);
   }
   .on-dark .btn-primary:hover {
-    background: var(--color-accent-on-dark);
+    background: var(--color-lime);
     color: var(--color-ink);
   }
   .on-dark .btn-secondary {
-    border-color: rgb(242 237 228 / 0.3);
+    border-color: rgb(243 245 238 / 0.3);
     color: var(--color-ground);
   }
   .on-dark .btn-secondary:hover {
@@ -254,9 +281,9 @@ body::after {
     color: var(--color-ink-3);
   }
   .field:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-lime);
     outline-offset: 1px;
-    border-color: var(--color-accent);
+    border-color: var(--color-lime);
   }
 
   /* Underlined text link. */
@@ -268,7 +295,7 @@ body::after {
     transition: color 160ms ease;
   }
   .text-link:hover {
-    color: var(--color-accent);
+    color: var(--color-lime-ink);
   }
 
   /* Small mono chip (Sample, placeholder). */
@@ -293,11 +320,11 @@ body::after {
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
 }
 
 .on-dark .accent-word {
-  color: var(--color-accent-on-dark);
+  color: var(--color-lime);
 }
 
 /* Small mono label above sections: 12px uppercase, ink-2 (9.82:1 on
@@ -313,7 +340,7 @@ body::after {
 }
 
 .on-dark .eyebrow {
-  color: var(--color-accent-on-dark);
+  color: var(--color-lime);
 }
 
 /* Receipt: a perforated top edge (a row of 6px half-circle bites, 10px
@@ -351,8 +378,8 @@ body::after {
    with drop-shadow so it follows the perforations and teeth. */
 .receipt-paper {
   transform: rotate(1deg);
-  filter: drop-shadow(0 1px 1px rgb(74 52 30 / 0.12)) drop-shadow(0 8px 12px rgb(74 52 30 / 0.12))
-    drop-shadow(0 28px 32px rgb(74 52 30 / 0.2));
+  filter: drop-shadow(0 1px 1px rgb(10 20 15 / 0.12)) drop-shadow(0 8px 12px rgb(10 20 15 / 0.12))
+    drop-shadow(0 28px 32px rgb(10 20 15 / 0.2));
 }
 
 /* The "desk" under the receipt: ground-2 with a soft vignette, lighter
@@ -377,9 +404,9 @@ body::after {
 .card-lift:hover,
 .card-lift:focus-within {
   box-shadow:
-    0 1px 2px rgb(74 52 30 / 0.06),
-    0 10px 24px -10px rgb(74 52 30 / 0.16),
-    0 36px 72px -28px rgb(74 52 30 / 0.28);
+    0 1px 2px rgb(10 20 15 / 0.06),
+    0 10px 24px -10px rgb(10 20 15 / 0.16),
+    0 36px 72px -28px rgb(10 20 15 / 0.28);
 }
 @media (prefers-reduced-motion: reduce) {
   .card-lift {
@@ -434,9 +461,9 @@ body::after {
     background: linear-gradient(
       to bottom,
       transparent 0,
-      var(--color-accent-soft) 24px,
-      var(--color-accent) 24px,
-      var(--color-accent) 25px,
+      color-mix(in oklab, var(--color-lime) 35%, transparent) 24px,
+      var(--color-lime) 24px,
+      var(--color-lime) 25px,
       transparent 25px
     );
     background-repeat: no-repeat;
@@ -476,9 +503,9 @@ body::after {
   border: 1px solid var(--color-line);
   background: var(--color-card);
   box-shadow:
-    0 1px 2px rgb(74 52 30 / 0.06),
-    0 10px 24px -10px rgb(74 52 30 / 0.16),
-    0 36px 72px -28px rgb(74 52 30 / 0.28);
+    0 1px 2px rgb(10 20 15 / 0.06),
+    0 10px 24px -10px rgb(10 20 15 / 0.16),
+    0 36px 72px -28px rgb(10 20 15 / 0.28);
   transform: perspective(1400px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 300ms ease;
 }
@@ -523,10 +550,10 @@ body::after {
   background: color-mix(in oklab, var(--color-clay) 75%, var(--color-card));
 }
 .browser-dots i:nth-child(2) {
-  background: color-mix(in oklab, var(--color-sand) 85%, var(--color-card));
+  background: color-mix(in oklab, var(--store-sand) 85%, var(--color-card));
 }
 .browser-dots i:nth-child(3) {
-  background: color-mix(in oklab, var(--color-moss) 75%, var(--color-card));
+  background: color-mix(in oklab, var(--store-moss) 75%, var(--color-card));
 }
 
 .browser-url {
@@ -573,13 +600,13 @@ body::after {
   z-index: 2;
   pointer-events: none;
   opacity: 0;
-  background: var(--color-accent-soft);
+  background: color-mix(in oklab, var(--color-lime) 35%, transparent);
   mix-blend-mode: multiply;
 }
 
 .store-announce {
   padding: 0.4em 1em;
-  background: var(--color-moss);
+  background: var(--store-moss);
   color: var(--color-card);
   font-size: clamp(0.625rem, 2.3cqi, 0.6875rem);
   font-weight: 500;
@@ -628,7 +655,7 @@ body::after {
 .store-hero {
   display: grid;
   grid-template-columns: 46% minmax(0, 1fr);
-  background: color-mix(in oklab, var(--color-sand) 24%, var(--color-card));
+  background: color-mix(in oklab, var(--store-sand) 24%, var(--color-card));
 }
 
 .store-hero-art svg,
@@ -793,7 +820,7 @@ body::after {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-moss);
+  background: var(--store-moss);
 }
 
 .store-signup {
@@ -802,7 +829,7 @@ body::after {
   align-items: center;
   gap: 3cqi;
   padding: 3cqi 4cqi;
-  background: color-mix(in oklab, var(--color-moss) 12%, var(--color-card));
+  background: color-mix(in oklab, var(--store-moss) 12%, var(--color-card));
 }
 
 .store-signup-copy {
@@ -900,8 +927,8 @@ body::after {
   border-radius: 3px;
   background: var(--color-card);
   box-shadow:
-    0 1px 1px rgb(74 52 30 / 0.06),
-    0 6px 14px -8px rgb(74 52 30 / 0.4);
+    0 1px 1px rgb(10 20 15 / 0.06),
+    0 6px 14px -8px rgb(10 20 15 / 0.4);
   white-space: nowrap;
 }
 .finding-label {
@@ -1123,7 +1150,7 @@ body::after {
   gap: 0.75rem;
 }
 .story-how-arrow {
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
 }
 
 .story-index {
@@ -1131,7 +1158,7 @@ body::after {
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.12em;
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
   font-variant-numeric: tabular-nums;
 }
 .story-price {
@@ -1257,7 +1284,7 @@ body::after {
   .story-rail-fill {
     position: absolute;
     inset: 0;
-    background: var(--color-accent);
+    background: var(--color-lime);
     transform-origin: top;
   }
   .story-list {
@@ -1280,7 +1307,7 @@ body::after {
     right: 0;
     top: -1px;
     height: 2px;
-    background: var(--color-accent);
+    background: var(--color-lime);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 400ms cubic-bezier(0.5, 1, 0.89, 1);
@@ -1296,7 +1323,7 @@ body::after {
     color: inherit;
   }
   .story-item.is-active .story-index {
-    color: var(--color-accent);
+    color: var(--color-lime-ink);
   }
   .story-item-head {
     display: flex;
@@ -1381,7 +1408,7 @@ body::after {
   border: 1px solid var(--color-line-2);
   border-radius: 1.6cqi;
   background: var(--color-card);
-  box-shadow: 0 1px 2px rgb(74 52 30 / 0.08);
+  box-shadow: 0 1px 2px rgb(10 20 15 / 0.08);
   transform-origin: 50% 100%;
 }
 .fg-ad:nth-child(1) {
@@ -1413,7 +1440,7 @@ body::after {
   flex: 1;
   height: 2px;
   border-radius: 1px;
-  background: rgb(28 26 22 / 0.18);
+  background: rgb(10 20 15 / 0.18);
 }
 .fg-ad-bars i:first-child {
   background: var(--color-ink);
@@ -1523,14 +1550,14 @@ body::after {
   color: var(--color-ink-3);
 }
 .fg-tag-cited {
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
 }
 .fg-tag-cited i {
   width: 1.4cqi;
   height: 1.4cqi;
   min-width: 6px;
   min-height: 6px;
-  background: var(--color-accent);
+  background: var(--color-lime);
 }
 
 /* 03 flow timeline */
@@ -1555,7 +1582,7 @@ body::after {
 .fg-line-fill {
   height: 2px;
   margin-top: -0.5px;
-  background: var(--color-accent);
+  background: var(--color-lime);
   transform-origin: left;
 }
 .fg-node {
@@ -1583,7 +1610,7 @@ body::after {
   grid-area: 1 / 1;
 }
 .fg-added {
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
 }
 .fg-gap-label {
   opacity: 0;
@@ -1591,7 +1618,7 @@ body::after {
   font-size: clamp(0.5625rem, 1.9cqi, 0.75rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-clay-ink);
+  color: var(--color-ink-2);
 }
 .fg-dot {
   position: relative;
@@ -1615,7 +1642,7 @@ body::after {
   position: absolute;
   inset: -1.5px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--color-lime);
 }
 .fg-node-day {
   align-self: start;
@@ -1645,13 +1672,13 @@ body::after {
   background: var(--color-ink);
 }
 .fg-key-added {
-  background: var(--color-accent);
+  background: var(--color-lime);
 }
 
 /* 04 connections */
 .fg-connect {
   background:
-    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-accent-soft) 70%, transparent), transparent 45%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, color-mix(in oklab, var(--color-lime) 35%, transparent) 70%, transparent), transparent 45%),
     var(--color-card);
 }
 .fg-connect svg {
@@ -1668,7 +1695,7 @@ body::after {
   stroke-dasharray: 100;
 }
 .fg-dash {
-  stroke: var(--color-accent);
+  stroke: var(--color-lime);
   stroke-width: 0.8;
   stroke-linecap: round;
   stroke-dasharray: 8 200;
@@ -1743,13 +1770,13 @@ body::after {
   transform-origin: left;
 }
 .fg-bar-shop {
-  background: color-mix(in oklab, var(--color-sand) 70%, var(--color-card));
+  background: color-mix(in oklab, var(--store-sand) 70%, var(--color-card));
 }
 .fg-bar-before {
   background: var(--color-clay);
 }
 .fg-bar-meta {
-  background: var(--color-accent);
+  background: var(--color-lime);
 }
 .fg-bar-value {
   font-family: var(--font-mono);
@@ -1782,7 +1809,7 @@ body::after {
 .report-under {
   position: absolute;
   inset: 0;
-  background: color-mix(in oklab, var(--color-card) 80%, var(--color-ground-dark));
+  background: color-mix(in oklab, var(--color-card) 80%, var(--color-dark));
   transform: rotate(2.25deg) translate(6px, 6px);
   box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.6);
 }
@@ -1921,7 +1948,7 @@ body::after {
 .report-tick {
   width: 0.5rem;
   height: 0.5rem;
-  background: var(--color-accent-on-dark);
+  background: var(--color-lime);
   transform: translateY(-0.2em);
 }
 
@@ -1930,10 +1957,10 @@ body::after {
   color: var(--color-ground);
 }
 .on-dark form p {
-  color: rgb(242 237 228 / 0.75);
+  color: rgb(243 245 238 / 0.75);
 }
 .on-dark .field:focus-visible {
-  outline-color: var(--color-accent-on-dark);
+  outline-color: var(--color-lime);
 }
 
 /* Studio pull-quote: H2 scale and up, the open quote hanging in the
@@ -1949,7 +1976,7 @@ body::after {
 .studio-mark {
   font-family: var(--font-display-italic);
   font-style: italic;
-  color: var(--color-accent);
+  color: var(--color-lime-ink);
 }
 @media (min-width: 48rem) {
   .studio-mark {
@@ -1972,7 +1999,7 @@ body::after {
   line-height: 0.8;
   letter-spacing: -0.04em;
   white-space: nowrap;
-  color: rgb(242 237 228 / 0.08);
+  color: rgb(243 245 238 / 0.08);
   pointer-events: none;
   user-select: none;
 }

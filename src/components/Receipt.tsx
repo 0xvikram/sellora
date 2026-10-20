@@ -40,7 +40,7 @@ export function Receipt({ size = "compact" }: { size?: "compact" | "full" }) {
         <div className="dashed-rule mt-4 mb-3" />
         <div className="flex items-baseline justify-between gap-4">
           <span className="font-medium tracking-[0.14em] uppercase">Retainer required</span>
-          <span className="font-display text-[32px] leading-none tracking-[-0.02em] text-accent">None</span>
+          <span className="font-display text-[32px] leading-none tracking-[-0.02em] text-lime-ink">None</span>
         </div>
         <div className="dashed-rule mt-3" />
         <p className="mt-4 text-center text-ink-2" aria-hidden="true">

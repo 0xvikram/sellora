@@ -122,7 +122,7 @@ export function Nav() {
                 key={link.href}
                 href={link.href}
                 aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
-                className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-accent aria-[current=page]:underline-offset-[6px]"
+                className="text-sm text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink aria-[current=page]:underline aria-[current=page]:decoration-lime-ink aria-[current=page]:underline-offset-[6px]"
               >
                 {link.label}
               </Link>
@@ -164,7 +164,7 @@ export function Nav() {
                   href={link.href}
                   aria-current={isCurrent(pathname, link.href) ? "page" : undefined}
                   onClick={() => close(false)}
-                  className="block py-3 font-display text-3xl font-normal tracking-[-0.02em] text-ink aria-[current=page]:font-display-italic aria-[current=page]:text-accent aria-[current=page]:italic"
+                  className="block py-3 font-display text-3xl font-normal tracking-[-0.02em] text-ink aria-[current=page]:font-display aria-[current=page]:text-lime-ink aria-[current=page]:italic"
                 >
                   {link.label}
                 </Link>

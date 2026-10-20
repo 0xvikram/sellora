@@ -36,7 +36,7 @@ export default function ContactPage() {
               <ol className="mt-4 border-t border-line-2">
                 {NEXT_STEPS.map((step, i) => (
                   <li key={step} className="flex gap-5 border-b border-line-2 py-3.5 text-base text-ink">
-                    <span className="pt-0.5 font-mono text-sm text-accent tabular-nums">
+                    <span className="pt-0.5 font-mono text-sm text-lime-ink tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {step}

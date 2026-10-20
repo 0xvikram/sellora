@@ -8,7 +8,7 @@ export function BeforeAfter({ finding, className }: { finding: Finding; classNam
   const max = finding.max ?? (finding.unit === "%" ? 100 : Math.max(finding.before, finding.after, 1));
   const rows = [
     { name: "Before", value: finding.before, fill: "bg-line-control" },
-    { name: "After", value: finding.after, fill: "bg-accent" },
+    { name: "After", value: finding.after, fill: "bg-lime" },
   ];
   return (
     <figure className={cn("w-full", className)}>
@@ -25,7 +25,7 @@ export function BeforeAfter({ finding, className }: { finding: Finding; classNam
               <span
                 className={cn(
                   "text-right font-mono text-sm tabular-nums",
-                  row.name === "After" ? "font-medium text-accent" : "text-ink",
+                  row.name === "After" ? "font-medium text-lime-ink" : "text-ink",
                 )}
               >
                 {formatValue(row.value, finding.unit)}

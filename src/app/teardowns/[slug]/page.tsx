@@ -66,7 +66,7 @@ export default async function TeardownPage({ params }: Props) {
         <article>
           <Container className="py-12 md:py-20">
             <p className="text-sm">
-              <Link href="/teardowns" className="text-ink-2 transition-colors hover:text-accent">
+              <Link href="/teardowns" className="text-ink-2 transition-colors hover:text-lime-ink">
                 <span aria-hidden="true">←</span> All teardowns
               </Link>
             </p>
@@ -108,7 +108,7 @@ export default async function TeardownPage({ params }: Props) {
                     key={finding.title}
                     className="grid gap-6 border-b border-line-2 py-8 md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,22rem)] md:gap-10 md:py-10"
                   >
-                    <span className="font-mono text-sm text-accent tabular-nums md:pt-1.5">
+                    <span className="font-mono text-sm text-lime-ink tabular-nums md:pt-1.5">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div>
@@ -140,12 +140,12 @@ export default async function TeardownPage({ params }: Props) {
                 <p className="eyebrow">Next teardown</p>
                 <Link
                   href={`/teardowns/${next.slug}`}
-                  className="group mt-3 flex items-baseline justify-between gap-6 text-ink transition-colors hover:text-accent"
+                  className="group mt-3 flex items-baseline justify-between gap-6 text-ink transition-colors hover:text-lime-ink"
                 >
                   <span className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight tracking-[-0.015em]">
                     {next.metric}
                   </span>
-                  <span aria-hidden="true" className="font-mono text-accent transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
+                  <span aria-hidden="true" className="font-mono text-lime-ink transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
                     →
                   </span>
                 </Link>

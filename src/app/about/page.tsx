@@ -73,9 +73,9 @@ export default function AboutPage() {
                 <li key={step.title} className="relative pl-9 md:pt-9 md:pl-0">
                   <span
                     aria-hidden="true"
-                    className="absolute top-0.5 left-0 size-[11px] border border-accent bg-accent md:top-0"
+                    className="absolute top-0.5 left-0 size-[11px] border border-ink bg-lime md:top-0"
                   />
-                  <p className="font-mono text-sm font-medium text-accent tabular-nums">{step.when}</p>
+                  <p className="font-mono text-sm font-medium text-lime-ink tabular-nums">{step.when}</p>
                   <h3 className="type-h3 mt-2">{step.title}</h3>
                   <p className="mt-2 text-base text-ink-2">{step.body}</p>
                 </li>

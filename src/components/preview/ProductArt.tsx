@@ -10,12 +10,12 @@ import type { CSSProperties, ReactNode } from "react";
 // y = 66, so a composition can place one anywhere with `at(x, y, scale)`.
 
 export type Shape = "pump" | "dropper" | "jar" | "tube";
-export type Tone = "sand" | "moss" | "clay" | "accent";
+export type Tone = "sand" | "moss" | "clay" | "teal";
 
-const INK = "#1c1a16";
-const CARD = "#faf7f1";
+const INK = "#0a140f";
+const CARD = "#ffffff";
 
-export const toneVar = (tone: Tone) => ({ "--t": `var(--color-${tone})` }) as CSSProperties;
+export const toneVar = (tone: Tone) => ({ "--t": `var(--store-${tone})` }) as CSSProperties;
 
 const fill = {
   body: { fill: "var(--t)" },
@@ -213,7 +213,7 @@ export function HeroShot({ id }: { id: string }) {
         <rect x="36" y="72" width="54" height="12" rx="1" fill={`url(#${id}-cyl)`} opacity="0.7" />
         <rect x="36" y="72" width="54" height="1" style={{ fill: `color-mix(in oklab, var(--t) 30%, #fff)` }} />
       </g>
-      <Placed id={id} shape="pump" tone="accent" x={56} y={72.4} s={1.12} />
+      <Placed id={id} shape="pump" tone="teal" x={56} y={72.4} s={1.12} />
       <Placed id={id} shape="dropper" tone="clay" x={75} y={72.4} s={0.82} />
       <Placed id={id} shape="jar" tone="sand" x={42} y={90} s={0.72} />
     </svg>
