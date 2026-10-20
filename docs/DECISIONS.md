@@ -104,3 +104,53 @@ moment without a second animation library, and it makes the labelling
 promise concrete. Motion is one entrance (rise and settle, figures count
 up), once, static with reduced motion. It became section 03, so Prices,
 Studio and FAQ moved to 04 to 06.
+
+## 2026-10-20: Direction change to a 3D-led, motion-driven register (piece 1: foundation)
+
+The client rejected the quiet editorial build (Linen & Moss, Newsreader)
+and chose the register of squared-media.nl, lusion.co and iventions.com
+on the palette of charle.co.uk, kept professional (no mascots, no jokes).
+This supersedes the 2026-10-17 theme and type entries above. Piece 1 is
+the foundation; the 3D scenes come in pieces 2 and 3, so the hero keeps
+its drawn crawl preview for now (chrome moved to the new tokens).
+
+- **Palette "Bone & Lime"**: bone ground `#f3f5ee`, ground-2 `#e8ebe0`,
+  white cards, ink `#0a140f` (ink-2 `#2b352f`, ink-3 `#5a665e`), lime
+  `#d3f502` as a fill only (text on lime is always ink, 15.03:1),
+  lime-ink `#3f5a00` for lime-coloured text, sage `#b7c3a7` as the one
+  secondary ground (Work), clay `#ff5a2c` as a fill-only warning colour,
+  and ink as the dark ground (report and close). On sage, ink-3 and
+  lime-ink fail (3.25 and 4.26), so the sage scope swaps them for
+  `#3f4a43` (5.01) and `#2f4400` (5.84). Ratios are in `globals.css`.
+- **No grain.** The new register is clean, not papery. Radius: pills for
+  buttons and nav, 8px panels and cards, 12px browser frame; one ambient
+  shadow token (`--shadow-float`).
+- **Type**: Archivo (variable wght + wdth) for display, set condensed
+  (`font-stretch: 70%`), 600, uppercase, line-height 0.92; H3 normal
+  width. Instrument Sans body and Geist Mono labels stay.
+- **Accent word**: Archivo's own italic, not Instrument Sans italic. Both
+  were rendered on the hero. The Archivo italic keeps the word condensed
+  and uppercase, so the headline stays one block in one family (the look
+  of the reference sites); the Instrument Sans lowercase italic reads as
+  the editorial "one italic word" trope the client had just rejected.
+  Archivo does ship a real italic on Google Fonts (the brief assumed it
+  did not), so no synthetic slant is needed. It is one static cut (600,
+  wdth 70, latin, 41 KB) self-hosted and preloaded, because the accent
+  word is in the H1 (the LCP element); the variable italic was 100 KB and
+  pushed mobile LCP render delay out.
+- **Floating pill nav** that takes the tint of the section beneath it
+  (bone, sage, or ink at 70% with bone text).
+- **Scroll-driven ground** (`GroundShift.tsx`): one fixed layer behind the
+  home page eases to the ground of the section covering more than half
+  the viewport (600 ms, instant with reduced motion). Sections are
+  transparent while it runs. The text tokens of `<main>` follow the
+  current ground too and cross-fade with it (registered custom
+  properties), so the edge of the neighbouring section never shows ink on
+  ink. Without JavaScript each section paints its own ground.
+- **Receipt**: now a white panel with an ink border and a lime "None"
+  pill; the perforated and torn mask edges, the 1deg turn and the "thank
+  you, come again" line were removed as papery and jokey for the new
+  register.
+- The drawn sample store (Oatleaf) keeps its own product palette
+  (`--store-*`), as the illustration of a different brand; site chrome
+  around it uses the new tokens.

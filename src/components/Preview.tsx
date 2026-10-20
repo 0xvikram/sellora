@@ -27,7 +27,7 @@ type Timeline = ReturnType<Gsap["timeline"]>;
 //   0.00  status "connecting"
 //   0.60  status "reading"; scan line sweeps the body, 2.6 s, power2.inOut.
 //         As the line reaches each store region, the region takes a brief
-//         accent-soft wash (in 0.12 s, held to 0.3 s, out 0.4 s) and its finding chip
+//         soft lime wash (in 0.12 s, held to 0.3 s, out 0.4 s) and its finding chip
 //         appears (0.3 s fade, 6px). The product counter runs 6 -> 48
 //         while the line crosses the grid.
 //   3.20  status "measuring"; scan line fades (0.3 s)

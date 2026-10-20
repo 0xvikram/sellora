@@ -13,7 +13,7 @@ Every page is static.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero with the audit form and the crawl preview; 01 What changes (five services on the sample store, pinned scroll story on desktop); 02 Work (teardown cards); 03 The read, delivered (dark section with a sample audit report sheet and the form again); 04 Prices (receipt on a desk); 05 Studio (pull-quote); proof row; 06 FAQ |
+| `/` | Hero with the audit form and the crawl preview; 01 What changes (five services on the sample store, pinned scroll story on desktop); 02 Work (teardown cards); 03 The read, delivered (ink ground, a sample audit report sheet and the form again); 04 Prices (receipt); 05 Studio (pull-quote); proof row; 06 FAQ |
 | `/teardowns` | Index of teardowns, numbers first |
 | `/teardowns/[slug]` | One teardown: spec strip, before/after figures, method. Unknown slugs 404 |
 | `/prices` | Receipt, price ladder, terms |
@@ -21,9 +21,10 @@ Every page is static.
 | `/contact` | Audit form, next steps, email with a Copy button, hours |
 | `/opengraph-image`, `/icon.svg`, `/robots.txt`, `/sitemap.xml` | Generated metadata |
 
-Every page ends with the dark closing section (`Close.tsx`), which is also
-the footer and ends on a large, faint "Sellora" wordmark. The home page has
-one more dark section, the report (`Report.tsx`), between Work and Prices.
+Every page ends with the ink closing section (`Close.tsx`), which is also
+the footer and ends on a large, faint condensed "SELLORA" wordmark. On the
+home page the report (`Report.tsx`) is on the ink ground too, and Work on
+sage; the ground shifts as you scroll (see below).
 
 ## Where the copy lives
 
@@ -46,29 +47,52 @@ sit in the page files under `src/app/`.
 
 ## Design tokens and fonts
 
-Theme **Linen & Moss**, defined in `src/app/globals.css` (`@theme`):
-linen ground `#f2ede4`, ground-2 `#e7e0d3`, card `#faf7f1`, ink `#1c1a16`
-(with ink-2 and ink-3), one deep-teal accent `#1f5c63` with accent-soft,
-moss, sand and clay as illustrative fills, and a tinted near-black
-`#1a1c1b` for the closing section. Contrast ratios are listed at the top of
-`globals.css`; hex copies for the OG image live in `src/lib/tokens.ts`
-(keep the two in sync). A static 5% grain layer sits over the light page;
-the two dark sections sit above it.
+Theme **Bone & Lime** (since 2026-10-20), defined in `src/app/globals.css`
+(`@theme`): bone ground `#f3f5ee`, ground-2 `#e8ebe0`, card `#ffffff`, ink
+`#0a140f` with ink-2 `#2b352f` and ink-3 `#5a665e`, lines as ink at 12% /
+22% (controls 50%), lime `#d3f502` (fill only; text on lime is always
+ink), lime-ink `#3f5a00` for lime-coloured text, sage `#b7c3a7` (the Work
+section's ground), clay `#ff5a2c` (fill-only warning / illustration), and
+ink as the dark ground. `--color-bone` and `--color-dark` are fixed
+copies that never remap. Radius: `--radius-pill` 999px, `--radius-panel`
+8px, `--radius-frame` 12px. One shadow: `--shadow-float`. No grain.
+Contrast ratios are listed at the top of `globals.css`; hex copies for the
+OG image live in `src/lib/tokens.ts` (keep the two in sync).
 
-Fonts, all via `next/font` (self-hosted, `display: swap`, fallback metrics
-set so the swap does not shift layout):
+Token scopes: on sage, ink-3 and lime-ink swap to darker values; on ink,
+the text tokens map to bone (75% and 60% for ink-2 and ink-3) and
+lime-ink becomes lime. White panels inside a dark scope use `.surface`
+(also `.pv`, `.sfig`) to get the light tokens back. The drawn sample
+store keeps its own product palette (`--store-*`).
 
-- **Newsreader** roman, variable weight and optical size: headings.
-- **Newsreader italic**, one static cut (400, opsz 48, latin), self-hosted
-  from `src/app/fonts/`: the one accent word per heading (`.accent-word`,
-  `--font-display-italic`).
-- **Instrument Sans**, variable weight, roman only: body.
-- **Geist Mono**: eyebrows, prices, the receipt, preview labels.
+Grounds: every home section sets `data-ground="bone" | "sage" | "ink"`.
+`GroundShift.tsx` paints one fixed layer behind the page with the ground
+of the section covering more than half the viewport (600 ms, instant
+with reduced motion) and sets `html[data-ground-current]`, which the text
+tokens of `<main>` follow. Without JavaScript each section paints its own
+ground. The nav pill (`Nav.tsx`) reads the section under it and tints to
+match.
 
-The OG image uses its own static TTFs in `src/app/og-fonts/`.
+Fonts, all via `next/font` (self-hosted, `display: swap`):
+
+- **Archivo** roman, variable weight and width (`wdth` 62-125): headings,
+  set condensed (`font-stretch: 70%`), 600, uppercase, line-height 0.92;
+  H3 at normal width. `--font-display`.
+- **Archivo italic**, one static cut (600, wdth 70, latin, 41 KB),
+  self-hosted from `src/app/fonts/` and preloaded: the one accent word per
+  heading (`.accent-word`, lime-ink). `--font-archivo-italic`.
+- **Instrument Sans**, variable weight, roman only: body (17px, 18px from
+  lg).
+- **Geist Mono**: eyebrows (12px, uppercase, 0.14em), prices, the
+  receipt, preview labels.
+
+The OG image uses static Archivo TTFs in `src/app/og-fonts/` (OFL).
 
 ## Motion rules
 
+- **Ground shift**: the home page ground eases between bone, sage and ink
+  as sections take over the viewport (`GroundShift.tsx`, 600 ms); the nav
+  pill tints to the section under it. Instant with reduced motion.
 - **One signature motion**: the scan line. It runs once in the hero crawl
   preview (`Preview.tsx`, a GSAP timeline) and once per hover on teardown
   cards (CSS only, fine pointers only).

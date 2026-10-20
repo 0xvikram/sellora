@@ -534,8 +534,8 @@ section[data-ground="ink"] {
   }
 }
 
-/* Teardown card hover: the same scan line as the crawl preview (1px accent,
-   24px accent-soft trail, multiplied so text stays legible), once per
+/* Teardown card hover: the same scan line as the crawl preview (1px
+   lime-ink, 24px soft lime trail, multiplied so text stays legible), once per
    hover, 0.6 s. Fine pointers only, never with reduced motion. The
    pseudo-element is the card height plus the trail, so translateY of
    (100% - 25px) moves the line from the top edge to the bottom edge. */
@@ -554,8 +554,8 @@ section[data-ground="ink"] {
       to bottom,
       transparent 0,
       color-mix(in oklab, var(--color-lime) 35%, transparent) 24px,
-      var(--color-lime) 24px,
-      var(--color-lime) 25px,
+      var(--color-lime-ink) 24px,
+      var(--color-lime-ink) 25px,
       transparent 25px
     );
     background-repeat: no-repeat;
@@ -1877,10 +1877,10 @@ section[data-ground="ink"] {
 }
 
 /* ---------------------------------------------------------------
-   Report: "The read, delivered" (src/components/Report.tsx). The one
-   dark section inside <main>: ground text on ground-dark (14.69:1),
-   accent-on-dark (7.66:1), above the grain. The sheet is card paper with
-   ink type (ink 16.25, ink-2 10.71, ink-3 6.19, accent 7.09 on card).
+   Report: "The read, delivered" (src/components/Report.tsx), on the ink
+   ground: bone text (17.06:1), lime (15.03:1). The sheet is a white
+   .surface panel with the light tokens (ink 18.75, ink-2 12.70, ink-3
+   6.01, lime-ink 7.85 on white) and lime markers.
    --------------------------------------------------------------- */
 .report-desk {
   display: flex;

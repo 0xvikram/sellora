@@ -48,7 +48,7 @@ function LockIcon() {
 
 /**
  * `status` sits at the right of the browser bar. `findings` places one annotation chip in each region; `wash` is the
- * accent-soft overlay the timeline flashes as the scan line passes.
+ * soft lime overlay the timeline flashes as the scan line passes.
  */
 export function Storefront({
   domain,
