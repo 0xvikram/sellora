@@ -7,8 +7,9 @@ import { Close } from "@/components/Close";
 import { Container } from "@/components/Container";
 import { Nav } from "@/components/Nav";
 import { Reveal } from "@/components/Reveal";
-import { SampleChip } from "@/components/TeardownCard";
+import { MetricAccent, SampleChip } from "@/components/TeardownCard";
 import { TEARDOWNS } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 export const dynamicParams = false;
 
@@ -64,7 +65,7 @@ export default async function TeardownPage({ params }: Props) {
           </div>
         ) : null}
         <article>
-          <Container className="py-12 md:py-20">
+          <Container className="page-head pb-14 md:pb-20 lg:pb-24">
             <p className="text-sm">
               <Link href="/teardowns" className="text-ink-2 transition-colors hover:text-lime-ink">
                 <span aria-hidden="true">←</span> All teardowns
@@ -72,14 +73,14 @@ export default async function TeardownPage({ params }: Props) {
             </p>
 
             {/* Spec strip: Store · Period · Method · Status */}
-            <dl className="mt-8 grid gap-px border border-line-2 bg-line-2 sm:grid-cols-2 lg:grid-cols-[1fr_0.7fr_2fr_0.7fr]">
+            <dl className="mt-8 grid grid-cols-2 gap-2 lg:grid-cols-[1fr_0.7fr_2fr_0.7fr]">
               {spec.map((item) => (
-                <div key={item.term} className="bg-card px-5 py-4">
+                <div key={item.term} className={cn("panel px-5 py-4", item.term === "Method" && "col-span-2 lg:col-span-1")}>
                   <dt className="eyebrow">{item.term}</dt>
                   <dd className="mt-2 font-mono text-sm leading-snug text-ink">{item.detail}</dd>
                 </div>
               ))}
-              <div className="bg-card px-5 py-4">
+              <div className="panel px-5 py-4">
                 <dt className="eyebrow">Status</dt>
                 <dd className="mt-2">
                   {teardown.sample ? (
@@ -92,21 +93,24 @@ export default async function TeardownPage({ params }: Props) {
             </dl>
 
             <Reveal className="mt-12 md:mt-16">
-              <h1 className="type-h1 max-w-4xl text-ink">{teardown.metric}</h1>
+              <h1 className="type-h1 max-w-5xl text-ink">
+                <MetricAccent metric={teardown.metric} />
+              </h1>
               <p className="mt-4 text-lg text-ink-2">{teardown.store}</p>
             </Reveal>
             <p className="lead mt-6">{teardown.summary}</p>
             <p className="mt-4 font-mono text-sm text-ink-2">Baseline · {teardown.baseline}</p>
 
             <section aria-labelledby="findings-title" className="mt-16 md:mt-24">
-              <h2 id="findings-title" className="type-h2">
-                What we <span className="accent-word">found</span>
+              <p className="eyebrow">Findings</p>
+              <h2 id="findings-title" className="type-h2 mt-5">
+                What we <span className="accent-word">found.</span>
               </h2>
-              <ol className="mt-8 border-t border-line-2">
+              <ol className="mt-10 grid gap-4 md:mt-12">
                 {teardown.findings.map((finding, i) => (
                   <li
                     key={finding.title}
-                    className="grid gap-6 border-b border-line-2 py-8 md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,22rem)] md:gap-10 md:py-10"
+                    className="panel grid gap-6 p-6 md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,22rem)] md:gap-10 md:p-8"
                   >
                     <span className="font-mono text-sm text-lime-ink tabular-nums md:pt-1.5">
                       {String(i + 1).padStart(2, "0")}
@@ -122,10 +126,11 @@ export default async function TeardownPage({ params }: Props) {
             </section>
 
             <section aria-labelledby="how-title" className="mt-16 md:mt-24">
-              <h2 id="how-title" className="type-h3">
-                How we found it
+              <p className="eyebrow">Method</p>
+              <h2 id="how-title" className="type-h2 mt-5">
+                How we <span className="accent-word">found it.</span>
               </h2>
-              <dl className="mt-5 max-w-3xl rounded-panel border border-line bg-card px-5 py-4 font-mono text-sm leading-relaxed">
+              <dl className="panel mt-8 max-w-3xl px-5 py-4 font-mono text-sm leading-relaxed md:px-7 md:py-6">
                 {how.map((line) => (
                   <div key={line.term} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 py-1">
                     <dt className="text-ink-2 uppercase tracking-[0.1em] text-xs leading-[1.7rem]">{line.term}</dt>
@@ -142,8 +147,8 @@ export default async function TeardownPage({ params }: Props) {
                   href={`/teardowns/${next.slug}`}
                   className="group mt-3 flex items-baseline justify-between gap-6 text-ink transition-colors hover:text-lime-ink"
                 >
-                  <span className="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight font-semibold tracking-[-0.01em]">
-                    {next.metric}
+                  <span className="type-display text-[clamp(1.75rem,3.2vw,2.75rem)]">
+                    <MetricAccent metric={next.metric} />
                   </span>
                   <span aria-hidden="true" className="font-mono text-lime-ink transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
                     →
@@ -154,8 +159,9 @@ export default async function TeardownPage({ params }: Props) {
             ) : null}
           </Container>
 
-          <section aria-labelledby="teardown-cta-title" className="border-t border-line bg-card">
-            <Container className="grid gap-8 py-12 md:py-16 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+          <section aria-labelledby="teardown-cta-title">
+            <Container className="pb-14 md:pb-20 lg:pb-24">
+              <div className="panel grid gap-8 p-6 md:p-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <div>
                 <h2 id="teardown-cta-title" className="type-h2 max-w-xl text-ink">
                   Run the same read on <span className="accent-word">your</span> store.
@@ -165,6 +171,7 @@ export default async function TeardownPage({ params }: Props) {
                 </p>
               </div>
               <AuditForm id="teardown-audit" className="w-full lg:w-[32rem]" />
+              </div>
             </Container>
           </section>
         </article>

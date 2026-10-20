@@ -6,6 +6,20 @@ export function SampleChip({ className }: { className?: string }) {
   return <span className={cn("chip", className)}>Sample</span>;
 }
 
+// A teardown metric with its first figure ("+18%", "4", "94%") set as the
+// accent word, for headings in the display face.
+export function MetricAccent({ metric }: { metric: string }) {
+  const m = metric.match(/[+\u2212-]?\d[\d.,]*%?/);
+  if (!m || m.index === undefined) return <>{metric}</>;
+  return (
+    <>
+      {metric.slice(0, m.index)}
+      <span className="accent-word">{m[0]}</span>
+      {metric.slice(m.index + m[0].length)}
+    </>
+  );
+}
+
 // One teardown as a white card (8px radius). On hover it takes the ambient
 // shadow and (fine pointers) the scan line runs once. The headline finding
 // is drawn as two bars, before in the 3:1 control grey and after in lime,

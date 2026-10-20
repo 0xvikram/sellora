@@ -55,7 +55,7 @@ export default function PricesPage() {
     <>
       <Nav />
       <main id="main">
-        <Container className="py-12 md:py-24">
+        <Container className="page-head">
           <SectionHead level="h1" label="Prices">
             Prices, before the <span className="accent-word">first call.</span>
           </SectionHead>
@@ -64,18 +64,17 @@ export default function PricesPage() {
           </p>
         </Container>
 
-        <section aria-labelledby="range-title" className="desk border-t border-line">
-          <Container className="grid gap-12 py-14 md:py-24 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center lg:gap-16">
-            <div className="flex justify-center">
-              <Receipt size="full" />
-            </div>
-            <div>
-              <h2 id="range-title" className="type-h3 text-ink">
+        <section aria-labelledby="range-title">
+          <Container className="grid gap-10 pb-14 md:pb-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-14 lg:pb-24">
+            <Receipt size="full" />
+            <div className="panel p-6 md:p-8">
+              <p className="eyebrow">Range</p>
+              <h2 id="range-title" className="type-h3 mt-3 text-ink">
                 What moves a job to the top of the range
               </h2>
               <ul className="mt-6 border-t border-line-2">
                 {SERVICES.map((s) => (
-                  <li key={s.id} className="border-b border-line-2 py-4">
+                  <li key={s.id} className="border-b border-line-2 py-4 last:border-b-0 last:pb-0">
                     <p className="font-medium text-ink">{s.title}</p>
                     <p className="mt-1 text-base text-ink-2">{s.rangeNote}</p>
                   </li>
@@ -85,20 +84,20 @@ export default function PricesPage() {
           </Container>
         </section>
 
-        <section aria-labelledby="ladder-title" className="border-t border-line bg-ground-2">
-          <Container className="py-14 md:py-24">
+        <section aria-labelledby="ladder-title" className="border-t border-line">
+          <Container className="page-section">
             <SectionHead label="After the first job" id="ladder-title">
               How work <span className="accent-word">grows,</span> if it does.
             </SectionHead>
-            <ol className="mt-10 max-w-4xl md:mt-14">
+            <ol className="mt-10 md:mt-14">
               {LADDER.map((rung, i) => (
                 <li key={rung.step}>
                   {i > 0 ? <span aria-hidden="true" className="ml-8 block h-6 w-px bg-line-control" /> : null}
-                  <div className="grid gap-x-6 gap-y-2 rounded-panel border border-line bg-card p-5 md:grid-cols-[2.5rem_8rem_minmax(0,1fr)_auto] md:items-baseline md:p-6">
+                  <div className="panel grid gap-x-8 gap-y-2 p-5 md:grid-cols-[3rem_10rem_minmax(0,1fr)_auto] md:items-center md:p-7">
                     <p className="eyebrow">{rung.step}</p>
-                    <h3 className="type-h3">{rung.title}</h3>
+                    <h3 className="type-display text-[2rem] text-ink">{rung.title}</h3>
                     <p className="text-base text-ink-2">{rung.body}</p>
-                    <p className="font-mono text-base font-medium whitespace-nowrap text-lime-ink tabular-nums">
+                    <p className="font-mono text-lg font-medium whitespace-nowrap text-lime-ink tabular-nums">
                       {rung.price}
                     </p>
                   </div>
@@ -108,14 +107,17 @@ export default function PricesPage() {
           </Container>
         </section>
 
-        <section aria-labelledby="terms-title" className="border-t border-line bg-card">
-          <Container className="grid gap-8 py-14 md:grid-cols-[minmax(0,16rem)_1fr] md:gap-12 md:py-24">
-            <h2 id="terms-title" className="type-h2">
-              <span className="accent-word">Terms</span>
-            </h2>
-            <dl className="border-t border-line-2">
+        <section aria-labelledby="terms-title" className="border-t border-line">
+          <Container className="page-section grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-14">
+            <SectionHead label="In writing" id="terms-title">
+              The <span className="accent-word">terms.</span>
+            </SectionHead>
+            <dl className="panel px-5 md:px-8">
               {TERMS.map((t) => (
-                <div key={t.term} className="grid gap-2 border-b border-line-2 py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6">
+                <div
+                  key={t.term}
+                  className="grid gap-2 border-b border-line py-5 last:border-b-0 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6 md:py-6"
+                >
                   <dt className="eyebrow pt-1">{t.term}</dt>
                   <dd className="text-base text-ink">{t.detail}</dd>
                 </div>

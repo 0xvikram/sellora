@@ -15,20 +15,23 @@ export default function NotFound() {
     <>
       <Nav />
       <main id="main">
-        <Container className="py-16 md:py-28">
-          <p className="eyebrow">404</p>
-          <h1 className="type-h1 mt-6 max-w-3xl text-ink">
+        <Container className="page-head pb-14 md:pb-20 lg:pb-24">
+          <p className="eyebrow">Error 404</p>
+          <h1 className="type-h1 mt-5 max-w-4xl text-ink">
             This page is <span className="accent-word">not</span> here.
           </h1>
           <p className="lead mt-6">The address may be mistyped, or the page has moved.</p>
-          <p className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
-            <Link href="/" className="text-link">
-              Home
-            </Link>
-            <Link href="/teardowns" className="text-link">
-              Teardowns
-            </Link>
-          </p>
+          <div className="panel mt-10 flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
+            <p className="text-base text-ink-2">Try the home page, or see the work.</p>
+            <p className="flex flex-wrap gap-3">
+              <Link href="/" className="btn btn-primary">
+                Home
+              </Link>
+              <Link href="/teardowns" className="btn btn-ghost">
+                Teardowns
+              </Link>
+            </p>
+          </div>
         </Container>
       </main>
       <Close />

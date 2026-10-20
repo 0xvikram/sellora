@@ -41,42 +41,49 @@ export default function AboutPage() {
     <>
       <Nav />
       <main id="main">
-        <Container className="py-12 md:py-24">
-          <SectionHead level="h1" label="Studio" className="[&_h1]:max-w-4xl">
+        <Container className="page-head">
+          <SectionHead level="h1" label="Studio" className="[&_h1]:max-w-5xl">
             <AccentText text={STUDIO.line} accent={STUDIO.accent} />
           </SectionHead>
-          <div className="mt-10 grid gap-10 border-t border-line-2 pt-8 md:mt-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16">
-            <p className="lead">{STUDIO.how}</p>
-            <div>
+          <div className="mt-10 grid gap-4 md:mt-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-5">
+            <div className="panel p-6 md:p-8">
+              <p className="eyebrow">How we work</p>
+              <p className="lead mt-4">{STUDIO.how}</p>
+            </div>
+            <div className="panel p-6 md:p-8">
               <p className="eyebrow">Tools we work inside</p>
-              <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-sm text-ink">
+              <ul className="mt-4 flex flex-wrap gap-2 font-mono text-sm text-ink">
                 {TOOLS.map((tool) => (
-                  <li key={tool}>{tool}</li>
+                  <li key={tool} className="rounded-chip border border-line-2 px-2.5 py-1">
+                    {tool}
+                  </li>
                 ))}
               </ul>
+              <p className="eyebrow mt-8">Where</p>
+              <p className="mt-3 text-base text-ink">{STUDIO.location}</p>
             </div>
           </div>
         </Container>
 
-        <section aria-labelledby="first-30-title" className="border-t border-line bg-ground-2">
-          <Container className="py-14 md:py-24">
+        <section aria-labelledby="first-30-title" className="border-t border-line">
+          <Container className="page-section">
             <SectionHead label="How a project runs" id="first-30-title">
               The first <span className="accent-word">30 days.</span>
             </SectionHead>
-            {/* Vertical list on mobile, a horizontal hairline with four nodes from md. */}
-            <ol data-timeline className="relative mt-10 grid gap-9 md:mt-14 md:grid-cols-4 md:gap-8">
-              <span
-                aria-hidden="true"
-                className="absolute top-1.5 bottom-1.5 left-[5px] w-px bg-line-control md:top-[5px] md:right-0 md:bottom-auto md:left-0 md:h-px md:w-auto"
-              />
-              {FIRST_30_DAYS.map((step) => (
-                <li key={step.title} className="relative pl-9 md:pt-9 md:pl-0">
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-0.5 left-0 size-[11px] border border-ink bg-lime md:top-0"
-                  />
-                  <p className="font-mono text-sm font-medium text-lime-ink tabular-nums">{step.when}</p>
-                  <h3 className="type-h3 mt-2">{step.title}</h3>
+            <ol className="mt-10 grid gap-4 md:mt-14 md:grid-cols-2 md:gap-5 lg:grid-cols-4">
+              {FIRST_30_DAYS.map((step, i) => (
+                <li key={step.title} className="panel flex flex-col p-6">
+                  <p className="flex items-center justify-between gap-3">
+                    <span className="font-mono text-sm font-medium text-lime-ink tabular-nums">{step.when}</span>
+                    <span className="eyebrow tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  </p>
+                  <span aria-hidden="true" className="mt-4 block h-1.5 rounded-full bg-ground-2">
+                    <span
+                      className="block h-full rounded-full bg-lime shadow-[inset_0_0_0_1px_rgb(10_20_15/0.35)]"
+                      style={{ width: `${((i + 1) / FIRST_30_DAYS.length) * 100}%` }}
+                    />
+                  </span>
+                  <h3 className="type-h3 mt-5">{step.title}</h3>
                   <p className="mt-2 text-base text-ink-2">{step.body}</p>
                 </li>
               ))}
@@ -84,15 +91,15 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        <section aria-labelledby="not-do-title" className="border-t border-line bg-card">
-          <Container className="grid gap-8 py-14 md:grid-cols-[minmax(0,16rem)_1fr] md:gap-12 md:py-24">
-            <h2 id="not-do-title" className="type-h2">
-              What we do <span className="accent-word">not</span> do
-            </h2>
-            <ul className="border-t border-line-2">
+        <section aria-labelledby="not-do-title" className="border-t border-line">
+          <Container className="page-section grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-14">
+            <SectionHead label="Lines we hold" id="not-do-title">
+              What we do <span className="accent-word">not</span> do.
+            </SectionHead>
+            <ul className="panel px-5 md:px-8">
               {NOT_DO.map((item, i) => (
-                <li key={item} className="flex gap-5 border-b border-line-2 py-5 text-lg text-ink">
-                  <span className="pt-1 font-mono text-sm text-ink-2 tabular-nums">
+                <li key={item} className="flex gap-5 border-b border-line py-5 text-lg text-ink last:border-b-0 md:py-6">
+                  <span className="pt-1 font-mono text-sm text-lime-ink tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   {item}

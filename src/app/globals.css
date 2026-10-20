@@ -194,6 +194,7 @@ html.ground-live[data-ground-current="ink"] main,
 
 /* A white panel inside a dark scope gets the light tokens back. */
 .surface,
+.panel,
 .dio-chip,
 .dio-finding,
 .pipe-label,
@@ -435,6 +436,42 @@ section[data-ground="ink"] {
   }
   .text-link:hover {
     color: var(--color-lime-ink);
+  }
+
+  /* White 8px panel on bone: the inner pages' one container, as on the
+     home page (ink 18.75:1, ink-2 12.70:1, lime-ink 7.85:1 on white). It
+     carries the light tokens, so it reads the same in any scope. */
+  .panel {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    background: var(--color-card);
+  }
+
+  /* Inner page rhythm: the page head and each section use the home
+     page's section padding. */
+  .page-head {
+    padding-top: 3rem;
+    padding-bottom: 3.5rem;
+  }
+  .page-section {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+  @media (min-width: 48rem) {
+    .page-head {
+      padding-top: 5rem;
+      padding-bottom: 4rem;
+    }
+    .page-section {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .page-section {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
   }
 
   /* Small mono chip (Sample, placeholder). */

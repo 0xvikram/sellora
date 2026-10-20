@@ -4,7 +4,7 @@ import { Close } from "@/components/Close";
 import { Container } from "@/components/Container";
 import { Nav } from "@/components/Nav";
 import { SectionHead } from "@/components/SectionHead";
-import { SampleChip } from "@/components/TeardownCard";
+import { MetricAccent, SampleChip } from "@/components/TeardownCard";
 import { TEARDOWNS } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function TeardownsPage() {
     <>
       <Nav />
       <main id="main">
-        <Container className="py-12 md:py-24">
+        <Container className="page-head pb-14 md:pb-20 lg:pb-24">
           <SectionHead level="h1" label="Work">
             Teardowns, with the <span className="accent-word">numbers</span> first.
           </SectionHead>
@@ -32,15 +32,15 @@ export default function TeardownsPage() {
             </p>
           ) : null}
 
-          <ul className="mt-10 border-t border-line-2 md:mt-14">
+          <ul className="panel mt-10 overflow-hidden md:mt-14">
             {TEARDOWNS.map((t) => (
-              <li key={t.slug} className="border-b border-line-2">
+              <li key={t.slug} className="border-b border-line last:border-b-0">
                 <Link
                   href={`/teardowns/${t.slug}`}
-                  className="group grid gap-x-8 gap-y-3 py-6 transition-colors hover:bg-card md:grid-cols-[minmax(0,1fr)_16rem_6rem_5.5rem_1.5rem] md:items-center md:px-4"
+                  className="group grid gap-x-8 gap-y-3 px-5 py-6 transition-colors hover:bg-ground-2 focus-visible:bg-ground-2 md:grid-cols-[minmax(0,1fr)_16rem_6rem_5.5rem_1.5rem] md:items-center md:px-7 md:py-7"
                 >
-                  <h2 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-semibold tracking-[-0.01em] text-ink">
-                    {t.metric}
+                  <h2 className="text-[clamp(1.75rem,2.8vw,2.5rem)] text-ink">
+                    <MetricAccent metric={t.metric} />
                   </h2>
                   <span className="text-sm text-ink-2">{t.store}</span>
                   <span className="font-mono text-sm text-ink-2 tabular-nums">
