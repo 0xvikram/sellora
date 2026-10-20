@@ -154,3 +154,61 @@ its drawn crawl preview for now (chrome moved to the new tokens).
 - The drawn sample store (Oatleaf) keeps its own product palette
   (`--store-*`), as the illustration of a different brand; site chrome
   around it uses the new tokens.
+
+## 2026-10-20: Piece 2, the hero diorama
+
+The drawn storefront panel (`Preview.tsx`, `preview/Storefront.tsx`, about
+1,200 lines with its CSS) is replaced by a real-time 3D diorama, "a
+miniature store being read", in a rounded card on a bone -> peach -> sage
+gradient, after squared-media.nl's hero. The one signature motion moves
+into the scene: a lime light plane sweeps from a scanner gate across the
+slab and four findings rise in as it passes. Reasons and choices:
+
+- **Code only.** three.js 0.186.1, `@react-three/fiber` 9.8.1,
+  `@react-three/drei` 10.7.9 (pinned, each at least two weeks old). Every
+  part is a box or a rounded box; no models, textures, HDR files or
+  generated images. The environment is drei `Lightformer`s, not a preset
+  (presets fetch an HDR from a CDN).
+- **Poster first.** The server HTML is a rendered still of the scene's
+  end state, so phones, tablets, reduced motion, no-WebGL and no-JS
+  visitors get the same picture, and the LCP is an image that never
+  shifts. The posters are generated from the live scene
+  (`npm run posters`, `?diorama=still` / `still-m`), not drawn
+  separately, so they cannot drift from it. The small one is a 4:3
+  framing with shorter leaders and smaller pills, not a crop.
+- **The live scene only where it runs well**: after `load` plus idle,
+  `pointer: fine`, width >= 1024, motion allowed, WebGL. Lazy chunk
+  (about 1 MB raw, 274 KB gzip: three, fiber, drei) via `next/dynamic`.
+  DPR <= 1.5, PerformanceMonitor drops to DPR 1 and no shadows, the frame
+  loop pauses off-screen and in hidden tabs.
+- **Geometry is shared.** drei's `RoundedBox` builds an extruded rounded
+  rectangle per mesh; with about 60 blocks that was a 161 ms main-thread
+  task on mount and 440 ms of Lighthouse TBT. Blocks now share three's
+  `RoundedBoxGeometry` per size and radius: 55 ms, TBT 0.
+- **Shadows** are PCF (`shadows="percentage"`): three r186 removed
+  PCFSoftShadowMap and warns if asked for it. Tone mapping is Neutral so
+  the lime and the product tints are not desaturated by ACES.
+- **Findings** are drei `Html`, mounted one frame after the canvas: in
+  the first commit the first `Html` lost its content when fiber connected
+  its event target (React 19 defers the old root's unmount until after
+  the new root renders). Each finding sits above or below its part on a
+  leader and can run off to one side, so the four never collide. They are
+  `aria-hidden`; the card carries the same four as a visually hidden list.
+- **Timeline**: the light leaves 0.35 s after the first frame and crosses
+  in 2.4 s, so the findings are all in by about 2.8 s after the canvas
+  appears (about 2.5 to 3 s after navigation on this machine). The
+  brief's "mid-sweep at 4 s" assumed a later start; it was not slowed
+  down to match.
+- The chip shows local time (client only) and "Reading <domain>" from the
+  hero form. The old Measured / Generated / Sample results column left
+  with the drawn preview; the report section still defines the three
+  labels.
+- The crawl preview's GSAP timeline went with it; GSAP stays for the
+  story and report sections. ProductArt keeps only `AdShot`, which the
+  story figures use.
+- Measured on 2026-10-20 (M5 MacBook Air, `next start`): Lighthouse
+  12.8.2 desktop 100 / 100 / 100 / 100 (TBT 0-10 ms, LCP 0.8 s, the
+  poster) and mobile 91 / 100 / 100 / 100 (LCP 3.5 s, the H1, as before
+  this piece). 60 fps in headless Chromium on ANGLE Metal at DPR 1 and 2
+  (rAF-capped); SwiftShader gives 15 to 24 fps and trips the
+  PerformanceMonitor down to DPR 1.

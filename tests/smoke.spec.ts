@@ -95,38 +95,69 @@ test("Copy button on /contact copies the email", async ({ page, context }) => {
   await expect(page.locator(`a[href="mailto:${copied}"]`).first()).toBeVisible();
 });
 
-test("reduced motion shows the crawl preview end state", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+// The hero diorama. Server HTML is the poster; the live scene mounts only
+// on desktop with a mouse, motion allowed and WebGL (headless Chromium has
+// SwiftShader WebGL, so it mounts here too, slowly).
+const FINDING_IDS = ["shelves", "counter", "door", "parcels"];
+
+for (const [width, file, ratio] of [
+  [390, "/posters/hero-diorama-m.jpg", 4 / 3],
+  [1440, "/posters/hero-diorama.jpg", 4 / 5],
+] as const) {
+  test(`diorama poster is present, loaded and sized at ${width}`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
+    await page.goto("/");
+    const poster = page.locator("img[data-dio-poster]");
+    await expect(poster).toBeVisible();
+    await expect(poster).toHaveAttribute("width", /\d+/);
+    await expect(poster).toHaveAttribute("height", /\d+/);
+    await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+    expect(await poster.evaluate((img: HTMLImageElement) => new URL(img.currentSrc).pathname)).toBe(file);
+    const box = (await page.locator(".dio-card").boundingBox())!;
+    expect(box.width / box.height).toBeCloseTo(ratio, 2);
+    if (width >= 1024) expect(Math.round(box.width)).toBe(560);
+  });
+}
+
+test("diorama: on desktop the canvas mounts within 5 s and the four findings appear by 6 s", async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const start = Date.now();
   await page.goto("/");
-  const preview = page.locator("figure.pv");
-  await expect(preview.locator('[data-status="done"]')).toHaveCSS("opacity", "1");
-  await expect(preview.locator('[data-status="connecting"]')).toHaveCSS("opacity", "0");
-  for (const value of await preview.locator('[data-pv="value"]').all()) {
-    await expect(value).toHaveCSS("opacity", "1");
+  const figure = page.locator("figure[data-diorama]");
+  await expect(figure.locator("canvas")).toHaveCount(1, { timeout: 5_000 });
+  for (const id of FINDING_IDS) {
+    await expect(figure.locator(`[data-finding="${id}"]`)).toHaveAttribute("data-on", "true", {
+      timeout: Math.max(500, 6_000 - (Date.now() - start)),
+    });
   }
-  for (const chip of await preview.locator('[data-pv="chip"]').all()) {
-    await expect(chip).toHaveCSS("opacity", "1");
-  }
-  await expect(preview.locator('[data-pv="row"]').first()).toHaveCSS("clip-path", "none");
-  await expect(preview.locator('[data-pv="chip"]')).toHaveCount(5);
-  await expect(preview.locator('[data-pv="count"]')).toHaveText("48");
-  for (const wash of await preview.locator('[data-pv="wash"]').all()) {
-    await expect(wash).toHaveCSS("opacity", "0");
-  }
-  await expect(preview.getByRole("button", { name: "Replay" })).toHaveCount(0);
+  await expect(figure).toHaveAttribute("data-diorama", "live");
+  await expect(figure.getByRole("button", { name: "Replay" })).toBeVisible();
+  expect(errors).toEqual([]);
 });
 
-test("crawl preview plays to the end state and the URL bar follows the form", async ({ page }) => {
+test("diorama: reduced motion shows the poster only", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  const preview = page.locator("figure.pv");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500);
+  const figure = page.locator("figure[data-diorama]");
+  await expect(figure).toHaveAttribute("data-diorama", "poster");
+  await expect(figure.locator("canvas")).toHaveCount(0);
+  await expect(figure.locator("img[data-dio-poster]")).toBeVisible();
+  await expect(figure.getByRole("button", { name: "Replay" })).toHaveCount(0);
+});
+
+test("diorama: typing a store address updates the chip", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const domain = page.locator("[data-dio-chip] [data-dio-domain]");
+  await expect(domain).toHaveText("oatleaf.example");
+  await expect(page.locator("[data-dio-chip]")).toContainText(/\d{2}:\d{2}/);
   await page.locator("form#audit").getByLabel("Your store address").fill("https://www.my-shop.com/x");
-  await expect(preview.locator(".browser-url")).toContainText("my-shop.com");
-  await expect(preview.locator('[data-status="done"]')).toHaveCSS("opacity", "1", { timeout: 12_000 });
-  await expect(preview.locator('[data-pv="count"]')).toHaveText("48");
-  for (const value of await preview.locator('[data-pv="value"]').all()) {
-    await expect(value).toHaveCSS("opacity", "1");
-  }
+  await expect(domain).toHaveText("my-shop.com");
 });
 
 const STORY_NUMBERS = ["3–5", "1 → 4", "21% → 31%", "1", "54% → 96%"];
