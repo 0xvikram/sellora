@@ -7,7 +7,7 @@
 // pointer) in headless Chromium on the GPU (ANGLE Metal on macOS; set
 // POSTER_GL=swiftshader elsewhere) and saves the card as JPEG, quality 80:
 //   public/posters/hero-diorama.jpg    560 x 700 card at 2x = 1120 x 1400 (4:5, lg and up)
-//   public/posters/hero-diorama-m.jpg  390 x 292.5 card at 2x = 780 x 585 (4:3, below lg)
+//   public/posters/hero-diorama-m.jpg  390 x 292.5 card at 2x = 780 x 586 (4:3, below lg)
 // If the scene changes, run it again and commit the two files.
 import { chromium } from "@playwright/test";
 import { fileURLToPath } from "node:url";

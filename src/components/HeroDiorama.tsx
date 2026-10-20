@@ -184,7 +184,7 @@ export function HeroDiorama() {
             <img
               src="/posters/hero-diorama-m.jpg"
               width={780}
-              height={585}
+              height={586}
               alt=""
               fetchPriority="high"
               data-dio-poster

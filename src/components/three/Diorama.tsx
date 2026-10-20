@@ -43,6 +43,9 @@ const BASE_EL = 36 * DEG; // and above
 const POINTER_MAX = 3 * DEG;
 const SCROLL_TILT = 6 * DEG;
 const TARGET = new Vector3(0.1, 0.08, 0.05);
+// On a landscape card (the small poster) the scene sits a little lower,
+// clear of the chip.
+const TARGET_WIDE = new Vector3(0.1, 0.42, 0.05);
 
 const easeInOutCubic = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
 
@@ -56,6 +59,7 @@ function Rig({ pointer, scroll, still }: { pointer: RefObject<Pointer>; scroll: 
   const fov = 24 * DEG;
   const hHalf = Math.atan(Math.tan(fov / 2) * aspect);
   const dist = Math.max(2.75 / Math.tan(hHalf), 2.95 / Math.tan(fov / 2));
+  const target = aspect > 1 ? TARGET_WIDE : TARGET;
 
   useFrame((_, dt) => {
     const p = still ? { x: 0, y: 0 } : (pointer.current ?? { x: 0, y: 0 });
@@ -65,12 +69,12 @@ function Rig({ pointer, scroll, still }: { pointer: RefObject<Pointer>; scroll: 
     const k = Math.min(dt, 0.1);
     cur.current.az = still ? az : MathUtils.damp(cur.current.az, az, 3.5, k);
     cur.current.el = still ? el : MathUtils.damp(cur.current.el, el, 3.5, k);
-    camera.position.setFromSphericalCoords(dist, Math.PI / 2 - cur.current.el, cur.current.az).add(TARGET);
+    camera.position.setFromSphericalCoords(dist, Math.PI / 2 - cur.current.el, cur.current.az).add(target);
     if ("fov" in camera && camera.fov !== fov / DEG) {
       camera.fov = fov / DEG;
       camera.updateProjectionMatrix();
     }
-    camera.lookAt(TARGET);
+    camera.lookAt(target);
   });
   return null;
 }
