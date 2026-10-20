@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 
-// Code-drawn product "photography" for the sample store in the hero preview.
+// Code-drawn product "photography" for the sample store (Oatleaf), used by
+// the ad figures in the story section.
 // Every object is a flat silhouette in one palette tone (--t), shaded with a
 // shared cylinder gradient (a rim shadow, a soft highlight, a darker far
 // side), standing on a tinted tabletop with a contact shadow and a longer
@@ -180,43 +181,6 @@ function Backdrop({ id, w, h, horizon }: { id: string; w: number; h: number; hor
       <rect y={horizon} width={w} height={h - horizon} fill={`url(#${id}-floor)`} />
       <rect y={horizon} width={w} height="0.5" fill="#fff" opacity="0.5" />
     </g>
-  );
-}
-
-/** One product shot for a grid card: 10:7, the object on a tinted set. */
-export function ProductShot({ id, shape, tone, scene }: { id: string; shape: Shape; tone: Tone; scene: Tone }) {
-  const scale = { pump: 1.04, dropper: 1.12, jar: 1.32, tube: 1.0 }[shape];
-  return (
-    <svg viewBox="0 0 100 70" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style={toneVar(scene)}>
-      <Defs id={id} />
-      <Backdrop id={id} w={100} h={70} horizon={52} />
-      <Placed id={id} shape={shape} tone={tone} x={50} y={63} s={scale} />
-    </svg>
-  );
-}
-
-/** The store hero's still life: an arch, a plinth and three products. */
-export function HeroShot({ id }: { id: string }) {
-  return (
-    <svg viewBox="0 0 120 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style={toneVar("sand")}>
-      <Defs id={id} />
-      <Backdrop id={id} w={120} h={100} horizon={78} />
-      {/* Arch in moss, with its own soft light. */}
-      <g style={toneVar("moss")}>
-        <path d="M34 78V44A26 26 0 0 1 86 44V78Z" style={{ fill: `color-mix(in oklab, var(--t) 42%, ${CARD})` }} />
-        <path d="M34 78V44A26 26 0 0 1 86 44V78Z" fill={`url(#${id}-light)`} />
-      </g>
-      {/* Plinth. */}
-      <g style={toneVar("sand")}>
-        <ellipse cx="66" cy="84.5" rx="32" ry="2.6" fill={`url(#${id}-contact)`} opacity="0.7" />
-        <rect x="36" y="72" width="54" height="12" rx="1" style={{ fill: `color-mix(in oklab, var(--t) 70%, ${CARD})` }} />
-        <rect x="36" y="72" width="54" height="12" rx="1" fill={`url(#${id}-cyl)`} opacity="0.7" />
-        <rect x="36" y="72" width="54" height="1" style={{ fill: `color-mix(in oklab, var(--t) 30%, #fff)` }} />
-      </g>
-      <Placed id={id} shape="pump" tone="teal" x={56} y={72.4} s={1.12} />
-      <Placed id={id} shape="dropper" tone="clay" x={75} y={72.4} s={0.82} />
-      <Placed id={id} shape="jar" tone="sand" x={42} y={90} s={0.72} />
-    </svg>
   );
 }
 

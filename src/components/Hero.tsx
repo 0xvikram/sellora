@@ -3,7 +3,7 @@ import { SITE_TAGLINE } from "@/lib/site";
 import { AuditForm } from "./AuditForm";
 import { Container } from "./Container";
 import { HeroIntro } from "./HeroIntro";
-import { Preview } from "./Preview";
+import { HeroDiorama } from "./HeroDiorama";
 
 export function Hero() {
   return (
@@ -31,11 +31,10 @@ export function Hero() {
           </p>
         </HeroIntro>
 
-        {/* On lg the panel starts 24px below the top of the H1 (the eyebrow
-            line is 0.9rem plus its 1.5rem gap). On mobile it runs under the
-            form with 16px gutters. */}
-        <div className="-mx-1 min-w-0 md:mx-0 lg:mt-[calc(2.4rem+24px)]">
-          <Preview />
+        {/* The diorama card: 4:5 on lg (about 560 x 700), top-aligned with
+            the eyebrow; below lg a 4:3 poster card under the form. */}
+        <div className="min-w-0 lg:w-full lg:max-w-[560px] lg:justify-self-end">
+          <HeroDiorama />
         </div>
       </Container>
     </section>
