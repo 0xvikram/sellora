@@ -37,7 +37,7 @@ export function Slab() {
   return (
     <group>
       <mesh geometry={geometry} position={[0, -SLAB.h / 2, 0]} castShadow receiveShadow>
-        <meshStandardMaterial vertexColors roughness={0.82} metalness={0} />
+        <meshStandardMaterial vertexColors roughness={0.8} metalness={0} />
       </mesh>
       {/* A walkway from the gate to the door, a shade darker than the top */}
       <Block at={[-0.55, 0, 0.18]} size={[2.6, 0.004, 0.42]} color={C.path} r={0.002} rough={0.9} shadow={false} />

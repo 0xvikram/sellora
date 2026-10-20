@@ -21,14 +21,15 @@ export function Shelves() {
       {UNITS.map((x, u) => (
         <group key={x}>
           {/* Sides */}
-          <Block at={[x - W / 2 + 0.0125, 0, Z]} size={[0.025, H, D]} color={C.oak} r={0.006} />
-          <Block at={[x + W / 2 - 0.0125, 0, Z]} size={[0.025, H, D]} color={C.oak} r={0.006} />
+          <Block at={[x - W / 2 + 0.02, 0, Z]} size={[0.04, H, D]} color={C.oak} r={0.03} rough={0.62} />
+          <Block at={[x + W / 2 - 0.02, 0, Z]} size={[0.04, H, D]} color={C.oak} r={0.03} rough={0.62} />
           {/* Back panel, low and thin so the light gets in */}
-          <Block at={[x, 0, Z - D / 2 + 0.01]} size={[W, H, 0.02]} color={C.oak} rough={0.85} />
-          {/* Boards and the top */}
-          {[...BOARDS, H - 0.025].map((y) => (
-            <Block key={y} at={[x, y, Z]} size={[W, 0.025, D]} color={C.oak} r={0.006} />
+          <Block at={[x, 0, Z - D / 2 + 0.01]} size={[W, H, 0.02]} color={C.oak} rough={0.8} shadow={false} />
+          {/* Boards, and a thicker bevelled top */}
+          {BOARDS.map((y) => (
+            <Block key={y} at={[x, y, Z]} size={[W - 0.06, 0.03, D]} color={C.oak} r={0.03} rough={0.66} />
           ))}
+          <Block at={[x, H - 0.05, Z]} size={[W + 0.02, 0.05, D + 0.02]} color={C.oak} r={0.03} rough={0.62} />
           {BOARDS.map((y) =>
             [-0.08, 0.08].map((dx) => {
               const i = n++;
@@ -40,7 +41,7 @@ export function Shelves() {
                   size={[0.12, h, 0.12]}
                   color={PRODUCT_TINTS[(i + u) % PRODUCT_TINTS.length]}
                   r={0.03}
-                  rough={0.62}
+                  rough={0.58}
                 />
               );
             }),

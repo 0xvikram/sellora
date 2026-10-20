@@ -17,6 +17,7 @@ export const C = {
   oak: "#d6c2a6", // shelves and counter top
   counter: "#f6f3ec",
   parcel: "#c2a58c",
+  mat: "#3d4a3a", // the door mat, a dark moss
   // Oatleaf product tints (muted).
   teal: "#2d6a70",
   clay: "#c6704f",

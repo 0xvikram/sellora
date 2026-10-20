@@ -12,7 +12,7 @@ const STACK: P[] = [
   { size: [0.22, 0.13, 0.18], y: 0.37, rot: 0.16, dx: -0.01, dz: 0.01 },
 ];
 
-/** Three sand parcels stacked by the door, each with an ink tape band. */
+/** Three sand parcels stacked by the door, taped both ways in ink. */
 export function Parcels() {
   const x = 1.2;
   const z = 0.4;
@@ -20,9 +20,11 @@ export function Parcels() {
     <group position={[x, 0, z]}>
       {STACK.map((p, i) => (
         <group key={i} position={[p.dx, p.y, p.dz]} rotation={[0, p.rot, 0]}>
-          <Block at={[0, 0, 0]} size={p.size} color={C.parcel} r={0.014} rough={0.9} />
-          {/* Tape: a band over the top and down both ends */}
-          <Block at={[0, -0.002, 0]} size={[p.size[0] + 0.006, p.size[1] + 0.006, 0.045]} color={C.ink} rough={0.55} />
+          <Block at={[0, 0, 0]} size={p.size} color={C.parcel} r={0.014} rough={0.8} />
+          {/* Tape in two directions: a band over the top and down both
+              ends, and a shorter one across it over the top and sides */}
+          <Block at={[0, -0.002, 0]} size={[p.size[0] + 0.006, p.size[1] + 0.006, 0.045]} color={C.ink} rough={0.55} shadow={false} />
+          <Block at={[0, -0.002, 0]} size={[0.04, p.size[1] + 0.008, p.size[2] + 0.006]} color={C.ink} rough={0.55} shadow={false} />
         </group>
       ))}
     </group>

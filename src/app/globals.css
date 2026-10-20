@@ -513,13 +513,29 @@ section[data-ground="ink"] {
 
 /* ---------------------------------------------------------------
    Hero diorama card (src/components/HeroDiorama.tsx, three/*). A 12px
-   card on a vertical bone -> pale peach -> soft sage gradient; the
+   card on a vertical bone -> peach -> sage sunrise gradient; the
    poster image and the transparent WebGL canvas sit on it. The chip and
    the findings are HTML over the canvas.
    --------------------------------------------------------------- */
 .dio-card {
+  /* The sunrise: bone at the top, a warm peach band through the middle
+     (clay folded into bone, warmed off pink
+     with a touch of lime: about #f3d3b0), sage at the foot, and a soft warm glow where
+     the slab sits. */
+  --dio-peach: color-mix(in srgb, color-mix(in srgb, var(--color-clay) 24%, var(--color-bone)) 92%, var(--color-lime));
+  --dio-peach-soft: color-mix(in srgb, var(--dio-peach) 45%, var(--color-bone));
   border-radius: var(--radius-frame);
-  background: linear-gradient(180deg, #f3f5ee 0%, #f7e9dc 46%, #f1dfd0 58%, #cfd8c3 100%);
+  background:
+    radial-gradient(70% 42% at 52% 60%, rgb(255 244 228 / 0.85), rgb(255 244 228 / 0) 72%),
+    linear-gradient(
+      180deg,
+      var(--color-bone) 0%,
+      var(--dio-peach-soft) 22%,
+      var(--dio-peach) 44%,
+      var(--dio-peach) 54%,
+      color-mix(in oklab, var(--dio-peach) 45%, var(--color-sage)) 74%,
+      var(--color-sage) 100%
+    );
   box-shadow:
     inset 0 0 0 1px rgb(10 20 15 / 0.06),
     0 1px 2px rgb(10 20 15 / 0.05),

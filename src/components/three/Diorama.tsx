@@ -1,12 +1,13 @@
 "use client";
 
-import { ContactShadows, Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
+import { ContactShadows, PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { MathUtils, NeutralToneMapping, Vector3, type DirectionalLight, type Group } from "three";
+import { MathUtils, NeutralToneMapping, Vector3, type Group } from "three";
 import { Counter } from "./Counter";
 import { Finding } from "./Finding";
 import { Gate } from "./Gate";
+import { Lights } from "./Lighting";
 import { FINDINGS, GATE_X, SWEEP_END_X } from "./layout";
 import { Parcels } from "./Parcels";
 import { Shelves } from "./Shelves";
@@ -39,13 +40,20 @@ const FADE_OUT = 0.35;
 
 const DEG = Math.PI / 180;
 const BASE_AZ = 30 * DEG; // camera to the right of front
-const BASE_EL = 36 * DEG; // and above
+const BASE_EL = 46 * DEG; // and above, high enough that the slab fills a portrait card
 const POINTER_MAX = 3 * DEG;
 const SCROLL_TILT = 6 * DEG;
-const TARGET = new Vector3(0.1, 0.08, 0.05);
-// On a landscape card (the small poster) the scene sits a little lower,
-// clear of the chip.
-const TARGET_WIDE = new Vector3(0.1, 0.42, 0.05);
+// Framing: the camera sits closer than a fit of the whole slab (zoom) and
+// looks at a point well above it, so the slab fills the card's width and
+// its near corner runs off the card's bottom edge, the way an island runs
+// off the frame in squared-media.nl's hero. The empty band above is the
+// card's sunrise gradient.
+const FRAME = {
+  tall: { zoom: 0.8, target: new Vector3(0.15, 2.08, 0.55) },
+  // On a landscape card (the small poster) a fit by height, a little
+  // tighter, and a lower aim.
+  wide: { zoom: 0.66, target: new Vector3(0.15, 1.5, 0.45) },
+} as const;
 
 const easeInOutCubic = (u: number) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
 
@@ -53,13 +61,14 @@ function Rig({ pointer, scroll, still }: { pointer: RefObject<Pointer>; scroll: 
   const { camera, size } = useThree();
   const cur = useRef({ az: BASE_AZ, el: BASE_EL });
 
-  // Fit the slab: enough distance for its width on a portrait card and
-  // for its height on a landscape one.
+  // Fit the slab (its width on a portrait card, its height on a landscape
+  // one), then come in by the frame's zoom.
   const aspect = size.width / Math.max(1, size.height);
   const fov = 24 * DEG;
   const hHalf = Math.atan(Math.tan(fov / 2) * aspect);
-  const dist = Math.max(2.75 / Math.tan(hHalf), 2.95 / Math.tan(fov / 2));
-  const target = aspect > 1 ? TARGET_WIDE : TARGET;
+  const frame = aspect > 1 ? FRAME.wide : FRAME.tall;
+  const dist = frame.zoom * Math.max(2.75 / Math.tan(hHalf), 2.95 / Math.tan(fov / 2));
+  const target = frame.target;
 
   useFrame((_, dt) => {
     const p = still ? { x: 0, y: 0 } : (pointer.current ?? { x: 0, y: 0 });
@@ -77,47 +86,6 @@ function Rig({ pointer, scroll, still }: { pointer: RefObject<Pointer>; scroll: 
     camera.lookAt(target);
   });
   return null;
-}
-
-function Lights({ shadows }: { shadows: boolean }) {
-  const key = useRef<DirectionalLight>(null);
-  useEffect(() => {
-    const l = key.current;
-    if (!l) return;
-    l.shadow.camera.left = -3.4;
-    l.shadow.camera.right = 3.4;
-    l.shadow.camera.top = 3.4;
-    l.shadow.camera.bottom = -3.4;
-    l.shadow.camera.near = 1;
-    l.shadow.camera.far = 22;
-    l.shadow.camera.updateProjectionMatrix();
-  }, []);
-  return (
-    <>
-      {/* Warm key from the upper left front, soft PCF shadows */}
-      <directionalLight
-        ref={key}
-        color="#fff1df"
-        intensity={2.8}
-        position={[-5, 7.5, 1.2]}
-        castShadow={shadows}
-        shadow-mapSize={[1024, 1024]}
-        shadow-bias={-0.0004}
-        shadow-normalBias={0.02}
-        shadow-radius={3}
-      />
-      {/* Cool fill from the front right, no shadows */}
-      <directionalLight color="#eef2f6" intensity={1.35} position={[6, 3, 3]} />
-      <hemisphereLight args={["#ffffff", "#b7c3a7", 0.4]} />
-      {/* A code-built studio: soft boxes, no HDR file */}
-      <Environment resolution={64} frames={1} environmentIntensity={0.7}>
-        <Lightformer form="rect" intensity={2.2} color="#fff6ea" position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[8, 8, 1]} />
-        <Lightformer form="rect" intensity={1.1} color="#ffffff" position={[-6, 2, 3]} rotation-y={Math.PI / 2} scale={[6, 3, 1]} />
-        <Lightformer form="rect" intensity={0.7} color="#e8f0e2" position={[6, 1.5, -2]} rotation-y={-Math.PI / 2} scale={[6, 3, 1]} />
-        <Lightformer form="rect" intensity={0.5} color="#f6e3d3" position={[0, 1, 7]} scale={[8, 2, 1]} />
-      </Environment>
-    </>
-  );
 }
 
 function Scene({
@@ -255,11 +223,11 @@ export default function Diorama({
       <Scene replay={replay} still={still} onReady={onReady} />
       <ContactShadows
         position={[0, -0.95, 0]}
-        scale={[9, 7]}
+        scale={[13, 10]}
         resolution={512}
-        far={1.8}
-        blur={2.6}
-        opacity={0.32}
+        far={2.6}
+        blur={3.4}
+        opacity={0.3}
         color="#1c2a22"
         frames={1}
       />
