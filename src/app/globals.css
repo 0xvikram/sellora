@@ -195,6 +195,8 @@ html.ground-live[data-ground-current="ink"] main,
 /* A white panel inside a dark scope gets the light tokens back. */
 .surface,
 .pv,
+.dio-chip,
+.dio-finding,
 .sfig {
   --color-ink: #0a140f;
   --color-ink-2: #2b352f;
@@ -531,6 +533,161 @@ section[data-ground="ink"] {
   .pv.pv-anim [data-pv="placeholder"],
   .pv.pv-anim [data-status="connecting"] {
     opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Hero diorama card (src/components/HeroDiorama.tsx, three/*). A 12px
+   card on a vertical bone -> pale peach -> soft sage gradient; the
+   poster image and the transparent WebGL canvas sit on it. The chip and
+   the findings are HTML over the canvas.
+   --------------------------------------------------------------- */
+.dio-card {
+  border-radius: var(--radius-frame);
+  background: linear-gradient(180deg, #f3f5ee 0%, #f7e9dc 46%, #f1dfd0 58%, #cfd8c3 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(10 20 15 / 0.06),
+    0 1px 2px rgb(10 20 15 / 0.05),
+    0 30px 60px -30px rgb(10 20 15 / 0.18);
+}
+
+.dio-chip {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 28px);
+  height: 28px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.82);
+  box-shadow:
+    0 0 0 1px rgb(10 20 15 / 0.06),
+    0 6px 16px -10px rgb(10 20 15 / 0.25);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+
+/* A finding: the element's origin is the 3D anchor. The leader (length
+   --lead) runs from a dot on the anchor up to the pill (data-place=above)
+   or down to it (below). The pill is centred on the leader or runs off to
+   one side of it (data-align=right / left, the leader 14px in from that
+   edge). It rises 6px as it fades in. */
+.dio-finding {
+  --lead: 24px;
+  --tx: -50%;
+  --ty: -100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(var(--tx), var(--ty));
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 200ms ease-out,
+    translate 200ms ease-out;
+}
+.dio-finding[data-place="below"] {
+  --ty: 0%;
+  flex-direction: column-reverse;
+}
+.dio-finding[data-align="right"] {
+  --tx: -14px;
+  align-items: flex-start;
+}
+.dio-finding[data-align="left"] {
+  --tx: calc(-100% + 14px);
+  align-items: flex-end;
+}
+/* The small (4:3, 390 wide) poster: shorter leaders, smaller pills. */
+[data-dio-compact] .dio-finding {
+  --lead-scale: 0.55;
+}
+[data-dio-compact] .dio-pill {
+  gap: 5px;
+  padding: 4px 7px 4px 6px;
+  border-radius: 6px;
+  font-size: 9px;
+}
+[data-dio-compact] .dio-marker {
+  width: 5px;
+  height: 5px;
+}
+.dio-finding[data-on] {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 350ms cubic-bezier(0.5, 1, 0.89, 1),
+    translate 350ms cubic-bezier(0.5, 1, 0.89, 1);
+}
+.dio-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 8px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgb(10 20 15 / 0.07),
+    0 8px 20px -12px rgb(10 20 15 / 0.35);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.dio-marker {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--color-lime);
+  box-shadow: 0 0 0 1px rgb(10 20 15 / 0.12);
+}
+.dio-label,
+.dio-dot {
+  color: var(--color-ink-3);
+}
+.dio-leader {
+  position: relative;
+  width: 1px;
+  height: calc(var(--lead) * var(--lead-scale, 1));
+  background: rgb(10 20 15 / 0.4);
+}
+.dio-finding[data-align="right"] .dio-leader {
+  margin-left: 14px;
+}
+.dio-finding[data-align="left"] .dio-leader {
+  margin-right: 14px;
+}
+.dio-leader::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  bottom: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  box-shadow: 0 0 0 1.5px #ffffff;
+}
+.dio-finding[data-place="below"] .dio-leader::after {
+  top: -2.5px;
+  bottom: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dio-finding,
+  .dio-finding[data-on] {
+    transition: none;
   }
 }
 
